@@ -6,7 +6,7 @@ baseUrl = "https://cat-fact.herokuapp.com"
 // #endif
 export default {
 	h5: {
-		url: "https://uni-starter.dcloud.net.cn", //	前端网页托管的域名	
+		url: "", //	前端网页托管的域名	
 		// 在h5端全局悬浮引导用户下载app的功能 更多自定义要求在/common/openApp.js中修改	
 		openApp: { //如不需要本功能直接移除本节点即可	
 			// //点击悬浮下载栏后打开的网页链接

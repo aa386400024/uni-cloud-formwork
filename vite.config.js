@@ -55,30 +55,27 @@ export default defineConfig({
 		'process.env.VUE_APP_TEST': JSON.stringify('test'),
 		'process.env.BASE_URL': JSON.stringify('https://cat-fact.herokuapp.com'), 
 		'ROUTES': new TransformPages(__dirname).routes, // 注入路由表
-		'__INTLIFY_PROD_DEVTOOLS__': false,
-		'import.meta.env.VUE_I18N_LEGACY_API': false,
-		'import.meta.env.VUE_I18N_RUNTIME_GLOBAL': false,
 	},
 	// 构建配置
-	build: {
-		// 使用 terser 进行代码压缩
-		minify: 'terser',
-		// terser 配置
-		terserOptions: {
-			compress: {
-				// 删除 console 语句
-				drop_console: true,
-			},
-		},
-		// 添加别名
-		rollupOptions: {
-			resolve: {
-				alias: {
-					'vue-i18n': 'vue-i18n/dist/vue-i18n.runtime.esm-bundler.js',
-				},
-			},
-		},
-	},
+	// build: {
+	// 	// 使用 terser 进行代码压缩
+	// 	minify: 'terser',
+	// 	// terser 配置
+	// 	terserOptions: {
+	// 		compress: {
+	// 			// 删除 console 语句
+	// 			drop_console: true,
+	// 		},
+	// 	},
+	// 	// 添加别名
+	// 	rollupOptions: {
+	// 		resolve: {
+	// 			alias: {
+	// 				'vue-i18n': 'vue-i18n/dist/vue-i18n.runtime.esm-bundler.js',
+	// 			},
+	// 		},
+	// 	},
+	// },
 })
 
 // 如果是生产环境，执行 modifyManifest 函数

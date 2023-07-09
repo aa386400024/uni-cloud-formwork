@@ -26,13 +26,14 @@
 				"navigationBarTitleText": "我的",
 				"enablePullDownRefresh": false
 			}
-		}, {
+		}, 
+		{
 			"path": "pages/list/list",
 			"style": {
-				// #ifndef APP-PLUS
-				"enablePullDownRefresh": true,
-				// #endif
-				"navigationStyle": "custom"
+				// // #ifndef APP-PLUS
+				// "enablePullDownRefresh": true,
+				// // #endif
+				// "navigationStyle": "custom"
 			}
 		},
 		{

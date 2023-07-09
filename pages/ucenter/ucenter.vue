@@ -159,6 +159,11 @@
 				icon: 'loop',
 				showBadge: this.appVersion.hasNew
 			})
+			this.ucenterList[this.ucenterList.length - 1].unshift({
+				title:this.$t('mine.vk'),
+				"to": '/pages_template/uni-id/index/index',
+				icon: 'loop',
+			})
 			//#endif
 		},
 		onShow() {
