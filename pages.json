@@ -131,21 +131,20 @@
 			}
 		}
 		// #endif
-	,{
-    "path": "uni_modules/uni-pay/pages/success/success",
-    "style": {
-        "backgroundColor": "#F8F8F8",
-        "navigationBarTitleText": "支付成功"
-    }
-}
-,{
-    "path": "uni_modules/uni-pay/pages/ad-interactive-webview/ad-interactive-webview",
-    "style": {
-        "backgroundColor": "#F8F8F8",
-        "navigationBarTitleText": "ad"
-    }
-}
-],
+		, {
+			"path": "uni_modules/uni-pay/pages/success/success",
+			"style": {
+				"backgroundColor": "#F8F8F8",
+				"navigationBarTitleText": "支付成功"
+			}
+		}, {
+			"path": "uni_modules/uni-pay/pages/ad-interactive-webview/ad-interactive-webview",
+			"style": {
+				"backgroundColor": "#F8F8F8",
+				"navigationBarTitleText": "ad"
+			}
+		}
+	],
 	"subPackages": [{
 			"root": "uni_modules/uni-feedback",
 			"pages": [{
@@ -483,7 +482,8 @@
 				"iconPath": "static/tabbar/me.png",
 				"selectedIconPath": "static/tabbar/me_active.png",
 				"text": "我的"
-		}]
+			}
+		]
 	},
 	"uniIdRouter": {
 		"loginPage": "uni_modules/uni-id-pages/pages/login/login-withoutpwd",
