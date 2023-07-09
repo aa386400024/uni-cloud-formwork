@@ -52,7 +52,7 @@
 </script>
 
 <style lang="scss">
-@import '@/styles/index.scss'
+@import '@/common/css/index.scss'
 	/*每个页面公共css */
 	
 </style>
