@@ -1,3 +1,4 @@
+```
 .
 │  .gitignore  # Git忽略文件配置
 │  androidPrivacy.json  # Android隐私设置
@@ -154,3 +155,4 @@
     ├─helper  # 辅助工具目录
     ├─toast  # Toast提示工具目录
     └─validation  # 验证工具目录
+```
