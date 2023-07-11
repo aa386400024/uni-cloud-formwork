@@ -6,8 +6,6 @@ import TransformPages from 'uni-read-pages-vite'
 
 // 复制自定义静态资源目录
 // 将项目中的 'images' 文件夹复制到打包后的输出目录中
-// 复制自定义静态资源目录
-// 将项目中的 'images' 文件夹复制到打包后的输出目录中
 function copyFile() {
 	return {
 		enforce: 'post',
@@ -56,26 +54,6 @@ export default defineConfig({
 		'process.env.BASE_URL': JSON.stringify('https://cat-fact.herokuapp.com'), 
 		'ROUTES': new TransformPages(__dirname).routes, // 注入路由表
 	},
-	// 构建配置
-	// build: {
-	// 	// 使用 terser 进行代码压缩
-	// 	minify: 'terser',
-	// 	// terser 配置
-	// 	terserOptions: {
-	// 		compress: {
-	// 			// 删除 console 语句
-	// 			drop_console: true,
-	// 		},
-	// 	},
-	// 	// 添加别名
-	// 	rollupOptions: {
-	// 		resolve: {
-	// 			alias: {
-	// 				'vue-i18n': 'vue-i18n/dist/vue-i18n.runtime.esm-bundler.js',
-	// 			},
-	// 		},
-	// 	},
-	// },
 })
 
 // 如果是生产环境，执行 modifyManifest 函数

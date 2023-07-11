@@ -1,20 +1,8 @@
 <template>
-	<view>
-		
-	</view>
+  <view>
+  </view>
 </template>
 
-<script>
-	export default {
-		name:"base",
-		data() {
-			return {
-				
-			};
-		}
-	}
+<script lang="ts" setup>
+	
 </script>
-
-<style lang="scss">
-
-</style>

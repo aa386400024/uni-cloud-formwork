@@ -11,7 +11,7 @@ export default {
   },
   // 首页页面路径
   index: {
-    url: '/pages/index/index'
+    url: '/pages/home/index'
   },
   // 404 Not Found 错误页面路径
   error: {

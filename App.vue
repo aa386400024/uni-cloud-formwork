@@ -52,7 +52,10 @@
 </script>
 
 <style lang="scss">
-@import '@/common/css/index.scss'
-	/*每个页面公共css */
-	
+/* #ifndef APP-PLUS-NVUE */
+@import '@/common/css/index-vue.scss';
+/* #endif */
+/* #ifdef APP-PLUS-NVUE */
+@import '@/common/css/index-nvue.scss';
+/* #endif */
 </style>
