@@ -52,7 +52,7 @@ export default {
 				url: "template/openapi/alipay/pub/getMiniCode",
 				title: "请求中...",
 				data: {
-					page: "pages/index/index",
+					page: "pages/home/index",
 					scene: "a=1&b=2"
 				},
 				success: data => {
