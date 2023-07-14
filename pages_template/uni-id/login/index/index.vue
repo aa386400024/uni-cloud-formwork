@@ -158,6 +158,7 @@
 					eventChannel.emit('loginSuccess', {});
 					vk.navigateBack();
 				}else{
+					console.log('进入首页');
 					// 进入首页
 					vk.navigateToHome();
 				}
