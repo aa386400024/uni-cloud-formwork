@@ -1,5 +1,11 @@
 /* mixins.scss 定义混入，用于复用样式片段 */
-
+/**
+ * 当前页的方法和utilities.scss里的内容会给人感觉有所重复，但适用于不同场景。
+ * utilities.scss中的类提供快捷方式应用布局，可直接在HTML中使用。
+ * mixins.scss的mixin则更灵活，可以处理更复杂的布局情况。
+ * 简单布局可用.utilities.scss的类，复杂布局可用mixins.scss，两者结合使用合理且互补。
+ * 但为防混淆，使用时要保持一致，或在代码中注释为何在此处用类，哪处用mixin。 
+ */
 // flex布局的 mixin
 @mixin flex-layout($type: center) {
 	$layouts: (
@@ -25,14 +31,11 @@
 		),
 		// 在这里添加更多的布局类型...
 	);
-
 	// 设定默认的 display 和 flex-direction
 	display: flex;
 	flex-direction: row;
-
 	// 在 map 中查找对应的布局类型
 	$layout: map-get($layouts, $type);
-
 	// 如果找到了，就应用对应的属性
 	@if $layout {
 		@each $property, $value in $layout {
@@ -44,29 +47,45 @@
 		@warn "未知的布局类型: `#{$type}`.";
 	}
 }
-
 // 清除浮动的 mixin
-@mixin clearfix {
-	&::after {
-		content: '';
-		display: table;
-		clear: both;
+@mixin clearfix($pseudo: 'after') {
+	@if $pseudo == 'both' {
+		&::before,
+		&::after {
+			content: '';
+			display: table;
+			clear: both;
+		}
+	} @else {
+		&::#{$pseudo} {
+			content: '';
+			display: table;
+			clear: both;
+		}
+	}
+}
+// 文本溢出显示省略号的 mixin
+@mixin ellipsis($lines: 1) {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	@if $lines == 1 {
+		white-space: nowrap;
+	} @else {
+		display: -webkit-box;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: $lines;
 	}
 }
 
-// 文本溢出显示省略号的 mixin
-@mixin ellipsis {
-	overflow: hidden;
-	white-space: nowrap;
-	text-overflow: ellipsis;
-}
-
-// 绝对居中定位的 mixin
-@mixin absolute-center {
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
+// position定位的 mixin
+@mixin position($type: relative, $top: auto, $right: auto, $bottom: auto, $left: auto, $z-index: auto, $transform: none) {
+	position: $type;
+	top: $top;
+	right: $right;
+	bottom: $bottom;
+	left: $left;
+	z-index: $z-index;
+	transform: $transform;
 }
 
 // 流式布局的 mixin
@@ -79,7 +98,6 @@
 		#{$property}: $max-value;
 	}
 }
-
 // 嵌套图片自适应 mixin
 @mixin aspect-ratio($width, $height) {
 	position: relative;
@@ -99,48 +117,10 @@
 		height: 100%;
 	}
 }
-
 // 生成简单的渐变背景 mixin
 @mixin gradient-bg($start-color, $end-color) {
 	background: $start-color;
 	background: linear-gradient(to right, $start-color, $end-color);
-}
-
-// 生成阴影效果 mixin
-@mixin box-shadow($shadow) {
-	-webkit-box-shadow: $shadow;
-	-moz-box-shadow: $shadow;
-	box-shadow: $shadow;
-}
-
-// 生成文本阴影效果 mixin
-@mixin text-shadow($shadow) {
-	text-shadow: $shadow;
-}
-
-// 生成圆角效果 mixin
-@mixin border-radius($radius) {
-	-webkit-border-radius: $radius;
-	-moz-border-radius: $radius;
-	border-radius: $radius;
-}
-
-// 生成动画效果 mixin
-@mixin animation($animation) {
-	-webkit-animation: $animation;
-	-moz-animation: $animation;
-	-ms-animation: $animation;
-	-o-animation: $animation;
-	animation: $animation;
-}
-
-// 生成过渡效果 mixin
-@mixin transition($transition) {
-	-webkit-transition: $transition;
-	-moz-transition: $transition;
-	-ms-transition: $transition;
-	-o-transition: $transition;
-	transition: $transition;
 }
 
 // 生成2倍视网膜显示屏图片背景 mixin
@@ -151,7 +131,6 @@
 		background-size: $width $height;
 	}
 }
-
 // 生成多列布局 mixin
 @mixin columns($column-count: 2, $column-gap: 1em) {
 	-webkit-column-count: $column-count;
