@@ -1,5 +1,5 @@
 <template>
-  <view>
+  <view class="page-container">
     <text>Count: {{ count }}</text>
     <text>Double Count: {{ doubleCount }}</text>
     <button @tap="increment">Increment</button>

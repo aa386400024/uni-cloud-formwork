@@ -227,7 +227,7 @@
 								uni.setLocale(language)
 							}
 							uni.reLaunch({
-								url: '/pages/list/list',
+								url: '/pages/home/index',
 								complete: () => {
 									uni.$emit("changeLanguage",language)
 								}

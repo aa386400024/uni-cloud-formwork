@@ -300,7 +300,7 @@
 			loadList(text = '') {
 				getApp().globalData.searchText = text;
 				uni.switchTab({
-					url:'/pages/list/list'
+					url:'/pages/home/index'
 				})
 			},
 			backPage(){

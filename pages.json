@@ -27,15 +27,15 @@
 				"enablePullDownRefresh": false
 			}
 		}, 
-		{
-			"path": "pages/list/list",
-			"style": {
-				// // #ifndef APP-PLUS
-				// "enablePullDownRefresh": true,
-				// // #endif
-				// "navigationStyle": "custom"
-			}
-		},
+		// {
+		// 	"path": "pages/list/list",
+		// 	"style": {
+		// 		// // #ifndef APP-PLUS
+		// 		// "enablePullDownRefresh": true,
+		// 		// // #endif
+		// 		// "navigationStyle": "custom"
+		// 	}
+		// },
 		{
 			"path": "pages/grid/grid",
 			"style": {
@@ -434,15 +434,18 @@
 		"backgroundColor": "#F8F8F8",
 		"enablePullDownRefresh": false,
 		// "maxWidth":375,
-		"rpxCalcMaxDeviceWidth": 375,
-		"rpxCalcBaseDeviceWidth": 375
-		// "rpxCalcIncludeWidth":0
+		// #ifdef APP-PLUS || H5
+		"rpxCalcMaxDeviceWidth": 960,
+		"rpxCalcBaseDeviceWidth": 375,
+		"rpxCalcIncludeWidth": 750
+		// #endif
+		
 	},
 	"condition": {
 		"list": [{
 				"path": "pages/list/detail"
 			}, {
-				"path": "pages/list/list"
+				"path": "pages/home/index"
 			},
 			{
 				"path": "pages/ucenter/settings/settings"

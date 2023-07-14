@@ -1,5 +1,6 @@
 <template>
-  <view>
+  <view class="page-container">
+	  我的
   </view>
 </template>
 
