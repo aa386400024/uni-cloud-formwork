@@ -1,5 +1,6 @@
 <template>
-  <view>
+  <view  class="page-container">
+	  圈子
   </view>
 </template>
 

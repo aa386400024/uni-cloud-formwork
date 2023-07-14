@@ -1,31 +1,48 @@
 /* mixins.scss 定义混入，用于复用样式片段 */
 
-// 媒体查询的 mixin
-@mixin respond-to($breakpoint) {
-	@if $breakpoint == 'phone' {
-		@media (max-width: 599px) {
-			@content;
-		}
-	} @else if $breakpoint == 'tablet-portrait' {
-		@media (min-width: 600px) and (max-width: 900px) {
-			@content;
-		}
-	} @else if $breakpoint == 'tablet-landscape' {
-		@media (min-width: 901px) and (max-width: 1200px) {
-			@content;
-		}
-	} @else if $breakpoint == 'desktop' {
-		@media (min-width: 1201px) {
-			@content;
+// flex布局的 mixin
+@mixin flex-layout($type: center) {
+	$layouts: (
+		'start': (
+			justify-content: flex-start,
+			align-items: flex-start
+		),
+		'end': (
+			justify-content: flex-end,
+			align-items: flex-end
+		),
+		'center': (
+			justify-content: center,
+			align-items: center
+		),
+		'between': (
+			justify-content: space-between,
+			align-items: center
+		),
+		'around': (
+			justify-content: space-around,
+			align-items: center
+		),
+		// 在这里添加更多的布局类型...
+	);
+
+	// 设定默认的 display 和 flex-direction
+	display: flex;
+	flex-direction: row;
+
+	// 在 map 中查找对应的布局类型
+	$layout: map-get($layouts, $type);
+
+	// 如果找到了，就应用对应的属性
+	@if $layout {
+		@each $property, $value in $layout {
+			#{$property}: $value;
 		}
 	}
-}
-
-// flex布局的 mixin
-@mixin flex-center {
-	display: flex;
-	justify-content: center;
-	align-items: center;
+	// 如果没有找到对应的类型，给出一个编译时的警告
+	@else {
+		@warn "未知的布局类型: `#{$type}`.";
+	}
 }
 
 // 清除浮动的 mixin
@@ -56,10 +73,7 @@
 @mixin fluid-grid($property, $min-value, $max-value, $min-viewport: 320px, $max-viewport: 1200px) {
 	#{$property}: $min-value;
 	@media screen and (min-width: $min-viewport) and (max-width: $max-viewport) {
-		#{$property}: calc(
-			#{$min-value} + (#{$max-value} - #{$min-value}) * ((100vw - #{$min-viewport}) /
-						(#{$max-viewport} - #{$min-viewport}))
-		);
+		#{$property}: calc(#{$min-value} + (#{$max-value} - #{$min-value}) * ((100vw - #{$min-viewport}) / (#{$max-viewport} - #{$min-viewport})));
 	}
 	@media screen and (min-width: $max-viewport) {
 		#{$property}: $max-value;
@@ -132,11 +146,7 @@
 // 生成2倍视网膜显示屏图片背景 mixin
 @mixin retina-bg($filename, $extension, $width, $height) {
 	background-image: url('#{$filename}.#{$extension}');
-	@media (min--moz-device-pixel-ratio: 2),
-		(-o-min-device-pixel-ratio: 2/1),
-		(-webkit-min-device-pixel-ratio: 2),
-		(min-resolution: 192dpi),
-		(min-resolution: 2dppx) {
+	@media (min--moz-device-pixel-ratio: 2), (-o-min-device-pixel-ratio: 2/1), (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi), (min-resolution: 2dppx) {
 		background-image: url('#{$filename}@2x.#{$extension}');
 		background-size: $width $height;
 	}
