@@ -19,10 +19,6 @@ function request(options : RequestOptions) : Promise<UniApp.RequestSuccessCallba
 	const { url, method = 'GET', data, headers, timeout = config.api.timeout, cancelToken, cloudFunction = false } = requestInterceptor(options)
 
 	if (cloudFunction) {
-		let vk = uni.vk;
-		if (!vk) {
-		    throw new Error('vk is not initialized');
-		}
 		// 是云函数请求，使用vk.callFunction
 		return new Promise((resolve, reject) => {
 			vk.callFunction({
