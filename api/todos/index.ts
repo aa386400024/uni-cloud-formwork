@@ -2,10 +2,12 @@
 
 import { request, RequestOptions } from '@/utils/api/request'
 // 一个示例API请求函数
-export async function fetchTodos(): Promise<any> {
+export async function fetchTodos(data: any): Promise<any> {
   const options: RequestOptions = {
     url: '/facts/random',
     method: 'GET',
+	data,
+	cloudFunction: false,
   }
   const response = await request(options)
   return response.data
