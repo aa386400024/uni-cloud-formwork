@@ -9,6 +9,7 @@ const app = new Vue({
 })
 // 在 Vue 2 中使用插件
 setupPluginsV2(Vue, pluginsV2)
+console.log(uni.vk, 'aaaaaaaaaa') 
 app.$mount()
 // #endif
 
@@ -22,6 +23,7 @@ export function createApp() {
 	const app = createSSRApp(App)
 	app.use(Pinia.createPinia().use(piniaPersistPlugin)) // 添加 piniaPersistPlugin
 	setupPluginsV3(app, pluginsV3) // 使用插件和功能设置
+	console.log(uni.vk, 'bbbbbbbbbbbbbbbbbbb') 
 	return {
 		app,
 		Pinia
