@@ -87,6 +87,8 @@
 		"qrcodejs2": "^0.0.2"
 	},
 	"devDependencies": {
+		"@typescript-eslint/eslint-plugin": "^6.1.0",
+		"@typescript-eslint/parser": "^6.1.0",
 		"uni-read-pages-vite": "^0.0.6"
 	}
 }

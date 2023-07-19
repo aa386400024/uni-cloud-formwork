@@ -2,6 +2,7 @@
 	<view class="page-container">
 		<u-action-sheet :list="list" v-model="show"></u-action-sheet>
 		<u-button type="warning" text="月落" @click="callVKFunction"></u-button>
+		{{sumVal}}
 	</view>
 </template>
 
@@ -20,20 +21,24 @@
 			text: '评论'
 		}
 	]);
+	const show = ref(true);
+	const sumVal = ref(null)
 	const callVKFunction = () => {
-		vk.callFunction({
-			url: 'client/pub.user.calc',
-			title: '请求中...',
-			data: {
-				x: 2,
-				y: 4
-			},
-			success: (data) => {
-				// 在这里处理成功的响应
-			}
+		vk.callFunction<{ x: number; y: number; }, { z: number; }>({
+		    url: 'client/pub.user.calc',
+		    title: '请求中...',
+		    data: {
+		        x: 1,
+		        y: 2
+		    },
+		    success: (data) => {
+		        const { z } = data;
+		        sumVal.value = z;
+		    }
 		});
 	};
-	const show = ref(true);
+	
+	// 如果在组件外要是有这个方法，需要defineExpose导出
 	defineExpose({
 		callVKFunction
 	});
