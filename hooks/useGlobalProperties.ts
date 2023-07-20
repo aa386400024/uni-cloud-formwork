@@ -13,7 +13,7 @@ export function useGlobalProperties<T extends ComponentPublicInstance>() : T {
 
 	// 创建并返回一个新的 Proxy 对象，它包装了当前组件实例的 proxy 对象
 	// Proxy 对象用来拦截对组件实例 proxy 对象的访问，当尝试获取一个属性时，它会运行以下的 get 函数
-	return new Proxy(instance.proxy, {
+	return new Proxy(instance.proxy!, {  // 添加了非空断言操作符 `!`
 		// get 函数接收两个参数：目标对象和要访问的属性名
 		get(target, prop : string | symbol) {
 			// 检查要访问的属性是否在目标对象上
