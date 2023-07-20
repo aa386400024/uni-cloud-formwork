@@ -1,7 +1,7 @@
+import APIWrapper from '@/common/js/apiWrapper';
+import config from '@/uni-starter.config.js';
+
 export function setupGlobalMethodsAndVariables(appOrPrototype : any) {
-	appOrPrototype.$myMethod = function () {
-		console.log('This is a global method.')
-	}
-	console.log(appOrPrototype, 'appOrPrototype');
-	appOrPrototype.$myVariable = 'This is a global variable.'
+	appOrPrototype.$myApi = new APIWrapper();
+	appOrPrototype.$myConfig = config;
 }

@@ -43,20 +43,23 @@
 │   │   │   └── iconfont.ttf # 图标字体文件
 │   │   ├── nvue-styles # nvue专用样式目录
 │   │   └── vue-styles # vue专用样式目录
-│   ├── function
-│   │   └── myPubFunction.js # 公共函数文件
+│   └── js
+│       ├── common.ts # 全局公共方法
+│       └── myPubFunction.js # 公共函数文件
+│
+├── startup # 用于存放应用程序初始化和启动的逻辑
 │   ├── appInit.js # 应用初始化文件
 │   └── openApp.js # 应用打开文件
 │
 ├── components # 组件文件目录
-│   ├── base # 基础组件
-│   ├── custom # 自定义组件
+│   ├── Base # 基础组件
+│   ├── Custom # 自定义组件
 │   ├── refreshBox # 刷新盒子组件
 │   └── uni-load-state # uni-app加载状态组件
-│
+│ 
 ├── config # 全局配置
 │   └── globals.ts # 全局变量
-│ 
+│
 ├── hooks # 存放 Vue composition API 的 hooks
 │   └── useGlobalProperties.ts # 用于在 Vue 3 组件中安全地访问全局属性和方法。
 │ 

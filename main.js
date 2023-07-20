@@ -1,5 +1,6 @@
 import App from './App'
 import { setupGlobalMethodsAndVariables } from './config/globals.ts'
+
 // #ifndef VUE3
 import Vue from 'vue'
 import { setupPluginsV2, pluginsV2 } from './plugins/index.ts'

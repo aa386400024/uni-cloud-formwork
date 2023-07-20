@@ -1,15 +1,18 @@
 <template>
+	<top-nav-bar :show="true" title="首页"></top-nav-bar>
 	<view class="page-container">
 		<u-action-sheet :list="list" v-model="show"></u-action-sheet>
 		<u-button type="warning" text="月落" @click="callVKFunction"></u-button>
+		
 		{{sumVal}}
-		<text>{{$myVariable}}</text>
+		<text>{{$myApi}}</text>
 	</view>
 </template>
 
 <script lang="ts" setup>
 	import { computed, onMounted, ref } from 'vue';
-	import { useGlobalProperties } from '@/hooks/useGlobalProperties'
+	import TopNavBar from '@/components/Custom/TopNavBar.vue';
+	import { useGlobalProperties } from '@/hooks/useGlobalProperties';
 	const list = ref([
 		{
 			text: '点赞',
@@ -25,7 +28,10 @@
 	]);
 	const show = ref(true);
 	const sumVal = ref(null);
-	const { $myVariable } = useGlobalProperties()
+	const { $myApi } = useGlobalProperties()
+	
+	 console.log($myApi, 'globalPropsglobalProps')
+	
 	const callVKFunction = () => {
 		vk.callFunction<{ x: number; y: number; }, { z: number; }>({
 		    url: 'client/pub.user.calc',
