@@ -1,6 +1,6 @@
 <script>
-	import initApp from '@/common/appInit.js';
-	import openApp from '@/common/openApp.js';
+	import initApp from '@/common/js/appInit.js';
+	import openApp from '@/common/js/openApp.js';
 	// #ifdef H5
 		openApp() //创建在h5端全局悬浮引导用户下载app的功能
 	// #endif
