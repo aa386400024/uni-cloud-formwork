@@ -27,6 +27,8 @@ export default {
 	about: {
 		// 应用名称
 		appName: "uni-starter",
+		// 自定义头部 custom: 自定义，default: 系统默认
+		navbar: 'default', 
 		// 应用logo
 		logo: "/static/logo.png",
 		// 公司名称

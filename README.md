@@ -54,6 +54,9 @@
 │   ├── refreshBox # 刷新盒子组件
 │   └── uni-load-state # uni-app加载状态组件
 │
+├── config # 全局配置
+│   └── globals.ts # 全局变量
+│ 
 ├── lang # 国际化语言包
 │   ├── en.js # 英文语言包
 │   ├── i18n.js # i18n配置文件
