@@ -26,15 +26,15 @@ export default {
 	// 关于应用的配置
 	about: {
 		// 应用名称
-		appName: "uni-starter",
+		appName: "uni-cloud-formwork",
 		// 自定义头部 custom: 自定义，default: 系统默认
 		navbar: 'default', 
 		// 应用logo
 		logo: "/static/logo.png",
 		// 公司名称
-		company: "北京xx网络技术有限公司",
+		company: "陆探信息咨询工作室",
 		// 口号
-		slogan: "云端一体应用快速开发模版",
+		slogan: "uni-cloud最佳实践",
 		// 应用的下载链接，用于分享到第三方平台和生成关于我们页的二维码
 		download: "https://itunes.apple.com/cn/app/hello-uni-app/id1417078253?mt=8",
 		// 应用版本，用于非app端显示，app端自动获取
