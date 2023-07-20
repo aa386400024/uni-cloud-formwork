@@ -57,6 +57,9 @@
 ├── config # 全局配置
 │   └── globals.ts # 全局变量
 │ 
+├── hooks # 存放 Vue composition API 的 hooks
+│   └── useGlobalProperties.ts # 用于在 Vue 3 组件中安全地访问全局属性和方法。
+│ 
 ├── lang # 国际化语言包
 │   ├── en.js # 英文语言包
 │   ├── i18n.js # i18n配置文件
