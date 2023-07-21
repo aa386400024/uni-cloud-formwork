@@ -64,7 +64,7 @@ export default {
 	},
 	// 路由配置
 	route: {
-		home: '/pages/home/home',
+		home: '/pages/home/index',
 		login: '/pages/login/login',
 		search: '/pages/home/search/search',
 		order: '/sub-user/pages/order/order',

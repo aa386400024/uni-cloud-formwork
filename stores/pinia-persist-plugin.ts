@@ -1,40 +1,52 @@
-import { PiniaPluginContext, PiniaPlugin } from 'pinia';
-import config from '@/uni-starter.config.js';
+// pinia-persist-plugin.ts
+import { PiniaPluginContext, PiniaPlugin } from 'pinia'
+import { debounce } from 'lodash'
+import config from '@/uni-starter.config.js'
+import { counterPersistStateKeys } from './modules/counter'
+// import { authPersistStateKeys } from './modules/auth';
+// ... import other modules' persistStateKeys
 
-// 定义持久化状态的键
-type PersistStateKeys = readonly { storeId: string; key: string }[];
+
+// 将所有模块的持久化状态键组合在一起
+const persistStateKeys = [
+	...counterPersistStateKeys,
+	// ...authPersistStateKeys,
+	// ... other modules' persistStateKeys
+]
 
 export const piniaPersistPlugin: PiniaPlugin = ({ store }: PiniaPluginContext) => {
-  // 定义需要持久化的 state 和 getter，可以在多个 store 中分别定义
-  const persistStateKeys: PersistStateKeys = [
-    { storeId: 'counter', key: 'count' },
-    { storeId: 'auth', key: 'isLoggedIn' },
-  ];
+	// 获取已有的本地数据并将其合并到 store 中
+	const persistedState = uni.getStorageSync(config.constants.storageKey)
+	if (persistedState) {
+		try {
+			store.$patch(JSON.parse(persistedState))
+		} catch (error) {
+			console.error('Failed to parse persisted state:', error)
+			// 在解析失败的情况下，可以选择清除本地存储中的数据或采取其他恢复措施
+			uni.removeStorageSync(config.constants.storageKey);
+			
+		}
+	}
 
-  // 获取已有的本地数据并将其合并到 store 中
-  const persistedState = uni.getStorageSync(config.constants.storageKey);
-  if (persistedState) {
-    store.$patch(JSON.parse(persistedState));
-  }
+	const persistState = () => {
+		const persistState = {} as any;
 
-  // 在 store 被修改时更新本地数据
-  store.$subscribe(({ events }) => {
-      // 确保 events 是一个 DebuggerEvent 对象
-      if (!Array.isArray(events)) {
-        // 查找当前 store 是否需要持久化指定的状态
-        const stateKey = persistStateKeys.find(
-          (key) => key.storeId === store.$id && key.key === events.key
-        );
-        if (stateKey) {
-          // 获取指定状态的值
-          const { [stateKey.key]: value } = store.$state;
-  
-          // 获取已有的本地数据
-          const existingData = JSON.parse(uni.getStorageSync(config.constants.storageKey) || '{}');
-  
-          // 将指定状态保存到本地存储中
-          uni.setStorageSync(config.constants.storageKey, JSON.stringify({ ...existingData, [stateKey.key]: value }));
-        }
-      }
-    });
-};
+		// 检查每个状态是否需要持久化，如果需要就添加到 persistState 中
+		for (const stateKey of persistStateKeys) {
+			if (stateKey.storeId === store.$id && store.$state.hasOwnProperty(stateKey.key)) {
+				persistState[stateKey.key] = store.$state[stateKey.key]
+			}
+		}
+
+		// 将需要持久化的状态保存到本地存储中
+		uni.setStorageSync(
+			config.constants.storageKey,
+			JSON.stringify(persistState)
+		)
+		console.log('Persisting state:', persistState);
+	}
+
+	// 在 store 被修改时更新本地数据
+	store.$subscribe(debounce(persistState, 300))  // 在 300ms 内，只会执行一次 persistState
+}
+

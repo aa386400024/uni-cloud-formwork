@@ -1,4 +1,5 @@
 'use strict'
+import config from '@/uni-starter.config'
 
 // 定义一个初始菜单按钮信息对象，包含top、width和height属性
 let menuButtonInfo = {
@@ -80,6 +81,15 @@ class APIWrapper {
 			// 如果传入了回调函数，则通过回调传递错误
 			callback(null)
 		}
+	}
+	
+	/**
+	 * @description 跳转首页
+	 */
+	tohome() {
+		uni.switchTab({
+			url: config.route.home
+		});
 	}
 }
 

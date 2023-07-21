@@ -9,7 +9,7 @@
 			<view class="dflex-b border-radius-lg padding-lr w-full use-hover"
 				:style="{ height: navbarTitleHeight + 'px' }">
 				<view class="wpre-30 dflex">
-					<view v-if="back" class="iconfont fwbd" :class="leftIconfont" @click="toback"></view>
+					<view v-if="back" class="iconfont icon-shouye" :class="leftIconfont" @click="toback"></view>
 					<block v-else>
 						<slot name="left" />
 					</block>
@@ -19,7 +19,7 @@
 						<slot />
 					</block>
 					<block v-else>
-						<text class="fwbd fs">{{ apptitle }}</text>
+						<text class="iconfont icon-shouye fs">{{ apptitle }}</text>
 					</block>
 				</view>
 				<view class="wpre-30">
@@ -104,19 +104,14 @@
 		return props.leftIcon
 	})
 
-
-
-	// For config, you should have a composition function or just import it from the file
-	// const config = computed(() => getConfig())
-
 	const iShow = computed(() => {
 
 		return props.show !== null ? props.show : config.about.navbar == 'custom'
 	})
 
-	function toback() {
+	const toback = () => {
 		if (getCurrentPages().length < 2) {
-			// apiWrapper.tohome()
+			apiWrapper.tohome()
 			return
 		}
 
@@ -127,26 +122,8 @@
 </script>
 
 <style lang="scss" scoped>
-	.use-navbar-placeholder {
-		min-height: 44px;
-	}
-
 	.use-navbar {
 		min-height: 44px;
 		z-index: 99999;
-	}
-
-	.use-search {
-		height: 70rpx;
-		line-height: 70rpx;
-
-		text {
-			color: #c0c0c0;
-		}
-
-		.iconfont {
-			// font-size: $font-base + 6upx;
-			color: #c0c0c0;
-		}
 	}
 </style>

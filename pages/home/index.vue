@@ -1,11 +1,11 @@
 <template>
-	<top-nav-bar :show="true" title="首页"></top-nav-bar>
+	<top-nav-bar :fixed="false" :show="true" title="首页"></top-nav-bar>
 	<view class="page-container">
 		<u-action-sheet :list="list" v-model="show"></u-action-sheet>
 		<u-button type="warning" text="月落" @click="callVKFunction"></u-button>
 		<u-button @click="clickHandler('myKey')">获取存储</u-button>
 		{{sumVal}}
-		<text>{{navbar}}</text>
+		<text>{{navbar.top}}</text>
 		{{storageData}}
 		{{os}}
 	</view>
