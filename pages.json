@@ -1,9 +1,13 @@
 {
+	"easycom": {
+		"^u-(.*)": "@/uni_modules/uview-plus/components/u-$1/u-$1.vue"
+	},
 	"pages": [{
 			"path": "pages/home/index",
 			"name": "home",
 			"style": {
-				"navigationBarTitleText": "首页"
+				"navigationBarTitleText": "首页",
+				"navigationStyle": "custom"
 			}
 		}, {
 			"path": "pages/practice/index",

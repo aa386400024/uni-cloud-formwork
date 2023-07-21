@@ -23,18 +23,24 @@
 }
 
 /* Flex */
-.flex-row {
-	flex-direction: row !important;
-}
+.dflex{display: flex; align-items: center;}
+.dflex-s{display: flex; align-items: flex-start;}
+.dflex-e{display: flex; justify-content: flex-end; align-items: baseline;}
+.dflex-es{display: flex; justify-content: flex-end; align-items: flex-start;}
+.dflex-c{display: flex; justify-content: center; align-items: center;}
+.dflex-col-c{display: flex; justify-content: center;}
+.dflex-a{display: flex; justify-content: space-around; align-items: center;}
+.dflex-b{display: flex; justify-content: space-between; align-items: center;}
+.dflex-flow-c{flex-flow: column;} .dflex-row{flex-flow: row;} .dflex-col{flex-flow: column;}
+.dflex-wrap-w{-ms-flex-wrap: wrap; -webkit-flex-wrap: wrap; flex-wrap: wrap;}
+.row-e {align-items: flex-end;}
+.row-s {align-items: flex-start;}
+.flex1{flex: 1;}
 
-.flex-column {
-	flex-direction: column !important;
-}
+.dgrid {display: grid;}
+.dgrid-col-3 { grid-gap: 20rpx 20rpx; grid-template-columns: repeat(3, 1fr); }
 
-.flex-center {
-	justify-content: center;
-	align-items: center;
-}
+.box-sizing-b { box-sizing: border-box; } .box-sizing-c { box-sizing: content-box; }
 
 /* Margins */
 .m-0 {
@@ -138,14 +144,26 @@
 .overflow-hidden {
 	overflow: hidden !important;
 }
-
+ 
 /* Width and height */
-.w-100 {
+.w-full {
 	width: 100% !important;
 }
 
-.h-100 {
+.h-full {
 	height: 100% !important;
+}
+
+.pos-t-full {
+	top:0;
+	left:0;
+	right:0;
+} 
+
+.pos-b-full {
+	bottom: 0;
+	left: 0;
+	right: 0;
 }
 
 /* Font styles */
@@ -209,14 +227,13 @@
 	vertical-align: middle !important;
 }
 
-/* Background color (use variable or direct color as per your theme) */
-.bg-primary {
-	background-color: $primary-color !important;
-}
-
-.bg-secondary {
-	background-color: $secondary-color !important;
-}
+/* 背景色 */
+.bg-main { background: #fff; } .bg-drak { background: #f5f5f5; } .bg-base{ background-color: #ff6a6c; color: #fff; } 
+.bg-warn{background: #ffbc49; color: #333;} .bg-disabled {background: #f4f4f4 !important; color: #bbb !important;}
+.bg-gray {background: #e8e8e8;}
+.ft-main { color: #333; } .ft-base { color: #ff6a6c; } 
+.ft-dark { color: #bbb; } .ft-dark-3 { color: #737373; } .ft-dark-4 { color: #4c4c4c; }
+.ft-black{ color: #333; } .ft-white { color: #fff; }
 
 /* More text color (use variable or direct color as per your theme) */
 .text-primary {
