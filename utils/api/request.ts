@@ -31,7 +31,7 @@ function request(
 	if (cloudFunction) {
 		// 是云函数请求，使用vk.callFunction
 		return new Promise((resolve, reject) => {
-			vk.callFunction({
+			uni.vk.callFunction({
 				url,
 				title: '请求中...',
 				data,

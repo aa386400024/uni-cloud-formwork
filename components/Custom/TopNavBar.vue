@@ -34,10 +34,9 @@
 </template>
 
 <script lang="ts" setup>
-	import { ref, watch, computed, onMounted } from 'vue'
-	import { useGlobalProperties } from '@/hooks/useGlobalProperties'
-	const { $myApi, $myConfig } = useGlobalProperties()
-	console.log($myConfig, '$myConfig')
+	import { ref, watch, computed, onMounted, toRaw } from 'vue'
+	import { useGlobalAPI } from '@/hooks/useGlobalAPI'
+	const { apiWrapper, config } = useGlobalAPI()
 	const props = defineProps({
 		fixed: {
 			type: [Number, Boolean],
@@ -78,24 +77,23 @@
 	})
 
 	let apptitle = ref('')
-	apptitle.value = props.title || $myConfig.about.appName
+	apptitle.value = props.title || config.about.appName
 
-	const menuButtonInfo = computed(() => $myApi.navbar)
-	const navbarTitleHeight = computed(() => $myApi.navbar.height)
+	const menuButtonInfo = computed(() => apiWrapper.navbar)
+	const navbarTitleHeight = computed(() => apiWrapper.navbar.height)
 	const navbarHeight = computed(() => {
 		if (iShow.value) {
-			return $myApi.navbar.height + 12
+			return apiWrapper.navbar.height + 12
 		}
 
 		return 0
 	})
 
 	const leftIconfont = computed(() => {
-		const pageArrs = getCurrentPages()
-
+		const pageArrs = getCurrentPages();
 		if (!pageArrs.length) return ''
-
-		if (pageArrs[pageArrs.length - 1].route.indexOf('/tabbar/') !== -1) {
+		const lastPage = pageArrs[pageArrs.length - 1];
+		if (lastPage && lastPage.route && lastPage.route.indexOf('/tabbar/') !== -1) {
 			return ''
 		}
 
@@ -106,17 +104,19 @@
 		return props.leftIcon
 	})
 
+
+
 	// For config, you should have a composition function or just import it from the file
 	// const config = computed(() => getConfig())
 
 	const iShow = computed(() => {
 
-		return props.show !== null ? props.show : $myConfig.navbar == 'custom'
+		return props.show !== null ? props.show : config.about.navbar == 'custom'
 	})
 
 	function toback() {
 		if (getCurrentPages().length < 2) {
-			// $myApi.tohome()
+			// apiWrapper.tohome()
 			return
 		}
 
@@ -124,7 +124,6 @@
 			delta: 1,
 		})
 	}
-
 </script>
 
 <style lang="scss" scoped>

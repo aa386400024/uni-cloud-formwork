@@ -28,7 +28,7 @@ export default {
 		// 应用名称
 		appName: "uni-cloud-formwork",
 		// 自定义头部 custom: 自定义，default: 系统默认
-		navbar: 'default', 
+		navbar: 'default',
 		// 应用logo
 		logo: "/static/logo.png",
 		// 公司名称
