@@ -60,6 +60,9 @@
 			success: (data) => {
 				const { z } = data;
 				sumVal.value = z;
+			},
+			fail: (error) => {
+				console.error(error);
 			}
 		});
 	};

@@ -9,7 +9,7 @@ declare global {
 			// 添加泛型参数
 			callFunction<TReq, TRes>(options: {
 				url: string;
-				title: string;
+				title?: string;
 				data: TReq;
 				success: (data: TRes) => void;
 				fail(error: any): void;
