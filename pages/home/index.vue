@@ -2,7 +2,7 @@
 	<scroll-view style="height: 100vh;" scroll-y @scroll="handleScroll">
 		<view class="top-banner"></view>
 		<view class="page-container">
-			<u-navbar :placeholder="false" :bgColor="navbarBgColor">
+			<u-navbar :placeholder="true" :bgColor="navbarBgColor">
 				<template #left>
 					<view>
 						<u-icon name="home" size="20"></u-icon>
@@ -13,9 +13,9 @@
 						<u--input
 							placeholder="请输入内容" 
 							prefixIcon="search"
-							border="surround" 
-							shape="circle" 
-							:readonly="true" 
+							border="surround"
+							shape="circle"
+							:readonly="true"
 							:prefixIconStyle="`font-size: 22px; color: ${textColor};`"
 							:placeholderStyle="`color: ${textColor};`"
 							:color="textColor"

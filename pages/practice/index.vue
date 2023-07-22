@@ -1,18 +1,5 @@
 <template>
 	<view class="page-container">
-		<u-navbar
-			class="navbar"
-			:placeholder="true"
-		>
-			<template #left>
-				<view>
-					<u--input
-						placeholder="请输入内容"
-						border="surround"
-					></u--input>
-				</view>
-			</template>
-		</u-navbar>
 		<text>Count: {{ count }}</text>
 		<text>Double Count: {{ doubleCount }}</text>
 		<button @tap="increment">Increment</button>
