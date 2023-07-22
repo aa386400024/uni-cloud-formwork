@@ -13,6 +13,8 @@
 			"path": "pages/practice/index",
 			"name": "practice",
 			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTextStyle": "white",
 				"navigationBarTitleText": "练习",
 				"enablePullDownRefresh": false
 			}

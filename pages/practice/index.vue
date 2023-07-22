@@ -1,5 +1,18 @@
 <template>
 	<view class="page-container">
+		<u-navbar
+			class="navbar"
+			:placeholder="true"
+		>
+			<template #left>
+				<view>
+					<u--input
+						placeholder="请输入内容"
+						border="surround"
+					></u--input>
+				</view>
+			</template>
+		</u-navbar>
 		<text>Count: {{ count }}</text>
 		<text>Double Count: {{ doubleCount }}</text>
 		<button @tap="increment">Increment</button>
@@ -13,7 +26,9 @@
 	import { useCounterStore } from '@/stores';
 	import { todos } from '@/api';
 	import { fetchTodosCloud } from '@/api/todos';
-
+	import { useGlobalAPI } from '@/hooks/useGlobalAPI'
+	const { apiWrapper, config } = useGlobalAPI()
+	
 	const apiResult = ref(null);
 	const incrementApi = async () => {
 		try {
@@ -25,6 +40,17 @@
 			// 可以在这里添加更多的错误处理逻辑，比如设置一个标志，让用户知道出现了错误
 		}
 	};
+	
+	const rightClick = () => {
+		
+	} 
+	const navbarRect = () => {
+		const selector = '.navbar';
+		apiWrapper.getBoundingRect(selector, (res) => {
+			// 在这里处理位置信息，可以使用res.left, res.top, res.width, res.height等属性
+			console.log('Element position:', res);
+		}); 
+	} 
 
 	// import { useRouter } from 'uni-mini-router'
 
@@ -39,6 +65,7 @@
 
 
 	onMounted(async () => {
+		navbarRect()
 		const todoList = await todos.fetchTodos();
 	});
 </script>

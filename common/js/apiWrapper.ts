@@ -46,41 +46,45 @@ class APIWrapper {
 	 * @returns 如果未传入回调函数，返回一个Promise对象，可以使用async/await方式获取位置信息
 	 */
 	async getBoundingRect(selector: string, callback?: (res: any) => void): Promise<any> {
-		// 检查参数合法性
-		if (typeof selector !== 'string' || selector.trim() === '') {
-			throw new Error('Invalid selector. Selector must be a non-empty string.')
-		}
-
-		// 创建一个选择器查询对象，选择指定的元素
-		const query = uni.createSelectorQuery().select(selector)
-
-		try {
-			const result = await new Promise((resolve, reject) => {
-				query.boundingClientRect((res: any) => {
-					resolve(res)
-				}).exec()
-			})
-
-			// 判断是否传入了回调函数，如果有，则调用回调函数传递位置信息
-			if (typeof callback === 'function') {
-				callback(result)
-			}
-
-			// 返回位置信息
-			return result
-		} catch (error) {
-			console.error('Error in selector query:', error)
-
-			// 在这里可以添加适当的错误处理逻辑，例如抛出自定义错误或进行其他操作
-
-			// 如果未传入回调函数，则抛出错误以便调用者处理
-			if (typeof callback !== 'function') {
-				throw error
-			}
-
-			// 如果传入了回调函数，则通过回调传递错误
-			callback(null)
-		}
+	    // 检查参数合法性
+	    if (typeof selector !== 'string' || selector.trim() === '') {
+	        throw new Error('Invalid selector. Selector must be a non-empty string.')
+	    }
+	
+	    // 创建一个选择器查询对象，选择指定的元素
+	    const query = uni.createSelectorQuery().select(selector)
+	
+	    try {
+	        const result = await new Promise((resolve, reject) => {
+	            query.fields({
+	                size: true,
+	                rect: true,
+	                scrollOffset: true
+	            }, (res: any) => {
+	                resolve(res)
+	            }).exec()
+	        })
+	
+	        // 判断是否传入了回调函数，如果有，则调用回调函数传递位置信息
+	        if (typeof callback === 'function') {
+	            callback(result)
+	        }
+	
+	        // 返回位置信息
+	        return result
+	    } catch (error) {
+	        console.error('Error in selector query:', error)
+	
+	        // 在这里可以添加适当的错误处理逻辑，例如抛出自定义错误或进行其他操作
+	
+	        // 如果未传入回调函数，则抛出错误以便调用者处理
+	        if (typeof callback !== 'function') {
+	            throw error
+	        }
+	
+	        // 如果传入了回调函数，则通过回调传递错误
+	        callback(null)
+	    }
 	}
 	
 	/**
