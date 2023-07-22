@@ -16,9 +16,9 @@
 							border="surround" 
 							shape="circle" 
 							:readonly="true" 
-							:prefixIconStyle="prefixIconStyle"
-							:placeholderStyle="`color: ${placeholderStyle};`"
-							:color="inputTextColor" 
+							:prefixIconStyle="`font-size: 22px; color: ${textColor};`"
+							:placeholderStyle="`color: ${textColor};`"
+							:color="textColor"
 							:customStyle="customStyle"
 						></u--input>
 					</view>
@@ -52,13 +52,11 @@
 			marginRight: '40px',
 		},
 		navbarBgColor: 'transparent',
-		inputTextColor: '#fff',
-		prefixIconStyle: { fontSize: '22px', color: '#fff' },
-		placeholderStyle: '#fff'
+		textColor: '#fff',
 	})
 	const os = uni.$u.os()
 	console.log(typeof os);
-	const { sumVal, storageData, customStyle, capsultBottom, navbarBgColor, prefixIconStyle, placeholderStyle, inputTextColor } = toRefs(myData)
+	const { sumVal, storageData, customStyle, capsultBottom, navbarBgColor, textColor } = toRefs(myData)
 
 	// 微信小程序的胶囊信息
 	const capsuleInfo = () => {
@@ -83,14 +81,10 @@
 			const { bottom } = res;
 			if (bottom <= capsultBottom.value) {
 				navbarBgColor.value = '#fff';
-				inputTextColor.value = "#000";
-				placeholderStyle.value = '#000';
-				prefixIconStyle.value.color = '#000';
+				textColor.value = '#000';
 			} else {
 				navbarBgColor.value = 'transparent';
-				inputTextColor.value = "#fff";
-				placeholderStyle.value = '#fff';
-				prefixIconStyle.value.color = '#fff';
+				textColor.value = '#fff';
 			}
 		}).catch(error => {
 			console.error('Error:', error);
