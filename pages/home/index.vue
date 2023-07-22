@@ -10,7 +10,7 @@
 				</template>
 				<template #center>
 					<view>
-						<u--input 
+						<u--input
 							placeholder="请输入内容" 
 							prefixIcon="search"
 							border="surround" 
@@ -26,7 +26,6 @@
 			</u-navbar>
 
 			<u-button type="warning" text="月落" @click="callVKFunction"></u-button>
-			<u-button @click="clickHandler">获取存储</u-button>
 			{{sumVal}}
 			<text>{{navbar.top}}</text>
 			{{storageData}}
@@ -67,16 +66,7 @@
 		myData.capsultBottom = menuButtonInfo.bottom;
 	}
 
-	const clickHandler = async () => {
-		await apiWrapper.getBoundingRect('.navbar').then(res => {
-			console.log(res, 'aaaaa');
-		}).catch(error => {
-			console.error('Error:', error);
-		});
-	}
-
 	const handleScroll = async () => {
-		console.log('aaaaa')
 		await apiWrapper.getBoundingRect('.top-banner').then(res => {
 			const { bottom } = res;
 			if (bottom <= capsultBottom.value) {
@@ -112,7 +102,6 @@
 	// 如果在组件外要是有这个方法，需要defineExpose导出
 	defineExpose({
 		callVKFunction,
-		clickHandler
 	});
 	onMounted(async () => {
 		capsuleInfo()
