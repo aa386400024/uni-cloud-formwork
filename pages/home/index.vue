@@ -2,7 +2,7 @@
 	<scroll-view style="height: 100vh;" scroll-y @scroll="handleScroll">
 		<view class="top-banner"></view>
 		<view class="page-container">
-			<u-navbar :placeholder="true" :bgColor="navbarBgColor">
+			<u-navbar :placeholder="false" :bgColor="navbarBgColor">
 				<template #left>
 					<view>
 						<u-icon name="home" size="20"></u-icon>
