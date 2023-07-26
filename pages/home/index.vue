@@ -24,7 +24,36 @@
 					</view>
 				</template>
 			</u-navbar>
-
+			<u-tabs
+				:list="tabsList"
+				lineWidth="20"
+				lineHeight="7"
+				:lineColor="`url(${lineBg}) 100% 100%`"
+				:activeStyle="{
+					color: '#303133',
+					fontWeight: 'bold',
+					transform: 'scale(1.05)'
+				}"
+				:inactiveStyle="{
+					color: '#606266',
+					transform: 'scale(1)'
+				}"
+				itemStyle="padding-left: 15px; padding-right: 15px; height: 34px;"
+				@click="handleTabClick"
+			>
+				<template #right>
+					<view
+						style="padding-left: 4px;"
+						@tap="$u.toast('插槽被点击')"
+					>
+						<u-icon
+								name="list"
+								size="21"
+								bold
+						></u-icon>
+					</view>
+				</template>
+			</u-tabs>
 			<u-button type="warning" text="月落" @click="callVKFunction"></u-button>
 			{{sumVal}}
 			<text>{{navbar.top}}</text>
@@ -52,11 +81,45 @@
 		},
 		navbarBgColor: 'transparent',
 		textColor: '#fff',
+		tabsList: [
+			{
+				name: '行业名称', // 行业名称
+				name_en: 'Industry Name', // 行业名称的英文
+				description: '行业描述', // 行业描述
+				icon: '行业图标的URL', // 行业图标的URL
+				jobs: [ // 行业下的职业列表
+					{
+						name: '职业名称', // 职业名称
+						name_en: 'Job Name', // 职业名称的英文
+						description: '职业描述', // 职业描述
+						icon: '职业图标的URL', // 职业图标的URL
+						interviewPage: '面试页面的URL或者标识', // 面试页面的URL或者标识
+						// 可能还有其他属性
+					},
+					// 更多职业...
+				],
+			},
+			{ name: '推荐', badge: { isDot: true }}, 
+			{ name: '电影', }, 
+			{ name: '科技' },
+			{ name: '音乐' }, 
+			{ name: '美食' },
+			{ name: '文化' }, 
+			{ name: '财经' },
+			{ name: '手工' },
+		],
 	})
 	const os = uni.$u.os()
 	console.log(typeof os);
-	const { sumVal, storageData, customStyle, capsultBottom, navbarBgColor, textColor } = toRefs(myData)
+	const { sumVal, storageData, customStyle, capsultBottom, navbarBgColor, textColor, tabsList } = toRefs(myData)
+	const lineBg = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAOCAYAAABdC15GAAAACXBIWXMAABYlAAAWJQFJUiTwAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAFxSURBVHgBzZNRTsJAEIb/WTW+lpiY+FZPIDew3ABP4GJ8hxsI9zBpOYHeQDwBPQI+mRiRvpLojtPdYhCorQqF/6GdbGd2vvwzBXZcNAt4oj1ANeUoAT5iqkUjbEFLHNmhD1YPEvpZ3ghkGlVDCkc94/BmHMq998I5ONiY1ZBfpKAyuOtgAc5yOEDmYEWNh32BHF91sGHZHmwW4azciN9aQwnz3SJEgOmte+R2tdLprTYoa50mvuomlLpD4Y3oQZnov6D2RzCqI93bWOHaEmAGqQUyRBlZR1WfarcD/EJ2z8DtzDGvsMCwpm8XOCfDUsVOCYhiqRxI/CTQo4UOvjzO7Pow18vfywneuUHHUUxLn55lLw5JFpZ8bEUcY8oXdOLWiHLTxvoGpLqoUmy6dBT15o/ox3znpoycAmxUsiJTbs1cmxeVKp+0zmFIS7bGWiVghC7Vwse8jFKAX9eljh4ggKLLv7uaQvG9/F59Oo2SouxPu7OTCxN/s8wAAAAASUVORK5CYII=";
 
+	const handleTabClick = (item) => {
+	    console.log('当前选中的行业:', item.name);
+	    // 在这里你可以根据选中的行业获取对应的职业数据
+	}
+
+	
 	// 微信小程序的胶囊信息
 	const capsuleInfo = () => {
 		const menuButtonInfo = uni.getMenuButtonBoundingClientRect();
