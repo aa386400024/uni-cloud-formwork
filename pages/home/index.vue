@@ -55,7 +55,7 @@
 					</view>
 				</template>
 			</u-tabs>
-			<u-gap :height="globalVariables.gapHeight" :bgColor="globalVariables.gapBgcolor"></u-gap>
+			<custom-gap></custom-gap>
 			<u-button type="warning" text="月落" @click="callVKFunction"></u-button>
 			{{sumVal}}
 			<text>{{navbar.top}}</text>
@@ -69,7 +69,6 @@
 <script lang="ts" setup>
 	import { computed, onMounted, ref, reactive, toRefs, inject } from 'vue';
 	import { useGlobalAPI } from '@/hooks/useGlobalAPI'
-
 	const { apiWrapper, config } = useGlobalAPI()
 	const navbar = apiWrapper.navbar;
 	const globalVariables = inject('globalVariables');

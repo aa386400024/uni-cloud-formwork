@@ -1,7 +1,6 @@
 import App from './App'
-import provideGlobalVariables from './hooks/useGlobalVariables'
-import registerGlobalComponents from './hooks/useGlobalComponents'
-
+import globalVariables from './hooks/useGlobalVariables'
+import CustomGap from './components/base/gap.vue' 
 // #ifndef VUE3
 import Vue from 'vue'
 import { setupPluginsV2, pluginsV2 } from './plugins/index.ts'
@@ -26,10 +25,9 @@ export function createApp() {
 	setupPluginsV3(app, pluginsV3) // 使用插件和功能设置
 	
 	// 提供全局样式变量
-	provideGlobalVariables(app)
-	
+	app.provide('globalVariables', globalVariables)
 	// 注册全局组件
-	registerGlobalComponents(app)
+	app.component('custom-gap', CustomGap)
 	return {
 		app,
 		Pinia
