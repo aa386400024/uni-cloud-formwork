@@ -24,6 +24,7 @@
 					</view>
 				</template>
 			</u-navbar>
+			<custom-gap></custom-gap>
 			<u-tabs
 				:list="tabsList"
 				lineWidth="20"
@@ -54,6 +55,7 @@
 					</view>
 				</template>
 			</u-tabs>
+			<u-gap :height="globalVariables.gapHeight" :bgColor="globalVariables.gapBgcolor"></u-gap>
 			<u-button type="warning" text="月落" @click="callVKFunction"></u-button>
 			{{sumVal}}
 			<text>{{navbar.top}}</text>
@@ -65,11 +67,12 @@
 </template>
 
 <script lang="ts" setup>
-	import { computed, onMounted, ref, reactive, toRefs } from 'vue';
+	import { computed, onMounted, ref, reactive, toRefs, inject } from 'vue';
 	import { useGlobalAPI } from '@/hooks/useGlobalAPI'
 
 	const { apiWrapper, config } = useGlobalAPI()
 	const navbar = apiWrapper.navbar;
+	const globalVariables = inject('globalVariables');
 
 	const myData = reactive({
 		sumVal: 0,
@@ -108,10 +111,11 @@
 			{ name: '财经' },
 			{ name: '手工' },
 		],
+		gapBgColor: '$uni-color-error'
 	})
 	const os = uni.$u.os()
 	console.log(typeof os);
-	const { sumVal, storageData, customStyle, capsultBottom, navbarBgColor, textColor, tabsList } = toRefs(myData)
+	const { sumVal, storageData, customStyle, capsultBottom, navbarBgColor, textColor, tabsList, gapBgColor } = toRefs(myData)
 	const lineBg = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAOCAYAAABdC15GAAAACXBIWXMAABYlAAAWJQFJUiTwAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAFxSURBVHgBzZNRTsJAEIb/WTW+lpiY+FZPIDew3ABP4GJ8hxsI9zBpOYHeQDwBPQI+mRiRvpLojtPdYhCorQqF/6GdbGd2vvwzBXZcNAt4oj1ANeUoAT5iqkUjbEFLHNmhD1YPEvpZ3ghkGlVDCkc94/BmHMq998I5ONiY1ZBfpKAyuOtgAc5yOEDmYEWNh32BHF91sGHZHmwW4azciN9aQwnz3SJEgOmte+R2tdLprTYoa50mvuomlLpD4Y3oQZnov6D2RzCqI93bWOHaEmAGqQUyRBlZR1WfarcD/EJ2z8DtzDGvsMCwpm8XOCfDUsVOCYhiqRxI/CTQo4UOvjzO7Pow18vfywneuUHHUUxLn55lLw5JFpZ8bEUcY8oXdOLWiHLTxvoGpLqoUmy6dBT15o/ox3znpoycAmxUsiJTbs1cmxeVKp+0zmFIS7bGWiVghC7Vwse8jFKAX9eljh4ggKLLv7uaQvG9/F59Oo2SouxPu7OTCxN/s8wAAAAASUVORK5CYII=";
 
 	const handleTabClick = (item) => {

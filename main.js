@@ -1,4 +1,6 @@
 import App from './App'
+import provideGlobalVariables from './hooks/useGlobalVariables'
+import registerGlobalComponents from './hooks/useGlobalComponents'
 
 // #ifndef VUE3
 import Vue from 'vue'
@@ -22,6 +24,12 @@ export function createApp() {
 	const app = createSSRApp(App)
 	app.use(Pinia.createPinia().use(piniaPersistPlugin)) // 添加 piniaPersistPlugin
 	setupPluginsV3(app, pluginsV3) // 使用插件和功能设置
+	
+	// 提供全局样式变量
+	provideGlobalVariables(app)
+	
+	// 注册全局组件
+	registerGlobalComponents(app)
 	return {
 		app,
 		Pinia
