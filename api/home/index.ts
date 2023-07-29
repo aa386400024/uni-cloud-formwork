@@ -2,7 +2,7 @@
 
 import { request, RequestOptions } from '@/utils/api/request'
 
-// 下面是使用了cloud的方式的封装
+// 行业数据接口
 export async function fetchIndustries(): Promise<any> {
 	const options: RequestOptions = {
 		url: 'client/industries/pub/getList',
@@ -12,6 +12,7 @@ export async function fetchIndustries(): Promise<any> {
 	return response.data
 }
 
+// 职位数据接口
 export async function fetchPositions(data: any): Promise<any> {
 	const options: RequestOptions = {
 		url: 'client/positions/pub/getList',
