@@ -58,7 +58,7 @@
 				// 表单请求数据
 				form1:{
 					agreement: true,
-					username: 'admin',
+					username: 'aa386400025',
 					password: '123456'
 				},
 				scrollTop:0,

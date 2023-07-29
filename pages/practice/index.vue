@@ -4,18 +4,28 @@
 		<text>Double Count: {{ doubleCount }}</text>
 		<button @tap="increment">Increment</button>
 		<button @click="incrementApi">Increment</button>
+		<u-button type="warning" text="月落" @click="callVKFunction"></u-button>
 		<text>API Result: {{ apiResult }}</text>
+		{{os}}
+		<text>{{navbar.top}}</text>
+		{{sumVal}}
 	</view>
 </template>
 
 <script lang="ts" setup>
-	import { computed, onMounted, ref } from 'vue';
+	import { computed, onMounted, ref, toRefs, reactive } from 'vue';
 	import { useCounterStore } from '@/stores';
 	import { todos } from '@/api';
 	import { fetchTodosCloud } from '@/api/todos';
 	import { useGlobalAPI } from '@/hooks/useGlobalAPI'
 	const { apiWrapper, config } = useGlobalAPI()
-	
+	const navbar = apiWrapper.navbar; 
+	const myData = reactive({
+		sumVal: 0,
+	})
+	const {
+		sumVal
+	} = toRefs(myData)
 	const apiResult = ref(null);
 	const incrementApi = async () => {
 		try {
@@ -28,6 +38,25 @@
 		}
 	};
 	
+	const callVKFunction = () => {
+		uni.vk.callFunction<{ x : number; y : number; }, { z : number; }>({
+			url: 'client/pub.user.calc',
+			title: '请求中...',
+			data: {
+				x: 1,
+				y: 2
+			},
+			success: (data) => {
+				const { z } = data;
+				sumVal.value = z;
+			},
+			fail: (error) => {
+				console.error(error);
+			}
+		});
+	};
+	const os = uni.$u.os()
+	console.log(os, 'osos');
 	const rightClick = () => {
 		
 	} 
@@ -50,7 +79,10 @@
 	const doubleCount = computed(() => counterStore.doubleCount);
 	const increment = counterStore.increment;
 
-
+	// 如果在组件外要是有这个方法，需要defineExpose导出
+	defineExpose({
+		callVKFunction,
+	});
 	onMounted(async () => {
 		navbarRect()
 		const todoList = await todos.fetchTodos();

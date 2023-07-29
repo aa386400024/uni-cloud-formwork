@@ -1,5 +1,4 @@
 /* utilities.scss 实用的样式工具类，如清除浮动、隐藏元素等 */
-@import 'variables.scss';
 
 /* Display */
 .d-none {
@@ -333,15 +332,6 @@
 }
 .ft-white {
 	color: #fff;
-}
-
-/* More text color (use variable or direct color as per your theme) */
-.text-primary {
-	color: $primary-color !important;
-}
-
-.text-secondary {
-	color: $secondary-color !important;
 }
 
 // 定义我们的间距规模

@@ -1,5 +1,4 @@
 // 重置样式
-@import 'variables.scss';
 @import '@/uni.scss';
 
 body {
@@ -42,7 +41,7 @@ switch {
 }
 
 .page-container {
-  padding: $padding-normal;
+  padding: $uni-spacing-row-base;
   width: 100%;
   background-color: $uni-bg-color;
 }

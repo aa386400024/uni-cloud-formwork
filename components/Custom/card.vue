@@ -1,12 +1,12 @@
 <template>
 	<view class="card padding-md margin-bottom-md" @click="handleClick">
-		<image class="card-image margin-right-md" :src="job.image" />
+		<image class="card-image margin-right-md" :src="position.img" />
 		<view class="card-content">
-			<view class="card-title margin-bottom-xs">{{ job.title }}</view>
-			<view class="card-description margin-bottom-xs">{{ job.description }}</view>
+			<view class="card-title margin-bottom-xs">{{ position.name }}</view>
+			<view class="card-description margin-bottom-xs">{{ position.description }}</view>
 			<view class="card-interviews">
 				<image class="margin-right-xs" src="/static/interview-icon.png" />
-				<text>{{ job.interviews }} 模拟面试</text>
+				<text>{{ position.interviewed_count }} 模拟面试</text>
 			</view>
 		</view>
 	</view>
@@ -17,14 +17,14 @@
 
 	// 定义props
 	const props = defineProps({
-		job: Object,
+		position: Object,
 	});
 
 	// 定义emit
 	const emits = defineEmits(["click"]);
 
 	const handleClick = () => {
-		emits('click', props.job);
+		emits('click', props.position);
 	};
 </script>
 

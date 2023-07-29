@@ -13,16 +13,6 @@ let menuButtonInfo = {
 menuButtonInfo = uni.getMenuButtonBoundingClientRect()
 // #endif
 
-// #ifdef H5
-// 如果在H5平台中，更新menuButtonInfo对象的top属性为6
-menuButtonInfo.top = 6
-// #endif
-
-// #ifdef H5-WEIXIN
-// 如果在微信H5平台中，同样更新menuButtonInfo对象的top属性为6
-menuButtonInfo.top = 6
-// #endif
-
 // 定义一个APIWrapper类
 class APIWrapper {
 	// 明确声明类属性navbar、menuButtonInfo、navbarTitleHeight和navbarHeight

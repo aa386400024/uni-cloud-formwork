@@ -1,9 +1,9 @@
 <template>
-	<scroll-view style="height: 100vh;" scroll-y @scroll="handleScroll">
+	<scroll-view enable-flex style="height: 100vh;" scroll-y @scroll="handleScroll">
 		<view class="top-banner"></view>
-		<u-sticky v-if="offsetTop" :offsetTop="offsetTop" bgColor="#fff">
+		<u-sticky v-if="offsetTop || platform === 'h5'" :offsetTop="offsetTop" bgColor="#fff">
 			<u-tabs
-				:list="tabsList"
+				:list="industriesList"
 				lineWidth="20"
 				lineHeight="7"
 				:lineColor="`url(${lineBg}) 100% 100%`"
@@ -49,36 +49,29 @@
 					</view>
 				</template>
 			</u-navbar>
-			
 			<job-card
 				class="margin-bottom-md job-card"
-				v-for="(job, index) in jobs"
+				v-for="(item, index) in positions"
 				:key="index"
-				:job="job"
+				:position="item"
 				@click="goToInterview"
 			></job-card>
 			
 			<custom-gap></custom-gap>
-			<u-button type="warning" text="月落" @click="callVKFunction"></u-button>
-			{{sumVal}}
-			<text>{{navbar.top}}</text>
-			{{storageData}}
-			{{os}}
-			<view style="height: 2000px;"></view>
+			
+			<view style="height: 1000px;"></view>
 		</view>
 	</scroll-view>
 </template>
 
 <script lang="ts" setup>
-	import { onMounted, ref, reactive, toRefs } from 'vue';
+	import { onMounted, reactive, toRefs } from 'vue';
 	import { useGlobalAPI } from '@/hooks/useGlobalAPI'
+	import { fetchIndustries, fetchPositions } from '@/api/home';
 	import JobCard from '@/components/custom/card.vue';
-	const { apiWrapper, config } = useGlobalAPI()
-	const navbar = apiWrapper.navbar; 
+	const { apiWrapper } = useGlobalAPI()
 
 	const myData = reactive({
-		sumVal: 0,
-		storageData: '',
 		capsultBottom: 0,
 		offsetTop: 0,
 		customStyle: {
@@ -87,35 +80,7 @@
 		},
 		navbarBgColor: 'transparent',
 		textColor: '#fff',
-		tabsList: [
-			{ name: '热榜', badge: { value: 5, }}, 
-			{
-				name: '互联网', // 行业名称
-				name_en: 'internet', // 行业名称的英文
-				code: '001',
-				description: '行业描述', // 行业描述
-				icon: '行业图标的URL', // 行业图标的URL
-				jobs: [ // 行业下的职业列表
-					{
-						name: '职业名称', // 职业名称
-						name_en: 'Job Name', // 职业名称的英文
-						description: '职业描述', // 职业描述
-						icon: '职业图标的URL', // 职业图标的URL
-						interviewPage: '面试页面的URL或者标识', // 面试页面的URL或者标识
-						// 可能还有其他属性
-					},
-					// 更多职业...
-				],
-			},
-			{ name: '推荐', badge: { isDot: true }}, 
-			{ name: '电影', }, 
-			{ name: '科技' },
-			{ name: '音乐' }, 
-			{ name: '美食' },
-			{ name: '文化' }, 
-			{ name: '财经' },
-			{ name: '手工' },
-		],
+		industriesList: [],
 		activeStyle: {
 			color: '#303133',
 			fontWeight: 'bold',
@@ -130,37 +95,21 @@
 			paddingRight: '15px', 
 			height: '36px',
 		},
-		jobs: [
-			{
-				image: '/static/job-image1.png',
-				title: '职位名称1',
-				description: '职位描述1',
-				interviews: 10,
-			},
-			{
-				image: '/static/job-image2.png',
-				title: '职位名称2',
-				description: '职位描述2',
-				interviews: 20,
-			},
-			// 添加更多的职位...
-		]
+		positions: [],
+		platform: uni.$u.platform // 获取当前运行的平台名称
 	})
-	const os = uni.$u.os()
-	console.log(typeof os);
-	const { 
-		sumVal, 
-		storageData, 
+	const {
 		customStyle, 
 		capsultBottom, 
 		offsetTop,
 		navbarBgColor, 
 		textColor, 
-		tabsList,
+		industriesList,
 		activeStyle,
 		inactiveStyle,
 		itemStyle,
-		jobs
+		positions,
+		platform,
 	} = toRefs(myData)
 	const lineBg = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAOCAYAAABdC15GAAAACXBIWXMAABYlAAAWJQFJUiTwAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAFxSURBVHgBzZNRTsJAEIb/WTW+lpiY+FZPIDew3ABP4GJ8hxsI9zBpOYHeQDwBPQI+mRiRvpLojtPdYhCorQqF/6GdbGd2vvwzBXZcNAt4oj1ANeUoAT5iqkUjbEFLHNmhD1YPEvpZ3ghkGlVDCkc94/BmHMq998I5ONiY1ZBfpKAyuOtgAc5yOEDmYEWNh32BHF91sGHZHmwW4azciN9aQwnz3SJEgOmte+R2tdLprTYoa50mvuomlLpD4Y3oQZnov6D2RzCqI93bWOHaEmAGqQUyRBlZR1WfarcD/EJ2z8DtzDGvsMCwpm8XOCfDUsVOCYhiqRxI/CTQo4UOvjzO7Pow18vfywneuUHHUUxLn55lLw5JFpZ8bEUcY8oXdOLWiHLTxvoGpLqoUmy6dBT15o/ox3znpoycAmxUsiJTbs1cmxeVKp+0zmFIS7bGWiVghC7Vwse8jFKAX9eljh4ggKLLv7uaQvG9/F59Oo2SouxPu7OTCxN/s8wAAAAASUVORK5CYII=";
 
@@ -168,13 +117,33 @@
 	    console.log('当前选中的行业:', item.name);
 	    // 在这里你可以根据选中的行业获取对应的职业数据
 	}
-
+	
+	// 获取行业数据
+	const fetchIndustriesApi = async () => {
+		try {
+			const res = await fetchIndustries();
+			industriesList.value = res.rows || []
+		} catch (error) {
+			console.error('Error during fetchTodosCloud:', error);
+			// 可以在这里添加更多的错误处理逻辑，比如设置一个标志，让用户知道出现了错误
+		}
+	};
+	
+	// 获取职位数据
+	const fetchPositionApi = async (data: any) => {
+		try {
+			const res = await fetchPositions(data);
+			positions.value = res.rows || []
+		} catch (error) {
+			console.error('Error during fetchTodosCloud:', error);
+			// 可以在这里添加更多的错误处理逻辑，比如设置一个标志，让用户知道出现了错误
+		}
+	};
 	
 	// 微信小程序的胶囊信息
 	const capsuleInfo = () => {
 		const menuButtonInfo = uni.getMenuButtonBoundingClientRect();
 		const systemInfo = uni.getSystemInfoSync() || {};
-		console.log(systemInfo, 'systemInfo')
 		const capsuleHeight = menuButtonInfo.height;
 		customStyle.value.height = capsuleHeight + 'px';
 		capsultBottom.value = menuButtonInfo.bottom;
@@ -202,30 +171,17 @@
 	  // 你可以使用job参数来获取被点击的职位的信息
 	};
 
-	const callVKFunction = () => {
-		uni.vk.callFunction<{ x : number; y : number; }, { z : number; }>({
-			url: 'client/pub.user.calc',
-			title: '请求中...',
-			data: {
-				x: 1,
-				y: 2
-			},
-			success: (data) => {
-				const { z } = data;
-				sumVal.value = z;
-			},
-			fail: (error) => {
-				console.error(error);
-			}
-		});
-	};
-
-	// 如果在组件外要是有这个方法，需要defineExpose导出
-	defineExpose({
-		callVKFunction,
-	});
 	onMounted(async () => {
+		// #ifdef MP-WEIXIN
 		capsuleInfo()
+		// #endif
+		
+		fetchIndustriesApi().then(() => {
+			const data = {
+				industry_id: '001'
+			}
+			fetchPositionApi(data)
+		})
 	});
 </script>
 
