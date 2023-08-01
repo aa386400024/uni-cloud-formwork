@@ -2,7 +2,7 @@
 let baseUrl = process.env.BASE_URL
 
 // #ifdef APP-PLUS
-baseUrl = "https://cat-fact.herokuapp.com"
+baseUrl = "https://api.chatanywhere.com.cn"
 // #endif
 export default {
 	h5: {
