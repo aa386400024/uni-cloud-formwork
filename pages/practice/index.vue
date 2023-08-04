@@ -42,7 +42,7 @@
 	const completionsApi = async (data: any) => {
 		try {
 			const response = await completions(data);
-			apiResult.value = response;
+			apiResult.value = response.data;
 			console.log(apiResult.value, 'completions');
 		} catch (error) {
 			console.error('Error during completions:', error);
