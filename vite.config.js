@@ -51,7 +51,7 @@ export default defineConfig({
 	// 定义环境变量
 	define: {
 		'process.env.VUE_APP_TEST': JSON.stringify('test'),
-		'process.env.BASE_URL': JSON.stringify('https://cat-fact.herokuapp.com'), 
+		'process.env.BASE_URL': JSON.stringify('https://api.chatanywhere.com.cn'), 
 		'ROUTES': new TransformPages(__dirname).routes, // 注入路由表
 	},
 })

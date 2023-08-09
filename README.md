@@ -56,11 +56,9 @@
 │   ├── Custom # 自定义组件
 │   ├── refreshBox # 刷新盒子组件
 │   └── uni-load-state # uni-app加载状态组件
-│ 
-├── config # 全局配置
-│   └── globals.ts # 全局变量
 │
 ├── hooks # 存放 Vue composition API 的 hooks
+│   ├── useGlobalAPI.ts # 全局属性和方法
 │   └── useGlobalProperties.ts # 用于在 Vue 3 组件中安全地访问全局属性和方法。
 │ 
 ├── lang # 国际化语言包

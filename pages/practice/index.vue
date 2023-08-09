@@ -4,16 +4,29 @@
 		<text>Double Count: {{ doubleCount }}</text>
 		<button @tap="increment">Increment</button>
 		<button @click="incrementApi">Increment</button>
+		<u-button type="warning" text="月落" @click="callVKFunction"></u-button>
 		<text>API Result: {{ apiResult }}</text>
+		{{os}}
+		<text>{{navbar.top}}</text>
+		{{sumVal}}
 	</view>
 </template>
 
 <script lang="ts" setup>
-	import { computed, onMounted, ref } from 'vue';
+	import { computed, onMounted, ref, toRefs, reactive } from 'vue';
 	import { useCounterStore } from '@/stores';
 	import { todos } from '@/api';
 	import { fetchTodosCloud } from '@/api/todos';
-
+	import { completions } from '@/api/openai';
+	import { useGlobalAPI } from '@/hooks/useGlobalAPI'
+	const { apiWrapper, config } = useGlobalAPI()
+	const navbar = apiWrapper.navbar; 
+	const myData = reactive({
+		sumVal: 0,
+	})
+	const {
+		sumVal
+	} = toRefs(myData)
 	const apiResult = ref(null);
 	const incrementApi = async () => {
 		try {
@@ -25,6 +38,47 @@
 			// 可以在这里添加更多的错误处理逻辑，比如设置一个标志，让用户知道出现了错误
 		}
 	};
+	
+	const completionsApi = async (data: any) => {
+		try {
+			const response = await completions(data);
+			apiResult.value = response.data;
+			console.log(apiResult.value, 'completions');
+		} catch (error) {
+			console.error('Error during completions:', error);
+			// 可以在这里添加更多的错误处理逻辑，比如设置一个标志，让用户知道出现了错误
+		}
+	};
+	
+	const callVKFunction = () => {
+		uni.vk.callFunction<{ x : number; y : number; }, { z : number; }>({
+			url: 'client/pub.user.calc',
+			title: '请求中...',
+			data: {
+				x: 1,
+				y: 2
+			},
+			success: (data) => {
+				const { z } = data;
+				sumVal.value = z;
+			},
+			fail: (error) => {
+				console.error(error);
+			}
+		});
+	};
+	const os = uni.$u.os()
+	console.log(os, 'osos');
+	const rightClick = () => {
+		
+	} 
+	const navbarRect = () => {
+		const selector = '.navbar';
+		apiWrapper.getBoundingRect(selector, (res) => {
+			// 在这里处理位置信息，可以使用res.left, res.top, res.width, res.height等属性
+			console.log('Element position:', res);
+		}); 
+	} 
 
 	// import { useRouter } from 'uni-mini-router'
 
@@ -37,8 +91,27 @@
 	const doubleCount = computed(() => counterStore.doubleCount);
 	const increment = counterStore.increment;
 
-
+	// 如果在组件外要是有这个方法，需要defineExpose导出
+	defineExpose({
+		callVKFunction,
+	});
 	onMounted(async () => {
+		navbarRect()
+		const data = {
+		   "model": "gpt-3.5-turbo",
+		   "messages": [
+				{
+				  "role": "system",
+				  "content": "You are a helpful assistant."
+				},
+				{
+				  "role": "user",
+				  "content": "Who won the world series in 2020?"
+				}
+		   ]
+		}
+
+		completionsApi(data)
 		const todoList = await todos.fetchTodos();
 	});
 </script>
