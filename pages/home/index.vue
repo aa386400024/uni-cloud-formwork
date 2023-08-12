@@ -59,7 +59,6 @@
 			
 			<custom-gap></custom-gap>
 			
-			<view style="height: 1000px;"></view>
 		</view>
 	</scroll-view>
 </template>
@@ -113,9 +112,12 @@
 	} = toRefs(myData)
 	const lineBg = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAOCAYAAABdC15GAAAACXBIWXMAABYlAAAWJQFJUiTwAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAFxSURBVHgBzZNRTsJAEIb/WTW+lpiY+FZPIDew3ABP4GJ8hxsI9zBpOYHeQDwBPQI+mRiRvpLojtPdYhCorQqF/6GdbGd2vvwzBXZcNAt4oj1ANeUoAT5iqkUjbEFLHNmhD1YPEvpZ3ghkGlVDCkc94/BmHMq998I5ONiY1ZBfpKAyuOtgAc5yOEDmYEWNh32BHF91sGHZHmwW4azciN9aQwnz3SJEgOmte+R2tdLprTYoa50mvuomlLpD4Y3oQZnov6D2RzCqI93bWOHaEmAGqQUyRBlZR1WfarcD/EJ2z8DtzDGvsMCwpm8XOCfDUsVOCYhiqRxI/CTQo4UOvjzO7Pow18vfywneuUHHUUxLn55lLw5JFpZ8bEUcY8oXdOLWiHLTxvoGpLqoUmy6dBT15o/ox3znpoycAmxUsiJTbs1cmxeVKp+0zmFIS7bGWiVghC7Vwse8jFKAX9eljh4ggKLLv7uaQvG9/F59Oo2SouxPu7OTCxN/s8wAAAAASUVORK5CYII=";
 
-	const handleTabClick = (item) => {
-	    console.log('当前选中的行业:', item.name);
-	    // 在这里你可以根据选中的行业获取对应的职业数据
+	const handleTabClick = (item: any) => {
+	    console.log('当前选中的行业:', item);
+		const data = {
+			industry_id: item.industry_id
+		}
+	    fetchPositionApi(data)
 	}
 	
 	// 获取行业数据

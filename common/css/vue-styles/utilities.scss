@@ -334,7 +334,7 @@
 	color: #fff;
 }
 
-// 定义我们的间距规模
+// 定义间距规模
 $spacings: (
 	'xxs': 4rpx,
 	'xs': 6rpx,
@@ -377,5 +377,84 @@ $spacings: (
 	}
 	.margin-left-#{$name} {
 		margin-left: $size;
+	}
+}
+
+// 定义间距规模
+$borderSpacings: (
+	'xxs': 2rpx,
+	'xs': 4rpx,
+	'sm': 6rpx,
+	'md': 8rpx,
+	'lg': 10rpx,
+	'xl': 12rpx,
+);
+
+// 定义颜色规模
+$colors: (
+	'primary': #007bff,
+	'secondary': #6c757d,
+	'success': #28a745,
+	'danger': #dc3545,
+	'warning': #ffc107,
+	'info': #17a2b8,
+	'light': #f8f9fa,
+	'dark': #343a40,
+	'sd-primary': rgba(0, 0, 0, 0.1),
+	'sd-secondary': rgba(0, 0, 0, 0.2),
+	'sd-success': rgba(0, 0, 0, 0.3),
+	'sd-danger': rgba(0, 0, 0, 0.4),
+	'sd-warning': rgba(0, 0, 0, 0.5),
+	'sd-info': rgba(0, 0, 0, 0.6),
+	'sd-light': rgba(0, 0, 0, 0.7),
+	'sd-dark': rgba(0, 0, 0, 0.8),
+);
+
+// 定义border-radius规模
+$radius: (
+	'small': 5rpx,
+	'medium': 10rpx,
+	'large': 20rpx,
+);
+
+// 生成border-radius类
+@each $name, $value in $radius {
+	.border-radius-#{$name} {
+		border-radius: $value;
+	}
+}
+
+// 生成全部方向的 border 类
+@each $name, $size in $borderSpacings {
+	@each $colorName, $colorValue in $colors {
+		.border-#{$name}-#{$colorName} {
+			border-width: $size;
+			border-style: solid;
+			border-color: $colorValue;
+		}
+
+		.border-top-#{$name}-#{$colorName} {
+			border-top-width: $size;
+			border-top-style: solid;
+			border-top-color: $colorValue;
+		}
+		.border-right-#{$name}-#{$colorName} {
+			border-right-width: $size;
+			border-right-style: solid;
+			border-right-color: $colorValue;
+		}
+		.border-bottom-#{$name}-#{$colorName} {
+			border-bottom-width: $size;
+			border-bottom-style: solid;
+			border-bottom-color: $colorValue;
+		}
+		.border-left-#{$name}-#{$colorName} {
+			border-left-width: $size;
+			border-left-style: solid;
+			border-left-color: $colorValue;
+		}
+		.box-shadow-#{$name}-#{$colorName} {
+			box-shadow: 0 4rpx 20rpx 0 $colorValue;
+		}
 	}
 }

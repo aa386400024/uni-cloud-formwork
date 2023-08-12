@@ -1,16 +1,37 @@
 /* 在线链接服务仅供平台体验和调试使用，平台不承诺服务的稳定性，企业客户需下载字体包自行发布使用并做好备份。 */
 @font-face {
   font-family: 'iconfont';  /* Project id 4153686 */
-  src: url('https://at.alicdn.com/t/c/font_4153686_d52cn1d87yd.woff2?t=1688915032348') format('woff2'),
-       url('https://at.alicdn.com/t/c/font_4153686_d52cn1d87yd.woff?t=1688915032348') format('woff'),
-       url('https://at.alicdn.com/t/c/font_4153686_d52cn1d87yd.ttf?t=1688915032348') format('truetype');
+  src: url('https://at.alicdn.com/t/c/font_4153686_wo8gq8lze3f.woff2?t=1691854248147') format('woff2'),
+       url('https://at.alicdn.com/t/c/font_4153686_wo8gq8lze3f.woff?t=1691854248147') format('woff'),
+       url('https://at.alicdn.com/t/c/font_4153686_wo8gq8lze3f.ttf?t=1691854248147') format('truetype');
 }
+
 .iconfont {
   font-family: "iconfont" !important;
   font-size: 16px;
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-yonghuhuaxiang:before {
+  content: "\e7b2";
+}
+
+.icon-yonghutongji:before {
+  content: "\e620";
+}
+
+.icon-lianxi1:before {
+  content: "\e62f";
+}
+
+.icon-lianxiben:before {
+  content: "\e629";
+}
+
+.icon-lianxi2:before {
+  content: "\e60c";
 }
 
 .icon-shouye-shouye:before {
