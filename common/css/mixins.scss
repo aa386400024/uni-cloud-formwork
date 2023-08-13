@@ -7,7 +7,7 @@
  * 但为防混淆，使用时要保持一致，或在代码中注释为何在此处用类，哪处用mixin。 
  */
 // flex布局的 mixin
-@mixin flex-layout($type: center) {
+@mixin flex-layout($type: center, $direction: row) {
 	$layouts: (
 		'start': (
 			justify-content: flex-start,
@@ -31,22 +31,21 @@
 		),
 		// 在这里添加更多的布局类型...
 	);
-	// 设定默认的 display 和 flex-direction
+
 	display: flex;
-	flex-direction: row;
-	// 在 map 中查找对应的布局类型
+	flex-direction: $direction; // 使用参数
+
 	$layout: map-get($layouts, $type);
-	// 如果找到了，就应用对应的属性
 	@if $layout {
 		@each $property, $value in $layout {
 			#{$property}: $value;
 		}
-	}
-	// 如果没有找到对应的类型，给出一个编译时的警告
-	@else {
+	} @else {
 		@warn "未知的布局类型: `#{$type}`.";
 	}
 }
+
+
 // 清除浮动的 mixin
 @mixin clearfix($pseudo: 'after') {
 	@if $pseudo == 'both' {

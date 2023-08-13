@@ -1,9 +1,9 @@
 /* 在线链接服务仅供平台体验和调试使用，平台不承诺服务的稳定性，企业客户需下载字体包自行发布使用并做好备份。 */
 @font-face {
   font-family: 'iconfont';  /* Project id 4153686 */
-  src: url('https://at.alicdn.com/t/c/font_4153686_wo8gq8lze3f.woff2?t=1691854248147') format('woff2'),
-       url('https://at.alicdn.com/t/c/font_4153686_wo8gq8lze3f.woff?t=1691854248147') format('woff'),
-       url('https://at.alicdn.com/t/c/font_4153686_wo8gq8lze3f.ttf?t=1691854248147') format('truetype');
+  src: url('https://at.alicdn.com/t/c/font_4153686_j0nzhr0er6.woff2?t=1691916137798') format('woff2'),
+       url('https://at.alicdn.com/t/c/font_4153686_j0nzhr0er6.woff?t=1691916137798') format('woff'),
+       url('https://at.alicdn.com/t/c/font_4153686_j0nzhr0er6.ttf?t=1691916137798') format('truetype');
 }
 
 .iconfont {
@@ -12,6 +12,42 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-huiyuan:before {
+  content: "\e654";
+}
+
+.icon-huiyuandengji:before {
+  content: "\e634";
+}
+
+.icon-huiyuanshoudanmanjian:before {
+  content: "\e878";
+}
+
+.icon-chuangxiangqingtongvip:before {
+  content: "\e601";
+}
+
+.icon-liebiaoye-VIPjiaobiao:before {
+  content: "\e62a";
+}
+
+.icon-vip:before {
+  content: "\e60b";
+}
+
+.icon-VIP:before {
+  content: "\e640";
+}
+
+.icon-VIP1:before {
+  content: "\e6df";
+}
+
+.icon-vip5-01:before {
+  content: "\e64b";
 }
 
 .icon-yonghuhuaxiang:before {

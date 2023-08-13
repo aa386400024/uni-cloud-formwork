@@ -67,7 +67,7 @@ export default {
 		checkScore: "请登录后查看积分",
 		currentScore: "当前积分为",
 		noScore: "当前无积分",
-		notLogged: "未登录",
+		notLogged: "注册/登录",
 		vk: "vk"
 	},
 	userinfo:{
