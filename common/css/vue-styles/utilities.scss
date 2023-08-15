@@ -458,3 +458,28 @@ $radius: (
 		}
 	}
 }
+
+$titles: (
+  'h1': (
+    'font-size': 36rpx,
+    'color': #333,
+  ),
+  'h2': (
+    'font-size': 32rpx,
+    'color': #555,
+  ),
+  'h3': (
+    'font-size': 28rpx,
+    'color': #777,
+  ),
+  // ... 可以继续添加其他标题级别
+);
+
+@each $level, $styles in $titles {
+  .title-#{$level} {
+    font-size: map-get($styles, 'font-size');
+    color: map-get($styles, 'color');
+    font-weight: bold; // 假设所有标题都是加粗的
+    // 可以根据需要继续添加其他公共属性
+  }
+}

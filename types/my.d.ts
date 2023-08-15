@@ -3,3 +3,8 @@ declare interface Stat {
     number: number;
     description: string;
 }
+
+declare interface Grid {
+	name: string;
+	title: string;
+}
