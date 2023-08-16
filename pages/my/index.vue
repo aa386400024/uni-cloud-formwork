@@ -86,8 +86,20 @@
 				title: '简历诊断'
 			},
 			{
+				name: 'star',
+				title: '每日签到'
+			},
+			{
 				name: 'hourglass',
 				title: '面试日记'
+			},
+			{
+				name: 'hourglass',
+				title: '新手指南'
+			},
+			{
+				name: 'hourglass',
+				title: '联系客服'
 			},
 			{
 				name: 'home',
