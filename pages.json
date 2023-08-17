@@ -24,13 +24,13 @@
 				"enablePullDownRefresh": false
 			}
 		}, {
-			"path": "pages/my/index",
+			"path": "pages/my/my",
 			"name": "my",
 			"style": {
 				"navigationStyle": "custom",
 				"enablePullDownRefresh": false
 			}
-		}, 
+		},
 		// {
 		// 	"path": "pages/list/list",
 		// 	"style": {
@@ -150,8 +150,7 @@
 			}
 		}
 	],
-	"subPackages": [
-		{
+	"subPackages": [{
 			"root": "uni_modules/uni-feedback",
 			"pages": [{
 				"path": "pages/opendb-feedback/opendb-feedback",
@@ -423,6 +422,18 @@
 						"navigationStyle": "custom", // 隐藏系统导航栏
 						"navigationBarTextStyle": "white" // 状态栏字体为白色，只能为 white-白色，black-黑色 二选一
 					}
+				}, {
+					"path": "extras/vip/vip",
+					"style": {
+						"navigationBarTitleText": "开通会员",
+						"enablePullDownRefresh": false
+					}
+				}, {
+					"path": "interview/history/history",
+					"style": {
+						"navigationBarTitleText": "面试历史",
+						"enablePullDownRefresh": false
+					}
 				}
 			]
 		}
@@ -444,7 +455,7 @@
 		"rpxCalcBaseDeviceWidth": 375,
 		"rpxCalcIncludeWidth": 750
 		// #endif
-		
+
 	},
 	"condition": {
 		"list": [{
@@ -481,7 +492,7 @@
 				"text": "圈子"
 			},
 			{
-				"pagePath": "pages/my/index",
+				"pagePath": "pages/my/my",
 				"iconPath": "static/tabbar/my.png",
 				"selectedIconPath": "static/tabbar/my-active.png",
 				"text": "我的"
