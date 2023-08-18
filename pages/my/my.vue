@@ -1,5 +1,6 @@
 <template>
 	<uni-sign-in ref="signIn"></uni-sign-in>
+	
 	<view class="top-nav padding-md">
 		<view class="user-info" :style="{paddingTop: offsetTop + 'px'}">
 			<view class="left">
@@ -109,7 +110,7 @@
 				name: 'star',
 				title: '系统设置'
 			},
-		]
+		],
 	})
 	const { offsetTop, statsList, gridList } = toRefs(myData)
 	const { userInfo, hasLogin } = toRefs(storeOriginal);
