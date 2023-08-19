@@ -434,6 +434,12 @@
 						"navigationBarTitleText": "面试历史",
 						"enablePullDownRefresh": false
 					}
+				}, {
+					"path": "interview/flow/flow",
+					"style": {
+						"navigationBarTitleText": "模拟面试",
+						"enablePullDownRefresh": false
+					}
 				}
 			]
 		}

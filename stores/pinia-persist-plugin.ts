@@ -3,6 +3,7 @@ import { PiniaPluginContext, PiniaPlugin } from 'pinia'
 import { debounce } from 'lodash'
 import config from '@/uni-starter.config.js'
 import { counterPersistStateKeys } from './modules/counter'
+import { interviewPersistStateKeys } from './modules/interview-flow'
 // import { authPersistStateKeys } from './modules/auth';
 // ... import other modules' persistStateKeys
 
@@ -10,6 +11,7 @@ import { counterPersistStateKeys } from './modules/counter'
 // 将所有模块的持久化状态键组合在一起
 const persistStateKeys = [
 	...counterPersistStateKeys,
+	...interviewPersistStateKeys
 	// ...authPersistStateKeys,
 	// ... other modules' persistStateKeys
 ]
