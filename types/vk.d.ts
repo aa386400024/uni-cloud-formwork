@@ -11,6 +11,7 @@ declare global {
 				url: string;
 				title?: string;
 				data: TReq;
+				loading?: boolean | object;
 				success: (data: TRes) => void;
 				fail(error: any): void;
 			}): void;

@@ -80,12 +80,12 @@
 <script lang="ts" setup>
 	import { onMounted, reactive, ref, toRefs, computed } from 'vue';
 	import { useInterviewStore } from '@/stores';
-	import PermissionDrawer from './permission-drawer/permission-drawer.vue';
 	import { useGlobalAPI } from '@/hooks/useGlobalAPI'
 	import { fetchIndustries, fetchPositions } from '@/api/home';
 	import JobCard from '@/components/custom/card.vue';
-	const { apiWrapper } = useGlobalAPI()
+	import PermissionDrawer from './permission-drawer/permission-drawer.vue';
 	
+	const { apiWrapper } = useGlobalAPI()
 	const interviewStore = useInterviewStore();
 	const myData = reactive({
 		capsultBottom: 0,
@@ -97,6 +97,7 @@
 		navbarBgColor: 'transparent',
 		textColor: '#fff',
 		industriesList: [],
+		defaultIndustryId: "",
 		activeStyle: {
 			color: '#303133',
 			fontWeight: 'bold',
@@ -117,7 +118,6 @@
 		popupCustomStyle: {
 			backgroundColor: "#fff"
 		},
-		
 	})
 	const {
 		customStyle, 
@@ -126,6 +126,7 @@
 		navbarBgColor, 
 		textColor, 
 		industriesList,
+		defaultIndustryId,
 		activeStyle,
 		inactiveStyle,
 		itemStyle,
@@ -140,7 +141,6 @@
 	
 	// 切换行业tab点击事件
 	const handleTabClick = (item: any) => {
-	    console.log('当前选中的行业:', item);
 		const data = {
 			industry_id: item.industry_id
 		}
@@ -152,6 +152,7 @@
 		try {
 			const res = await fetchIndustries();
 			industriesList.value = res.rows || []
+			defaultIndustryId.value = res.rows[0].industry_id
 		} catch (error) {
 			console.error('Error during fetchTodosCloud:', error);
 			// 可以在这里添加更多的错误处理逻辑，比如设置一个标志，让用户知道出现了错误
@@ -196,12 +197,9 @@
 	}
 	
 	// 职位点击事件-跳转到面试页
-	const goToInterview = (job) => {
-		console.log('job', job.name)
+	const goToInterview = (job: any) => {
 		interviewStore.flowNavTitle = job.name;
 		showPopup.value = true
-	  // 这里添加跳转到模拟面试页面的代码
-	  // 你可以使用job参数来获取被点击的职位的信息
 	}
 	
 	// 关闭弹出层
@@ -219,7 +217,7 @@
 		vk.navigateTo('/pages_template/interview/flow/flow');
 	}
 	
-	// 开启弹出层
+	// 开启抽屉弹出层
 	const openPopup = () => {
 		childRef.value?.netWorkStatus();
 	}
@@ -231,7 +229,7 @@
 		
 		fetchIndustriesApi().then(() => {
 			const data = {
-				industry_id: '001'
+				industry_id: defaultIndustryId.value
 			}
 			fetchPositionApi(data)
 		})
