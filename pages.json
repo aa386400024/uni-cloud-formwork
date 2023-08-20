@@ -437,7 +437,13 @@
 				}, {
 					"path": "interview/flow/flow",
 					"style": {
-						"navigationBarTitleText": "模拟面试",
+						"navigationBarTitleText": "",
+						"enablePullDownRefresh": false
+					}
+				}, {
+					"path": "interview/custom/custom",
+					"style": {
+						"navigationBarTitleText": "自定义模拟面试",
 						"enablePullDownRefresh": false
 					}
 				}

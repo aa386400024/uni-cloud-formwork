@@ -214,7 +214,7 @@
 	
 	// 子组件开始模拟面试自定义事件
 	const childStartMockInterview = () => {
-		vk.navigateTo('/pages_template/interview/flow/flow');
+		vk.navigateTo('/pages_template/interview/custom/custom');
 	}
 	
 	// 开启抽屉弹出层
