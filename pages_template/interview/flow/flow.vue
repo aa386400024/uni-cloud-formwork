@@ -298,8 +298,8 @@
 		.btn-wrapper {
 			@include flex-layout(between);
 			.toggle-camera-btn {
-				width: 102rpx;
-				height: 102rpx;
+				width: 100rpx;
+				height: 100rpx;
 				border-radius: 50%;
 				overflow: hidden;
 				color: #fff;
