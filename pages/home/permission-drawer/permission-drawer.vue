@@ -52,7 +52,7 @@
 			<view class="margin-md"></view>
 			<u-button @click="closeDrawer" shape="circle" text="稍后"></u-button>
 		</view>
-	</view>
+	</view> 
 </template>
 
 
@@ -61,9 +61,9 @@
 	import { onShow } from "@dcloudio/uni-app"
 	const myData = reactive({
 		permissions: [
-			{ type: 'microphone', title: '麦克风', granted: false, btn_icon: 'mic', success_icon: 'icon-wo', fail_icon: 'icon-quanzi' },
-			{ type: 'camera', title: '摄像头', granted: false, btn_icon: 'camera-fill', success_icon: 'icon-wo', fail_icon: 'icon-quanzi' },
-			{ type: 'network', title: '网络', granted: false, btn_icon: '', message: '未知', success_icon: 'icon-wo', fail_icon: 'icon-quanzi' }
+			{ type: 'microphone', title: '麦克风', granted: false, success_icon: 'icon-yuyin1', fail_icon: 'icon-lockvoice' },
+			{ type: 'camera', title: '摄像头', granted: false, success_icon: 'icon-luxiang1', fail_icon: 'icon-luxiangguan' },
+			{ type: 'network', title: '网络', granted: false, message: '未知', success_icon: 'icon-wifi1', fail_icon: 'icon-wifi-off' }
 		],
 		startIvBtnCustomStyle: {
 			color: "#fff",

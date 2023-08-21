@@ -133,7 +133,7 @@
 	};
 	
 	const startInterviewClick = () => {
-		vk.navigateTo('/pages_template/interview/flow/flow');
+		vk.redirectTo('/pages_template/interview/flow/flow');
 	}
 	
 	onMounted(async () => {

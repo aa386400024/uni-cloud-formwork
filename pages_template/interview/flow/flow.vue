@@ -1,21 +1,116 @@
 <template>
-	<view>
-		面试过程
+	<view  style="position: relative; width: 100vw; height: 100vh;">
+		<view>
+			<video
+				class="fullscreen-video position-absolute top-0 left-0"
+				autoplay
+				:style="videoStyle"
+				:src="currentVideo === 'intro' ? introVideoPath : questionVideoPath"
+				:controls="false" 
+				:show-center-play-btn="false"
+				:show-play-btn="false"
+				@ended="videoEnded"
+				@loadedmetadata="handleMetadataLoaded"
+			></video>
+			<view 
+			    class="video-mask position-absolute top-0 left-0"
+				:style="videoStyle"
+			    @touchmove.prevent
+			></view>
+		</view>
+		<!-- 使用同一个位置和大小的容器来显示摄像头或“关闭中”提示 -->
+		<view class="camera-wrapper">
+			<camera v-if="isCameraActive" device-position="front"></camera>
+			<view v-else class="closed-view">摄像头关闭中</view>
+		</view> 
+		
+		<view class="bottom-body padding-xl">
+			<view class="btn-wrapper">
+				<view 
+					class="iconfont toggle-camera-btn" 
+					:class="isCameraActive ? 'icon-luxiangguan' : 'icon-luxiang1'" 
+					@tap="toggleCamera"
+				></view>
+				<!-- 根据是否回答中显示不同按钮 -->
+				<view class="btn-box">
+					<u-button
+						v-if="!isAnswering"
+						shape="circle" 
+						type="primary" 
+						size="large" 
+						text="开始答题"
+						:disabled="!canAnswer"
+						@click="startAnswering" 
+					></u-button>
+					<u-button
+						v-else
+						shape="circle" 
+						type="primary" 
+						size="large" 
+						:text="`回答完毕 ( ${formattedCountdown} )`"
+						:disabled="isButtonDisabled"
+						@click="stopAnswering" 
+					></u-button>
+				</view>
+			</view>
+		</view>
+		<view class="bottom-bg position-absolute bottom-0 left-0 right-0"></view>
 	</view>
 </template>
 
+
 <script setup lang="ts">
-	import { reactive, toRefs, computed, onMounted } from 'vue';
-	import { onShow } from "@dcloudio/uni-app"
+	import { reactive, ref, toRefs, computed, onMounted, onBeforeUnmount } from 'vue';
 	import { useInterviewStore } from '@/stores';
 	const interviewStore = useInterviewStore();
 	const flowNavTitle = computed(() => interviewStore.flowNavTitle);
+	
+	const INITIAL_COUNTDOWN = 300;
 	const myData = reactive({
-		
+		recordVideoPath: '',
+		isCameraActive: true, // 预览视频开启状态
+		isRecording: false, // 是否在录制视频中
+		isAnswering: false,
+		canAnswer: false,
+		countdown: INITIAL_COUNTDOWN,
+		countdownInterval: null as number | null,
+		introVideoPath: "https://mp-43f7552d-29af-4d0a-8672-7a2fcdd00dc7.cdn.bspapp.com/interview/interview-prologue.mp4",
+		questionVideoPath: "https://mp-43f7552d-29af-4d0a-8672-7a2fcdd00dc7.cdn.bspapp.com/2023/08/11/83260029-33479829-1.HTMLWeb.mp4",
+		currentVideo: 'intro',
+		isButtonDisabled: true,
+		sysWidth: 0,
+		sysHeight: 0,
+		videoWidth: 0,
+		videoHeight: 0
 	})
-	const { 
-		
+	const {
+		recordVideoPath,
+		isCameraActive,
+		isRecording,
+		isAnswering,
+		canAnswer,
+		countdown,
+		countdownInterval,
+		introVideoPath,
+		questionVideoPath,
+		currentVideo,
+		isButtonDisabled,
+		sysWidth,
+		sysHeight,
+		videoWidth,
+		videoHeight
 	} = toRefs(myData)
+	
+	const cameraCtx = uni.createCameraContext();
+	
+	// 计算后的视频宽高
+	const videoStyle = computed(() => {
+	    return {
+	        width: `${videoWidth.value}px`,
+	        height: `${videoHeight.value}px`
+	    };
+	});
+	
 	// 自定义导航标题
 	const customNavTitle = () => {
 		uni.setNavigationBarTitle({
@@ -23,13 +118,214 @@
 		})
 	}
 	
+	// 倒计时格式化
+	const formattedCountdown = computed(() => {
+		const minutes = Math.floor(countdown.value / 60);
+		const seconds = countdown.value % 60;
+		return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+	});
 	
+	// 倒计时方法
+	const startCountdown = () => {
+		countdownInterval.value = setInterval(() => {
+			if (countdown.value > 0) {
+				countdown.value--;
+			} else {
+				clearInterval(countdownInterval.value!);
+				stopAnswering();
+			}
+		}, 1000);
+	};
+	
+	// 当播放到末尾时触发 ended 事件
+	const videoEnded = () => {
+	    if (currentVideo.value === 'intro') {
+	        canAnswer.value = true;
+	    } else if (currentVideo.value === 'question') {
+	        isAnswering.value = true;
+	        isButtonDisabled.value = false;  // 将按钮设置为可点击状态
+	        startCountdown(); // 开始倒计时
+	    }
+	};
+	
+	// 开始答题
+	const startAnswering = () => {
+	    isAnswering.value = true;
+	    currentVideo.value = 'question';  // 设置为播放面试题视频
+	    if (isCameraActive.value) {
+	        startRecord();
+	    }
+	}
+
+	// 结束答题
+	const stopAnswering = async () => {
+		if (countdownInterval.value) {
+			clearInterval(countdownInterval.value);
+			countdown.value = 300; // 重置计时器
+		}
+		isAnswering.value = false;
+		if(isRecording.value) {
+			await stopRecord();
+			// 假设uploadVideo是您上传视频的函数
+			uploadVideo(recordVideoPath.value);
+		}
+	}
+	
+	// 上传视频到服务器
+	const uploadVideo = (recordVideoPath: string) => {
+		// 这里是您上传视频到服务器的逻辑
+		console.log(`上传视频: ${recordVideoPath}`);
+	}
+	
+	// 视频录制预览开关
+	const toggleCamera = () => {
+		isCameraActive.value = !isCameraActive.value;  // 切换摄像头状态
+		if (isCameraActive.value && isAnswering.value) {
+			startRecord()
+		}else {
+			if(isRecording.value) {  // 只有当摄像头正在录制时才尝试停止录制
+			    stopRecord();
+			}
+		}
+	}
+
+	// 开始录制视频
+	const startRecord = () => {
+		cameraCtx.startRecord({
+			success: () => {
+				console.log('开始录制');
+			},
+			fail: (err) => {
+				console.error('录制失败:', err);
+			}
+		});
+		isRecording.value = true;
+	};
+
+	// 停止录制视频
+	const stopRecord = async () => {
+	    try {
+	        const res = await new Promise<any>((resolve, reject) => {
+	            cameraCtx.stopRecord({
+	                success: resolve,
+	                fail: reject
+	            });
+	        });
+	
+	        console.log('录制完成', res.tempVideoPath);
+			isRecording.value = false;  // 更新录制状态
+	        recordVideoPath.value = res.tempVideoPath;
+	
+	        // 其他处理逻辑...
+	
+	        return res;  // 返回录制的结果，如果需要的话
+	
+	    } catch (err) {
+	        console.error('停止录制失败:', err);
+	        throw err;  // 抛出错误，以便在调用函数中进行进一步处理
+	    }
+	};
+	
+	// 获取当前设备宽度
+	const getSystemDimensions = () => {
+	    const systemInfo = uni.getSystemInfoSync();
+	    sysWidth.value = systemInfo.safeArea!.width;
+	    sysHeight.value = systemInfo.safeArea!.height;
+	}
+	
+	// 获取视频的宽高，并且和设备宽度做计算，防止视频出现黑边
+	const handleMetadataLoaded = (event: any) => {
+	    const { width, height } = event.detail;
+	
+	    const videoAspectRatio = width / height;
+	    const deviceAspectRatio = sysWidth.value / sysHeight.value;
+	
+	    if (videoAspectRatio > deviceAspectRatio) {
+	        videoWidth.value = sysWidth.value;
+	        videoHeight.value = Math.round(sysWidth.value / videoAspectRatio);
+	    } else {
+	        videoHeight.value = sysHeight.value;
+	        videoWidth.value = Math.round(sysHeight.value * videoAspectRatio);
+	    }
+	}
+
 	onMounted(async () => {
 		customNavTitle()
+		getSystemDimensions()
+	});
+	
+	// 当组件卸载时，清除计时器
+	onBeforeUnmount(() => {
+	    if (countdownInterval.value) {
+	        clearInterval(countdownInterval.value);
+	    }
 	});
 </script>
 
 <style lang="scss" scoped>
 	@import '@/common/css/mixins.scss';
 	
-</style> 
+	.camera-wrapper {
+		position: absolute;  // 使用绝对定位
+		top: 30rpx;
+		left: 30rpx;
+		width: 160rpx;
+		height: 220rpx;
+		overflow: hidden; // 确保摄像头的预览或“关闭中”的提示不超出容器的边界
+		background-color: #eee;  // 给容器一个背景色，以确保在摄像头关闭时有一个背景
+
+		camera {
+			width: 100%;   // 宽度和高度为100%确保填充整个容器
+			height: 100%;
+		}
+
+		.closed-view {
+			width: 100%;
+			height: 100%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			background-color: rgba(0, 0, 0, 0.5);  // 为“关闭中”的背景添加一个半透明的黑色，使文字更容易阅读
+			font-size: 12px;  // 根据需要调整字体大小
+		}
+	}
+	.bottom-body {
+		position: absolute;
+		bottom: 50rpx;
+		left: 0;
+		right: 0;
+		z-index: 3;
+		.btn-wrapper {
+			@include flex-layout(between);
+			.toggle-camera-btn {
+				width: 102rpx;
+				height: 102rpx;
+				border-radius: 50%;
+				overflow: hidden;
+				color: #fff;
+				background-color: $uni-color-warning;
+				box-sizing: border-box;
+				font-size: 60rpx;
+				@include flex-layout(center);
+			}
+			.btn-box {
+				width: 540rpx;
+			}
+		}
+	}
+	
+	.fullscreen-video {
+		object-fit: cover;
+		z-index: 0;  
+	}
+	
+	.video-mask {
+	    z-index: 1;  // 确保遮罩层在视频之上
+	    background-color: rgba(0, 0, 0, 0);  // 将其设置为极低的不透明度，从而能够捕获事件，但对用户来说几乎是透明的
+	}
+	.bottom-bg {
+		background: linear-gradient(to top, #35363a 0%, #3d4144 70%, rgba(61, 65, 68, 0.5) 85%, rgba(61, 65, 68, 0) 100%);
+		height: 300rpx;
+		z-index: 2;
+	}
+</style>
