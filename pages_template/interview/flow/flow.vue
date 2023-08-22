@@ -4,9 +4,12 @@
 			<video
 				class="fullscreen-video position-absolute top-0 left-0"
 				autoplay
+				http-cache
 				:style="videoStyle"
-				:src="currentVideo === 'intro' ? introVideoPath : questionVideoPath"
-				:controls="false" 
+				:src="currentVideo === 'intro' ? introVideoPath : (currentVideo === 'question' ? questionVideoPath : transitionPath)"
+				:loop="currentVideo === 'transition'"
+				:controls="false"
+				:show-loading="false"
 				:show-center-play-btn="false"
 				:show-play-btn="false"
 				@ended="videoEnded"
@@ -25,6 +28,9 @@
 		</view> 
 		
 		<view class="bottom-body padding-xl">
+			<view class="question-body border-radius-large">
+				<text class="question-text">{{interviewPrologue}}</text>
+			</view>
 			<view class="btn-wrapper">
 				<view 
 					class="iconfont toggle-camera-btn" 
@@ -74,9 +80,11 @@
 		canAnswer: false,
 		countdown: INITIAL_COUNTDOWN,
 		countdownInterval: null as number | null,
-		introVideoPath: "https://mp-43f7552d-29af-4d0a-8672-7a2fcdd00dc7.cdn.bspapp.com/interview/interview-prologue.mp4",
+		transitionPath: "https://mp-43f7552d-29af-4d0a-8672-7a2fcdd00dc7.cdn.bspapp.com/interview/iv-transition.mp4",
+		introVideoPath: "https://mp-43f7552d-29af-4d0a-8672-7a2fcdd00dc7.cdn.bspapp.com/interview/iv-prologue.mp4",
 		questionVideoPath: "https://mp-43f7552d-29af-4d0a-8672-7a2fcdd00dc7.cdn.bspapp.com/2023/08/11/83260029-33479829-1.HTMLWeb.mp4",
-		currentVideo: 'intro',
+		interviewPrologue: "您好！欢迎使用我们的AI模拟面试应用。我将会是您今日的面试官。我们致力于为您提供一个公正和真实的面试体验，以帮助您更好地准备实际面试。在开始之前，能请您简短地介绍一下自己吗？",
+		currentVideo: 'intro', // 'intro', 'question', 'transition'
 		isButtonDisabled: true,
 		sysWidth: 0,
 		sysHeight: 0,
@@ -91,8 +99,10 @@
 		canAnswer,
 		countdown,
 		countdownInterval,
+		transitionPath,
 		introVideoPath,
 		questionVideoPath,
+		interviewPrologue,
 		currentVideo,
 		isButtonDisabled,
 		sysWidth,
@@ -141,10 +151,13 @@
 	const videoEnded = () => {
 	    if (currentVideo.value === 'intro') {
 	        canAnswer.value = true;
+	        currentVideo.value = 'transition';  // 设置为播放transition视频
 	    } else if (currentVideo.value === 'question') {
 	        isAnswering.value = true;
 	        isButtonDisabled.value = false;  // 将按钮设置为可点击状态
 	        startCountdown(); // 开始倒计时
+	    } else if (currentVideo.value === 'transition' && !isAnswering.value) {
+	        currentVideo.value = 'transition'; // 如果是transition视频结束，再次播放
 	    }
 	};
 	
@@ -295,6 +308,17 @@
 		left: 0;
 		right: 0;
 		z-index: 3;
+		.question-body {
+			min-height: 240rpx;
+			padding: 30rpx;
+			background-color: rgba(43, 44, 48, 0.9);
+			margin-bottom: 70rpx;
+			.question-text {
+				line-height: 1.7em;
+				color: #fff;
+				font-size: 28rpx;
+			}
+		}
 		.btn-wrapper {
 			@include flex-layout(between);
 			.toggle-camera-btn {
