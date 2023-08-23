@@ -6,7 +6,7 @@
 				autoplay
 				http-cache
 				:style="videoStyle"
-				:src="currentVideo === 'intro' ? introVideoPath : (currentVideo === 'question' ? questionVideoPath : transitionPath)"
+				:src="currentVideo === 'question' ? questionVideoPath : transitionPath"
 				:loop="currentVideo === 'transition'"
 				:controls="false"
 				:show-loading="false"
@@ -29,7 +29,8 @@
 		
 		<view class="bottom-body padding-xl">
 			<view class="question-body border-radius-large">
-				<text class="question-text">{{ isAnswering ? questionText : interviewPrologue }}</text>
+				{{isAnswering}}
+				<text class="question-text">{{ questionText }}</text>
 			</view>
 			<view class="btn-wrapper">
 				<view 
@@ -81,14 +82,13 @@
 		countdown: INITIAL_COUNTDOWN,
 		countdownInterval: null as number | null,
 		transitionPath: "https://mp-43f7552d-29af-4d0a-8672-7a2fcdd00dc7.cdn.bspapp.com/interview/iv-transition.mp4",
-		introVideoPath: "https://mp-43f7552d-29af-4d0a-8672-7a2fcdd00dc7.cdn.bspapp.com/interview/iv-prologue.mp4",
+		introVideoPath: "",
 		questionVideoPath: "",
 		questionText: "",
-		interviewPrologue: "您好！欢迎使用我们的AI模拟面试应用。我将会是您今日的面试官。我们致力于为您提供一个公正和真实的面试体验，以帮助您更好地准备实际面试。在开始之前，能请您简短地介绍一下自己吗？",
 		isInterviewFinished: false,
 		questions: [],  // 存储所有的面试问题
-		currentQuestionIndex: -1,  // 当前问题的索引
-		currentVideo: 'intro', // 'intro', 'question', 'transition'
+		currentQuestionIndex: 0,  // 当前问题的索引
+		currentVideo: 'question', // 'intro', 'question', 'transition'
 		isButtonDisabled: true,
 		sysWidth: 0,
 		sysHeight: 0,
@@ -107,7 +107,6 @@
 		introVideoPath,
 		questionVideoPath,
 		questionText,
-		interviewPrologue,
 		isInterviewFinished,
 		questions,
 		currentQuestionIndex,
@@ -157,26 +156,27 @@
 	
 	// 当播放到末尾时触发 ended 事件
 	const videoEnded = () => {
-	    if (currentVideo.value === 'intro') {
-	        canAnswer.value = true;
-	        currentVideo.value = 'transition';  // 设置为播放transition视频
-	    } else if (currentVideo.value === 'question') {
+	    if (currentVideo.value === 'question') {
 	        currentVideo.value = 'transition';  // 面试题播放完后播放过渡视频
+			canAnswer.value = true;
 	        isButtonDisabled.value = false;  // 将按钮设置为可点击状态
 	        startCountdown(); // 开始倒计时
 	    } else if (currentVideo.value === 'transition') {
-	        return
+	        // canAnswer.value = false;
 	    }
 	};
 
 	// 开始答题
 	const startAnswering = () => {
 	    isAnswering.value = true;
-	    currentVideo.value = 'question';  // 设置为播放面试题视频
+		isButtonDisabled.value = false;
+		canAnswer.value = false;
+		startCountdown();
 	    if (isCameraActive.value) {
 	        startRecord();
 	    }
 	}
+
 
 	// 结束答题
 	const stopAnswering = async () => {
@@ -210,6 +210,11 @@
 	        },
 	        // ...您可以继续添加更多问题...
 	    ];
+		resQuestions.unshift({
+			video: "https://mp-43f7552d-29af-4d0a-8672-7a2fcdd00dc7.cdn.bspapp.com/interview/iv-prologue.mp4",
+			text: "您好！欢迎使用我们的AI模拟面试应用。我将会是您今日的面试官。我们致力于为您提供一个公正和真实的面试体验，以帮助您更好地准备实际面试。在开始之前，能请您简短地介绍一下自己吗？"
+		})
+		
 		if (resQuestions.length) {
 			questions.value = resQuestions;
 			questionVideoPath.value = resQuestions[0].video;
@@ -221,6 +226,7 @@
 	
 	// 展示下一个问题
 	const nextQuestion = () => {
+		console.log("nextQuestion method called");  // 添加这一行
 	    currentQuestionIndex.value++;
 	    
 	    if (currentQuestionIndex.value < questions.value.length) {
