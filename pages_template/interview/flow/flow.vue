@@ -29,7 +29,7 @@
 		
 		<view class="bottom-body padding-xl">
 			<view class="question-body border-radius-large">
-				<text class="question-text">{{interviewPrologue}}</text>
+				<text class="question-text">{{ isAnswering ? questionText : interviewPrologue }}</text>
 			</view>
 			<view class="btn-wrapper">
 				<view 
@@ -82,8 +82,12 @@
 		countdownInterval: null as number | null,
 		transitionPath: "https://mp-43f7552d-29af-4d0a-8672-7a2fcdd00dc7.cdn.bspapp.com/interview/iv-transition.mp4",
 		introVideoPath: "https://mp-43f7552d-29af-4d0a-8672-7a2fcdd00dc7.cdn.bspapp.com/interview/iv-prologue.mp4",
-		questionVideoPath: "https://mp-43f7552d-29af-4d0a-8672-7a2fcdd00dc7.cdn.bspapp.com/2023/08/11/83260029-33479829-1.HTMLWeb.mp4",
+		questionVideoPath: "",
+		questionText: "",
 		interviewPrologue: "您好！欢迎使用我们的AI模拟面试应用。我将会是您今日的面试官。我们致力于为您提供一个公正和真实的面试体验，以帮助您更好地准备实际面试。在开始之前，能请您简短地介绍一下自己吗？",
+		isInterviewFinished: false,
+		questions: [],  // 存储所有的面试问题
+		currentQuestionIndex: -1,  // 当前问题的索引
 		currentVideo: 'intro', // 'intro', 'question', 'transition'
 		isButtonDisabled: true,
 		sysWidth: 0,
@@ -102,7 +106,11 @@
 		transitionPath,
 		introVideoPath,
 		questionVideoPath,
+		questionText,
 		interviewPrologue,
+		isInterviewFinished,
+		questions,
+		currentQuestionIndex,
 		currentVideo,
 		isButtonDisabled,
 		sysWidth,
@@ -153,14 +161,21 @@
 	        canAnswer.value = true;
 	        currentVideo.value = 'transition';  // 设置为播放transition视频
 	    } else if (currentVideo.value === 'question') {
-	        isAnswering.value = true;
+	        currentVideo.value = 'transition';  // 面试题播放完后播放过渡视频
 	        isButtonDisabled.value = false;  // 将按钮设置为可点击状态
 	        startCountdown(); // 开始倒计时
-	    } else if (currentVideo.value === 'transition' && !isAnswering.value) {
-	        currentVideo.value = 'transition'; // 如果是transition视频结束，再次播放
+	    } else if (currentVideo.value === 'transition') {
+	        if (isAnswering.value) {
+	            // 如果在回答，那么不做任何操作，因为按钮已经被启用，倒计时已经开始
+	        } else {
+	            // 在转场视频结束后，加载面试问题
+	            currentVideo.value = 'question';
+	            questionText.value = questions.value[currentQuestionIndex.value].text;
+	            questionVideoPath.value = questions.value[currentQuestionIndex.value].video;
+	        }
 	    }
 	};
-	
+
 	// 开始答题
 	const startAnswering = () => {
 	    isAnswering.value = true;
@@ -172,16 +187,74 @@
 
 	// 结束答题
 	const stopAnswering = async () => {
-		if (countdownInterval.value) {
-			clearInterval(countdownInterval.value);
-			countdown.value = 300; // 重置计时器
+	    if (countdownInterval.value) {
+	        clearInterval(countdownInterval.value);
+	        countdown.value = 300; // 重置计时器
+	    }
+	    isAnswering.value = false;
+	    nextQuestion(); // 加载下一个问题
+	    if(isRecording.value) {
+	        await stopRecord();
+	        uploadVideo(recordVideoPath.value);
+	    }
+	}
+	
+
+	
+	// 获取面试题API
+	const fetchInterviewQuestions = async () => {
+	    // 模拟延迟，以更真实地模仿API请求
+	    await new Promise(resolve => setTimeout(resolve, 1000));
+	
+	    const resQuestions = [
+	        {
+	            video: "https://mp-43f7552d-29af-4d0a-8672-7a2fcdd00dc7.cdn.bspapp.com/2023/08/11/83260029-33479829-1.HTMLWeb.mp4",
+	            text: "请解释一下什么是html，以及它在web开发中的作用是什么？"
+	        },
+	        {
+	            video: "https://mp-43f7552d-29af-4d0a-8672-7a2fcdd00dc7.cdn.bspapp.com/2023/08/10/83146051-49111684-2.HTML`DOCTYPE``html``head``body`.mp4",
+	            text: "请问HTML文档的基本结构是怎样的？你能描述一下`<!DOCTYPE>`、`<html>`、`<head>`和`<body>`标签的用途吗？"
+	        },
+	        // ...您可以继续添加更多问题...
+	    ];
+		if (resQuestions.length) {
+			questions.value = resQuestions;
+			questionVideoPath.value = resQuestions[0].video;
+			questionText.value = resQuestions[0].text;
+		} else {
+			console.error("没有获取到面试问题");
 		}
-		isAnswering.value = false;
-		if(isRecording.value) {
-			await stopRecord();
-			// 假设uploadVideo是您上传视频的函数
-			uploadVideo(recordVideoPath.value);
-		}
+	};
+	
+	// 展示下一个问题
+	const nextQuestion = () => {
+	    currentQuestionIndex.value++;
+	    
+	    if (currentQuestionIndex.value < questions.value.length) {
+	        const currentQuestion = questions.value[currentQuestionIndex.value];
+	        
+	        if (currentQuestion) {
+	            questionVideoPath.value = currentQuestion.video;
+	            questionText.value = currentQuestion.text;
+	            currentVideo.value = 'question';  // 这里确保设置为播放问题视频
+	        } else {
+	            console.error("当前问题索引超出问题数组范围");
+	        }
+	    } else {
+	        // 所有问题都已回答
+	        showEndVideoAndReportNotification();
+	    }
+	}
+
+	
+	// 展示结束视频并通知用户报告正在生成
+	const showEndVideoAndReportNotification = () => {
+	    // 假设您有一个结束视频的路径
+	    const endVideoPath = "path_to_your_end_video.mp4";
+	    
+	    // 设置结束视频
+	    questionVideoPath.value = endVideoPath;
+	    questionText.value = "您的面试已完成！请等待大约10分钟以生成报告。"
 	}
 	
 	// 上传视频到服务器
@@ -265,6 +338,7 @@
 	onMounted(async () => {
 		customNavTitle()
 		getSystemDimensions()
+		await fetchInterviewQuestions();
 	});
 	
 	// 当组件卸载时，清除计时器
