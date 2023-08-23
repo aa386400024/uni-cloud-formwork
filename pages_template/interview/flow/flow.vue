@@ -29,7 +29,6 @@
 		
 		<view class="bottom-body padding-xl">
 			<view class="question-body border-radius-large">
-				{{isAnswering}}
 				<text class="question-text">{{ questionText }}</text>
 			</view>
 			<view class="btn-wrapper">
@@ -82,13 +81,12 @@
 		countdown: INITIAL_COUNTDOWN,
 		countdownInterval: null as number | null,
 		transitionPath: "https://mp-43f7552d-29af-4d0a-8672-7a2fcdd00dc7.cdn.bspapp.com/interview/iv-transition.mp4",
-		introVideoPath: "",
 		questionVideoPath: "",
 		questionText: "",
 		isInterviewFinished: false,
 		questions: [],  // 存储所有的面试问题
 		currentQuestionIndex: 0,  // 当前问题的索引
-		currentVideo: 'question', // 'intro', 'question', 'transition'
+		currentVideo: 'question', // 'question', 'transition'
 		isButtonDisabled: true,
 		sysWidth: 0,
 		sysHeight: 0,
@@ -104,7 +102,6 @@
 		countdown,
 		countdownInterval,
 		transitionPath,
-		introVideoPath,
 		questionVideoPath,
 		questionText,
 		isInterviewFinished,
@@ -160,7 +157,6 @@
 	        currentVideo.value = 'transition';  // 面试题播放完后播放过渡视频
 			canAnswer.value = true;
 	        isButtonDisabled.value = false;  // 将按钮设置为可点击状态
-	        startCountdown(); // 开始倒计时
 	    } else if (currentVideo.value === 'transition') {
 	        // canAnswer.value = false;
 	    }
