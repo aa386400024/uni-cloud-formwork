@@ -165,14 +165,7 @@
 	        isButtonDisabled.value = false;  // 将按钮设置为可点击状态
 	        startCountdown(); // 开始倒计时
 	    } else if (currentVideo.value === 'transition') {
-	        if (isAnswering.value) {
-	            // 如果在回答，那么不做任何操作，因为按钮已经被启用，倒计时已经开始
-	        } else {
-	            // 在转场视频结束后，加载面试问题
-	            currentVideo.value = 'question';
-	            questionText.value = questions.value[currentQuestionIndex.value].text;
-	            questionVideoPath.value = questions.value[currentQuestionIndex.value].video;
-	        }
+	        return
 	    }
 	};
 
