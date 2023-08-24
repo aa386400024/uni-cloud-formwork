@@ -71,16 +71,25 @@
 	const interviewStore = useInterviewStore();
 	const flowNavTitle = computed(() => interviewStore.flowNavTitle);
 	
-	const INITIAL_COUNTDOWN = 300;
+	const CONFIG = {
+	    INITIAL_COUNTDOWN: 300,
+		PROLOGUE_VIDEO_PATH: "https://mp-43f7552d-29af-4d0a-8672-7a2fcdd00dc7.cdn.bspapp.com/interview/iv-prologue.mp4",
+		PROLOGUE_VIDEO_TEXT: "您好！欢迎使用我们的AI模拟面试应用。我将会是您今日的面试官。我们致力于为您提供一个公正和真实的面试体验，以帮助您更好地准备实际面试。在开始之前，能请您简短地介绍一下自己吗？",
+	    TRANSITION_VIDEO_PATH: "https://mp-43f7552d-29af-4d0a-8672-7a2fcdd00dc7.cdn.bspapp.com/interview/iv-transition.mp4",
+	    END_VIDEO_PATH: "https://mp-43f7552d-29af-4d0a-8672-7a2fcdd00dc7.cdn.bspapp.com/interview/iv-end-video.mp4",
+		END_VIDEO_TEXT: "您的本次面试已经顺利结束，感谢您的参与与努力。请您稍等片刻，我们正在为您生成专属的面试报告。稍后，您可以在'面试历史'里查看您的面试表现和反馈。再次感谢您，祝您一切顺利！"
+		// ... 其他硬编码的值
+	};
+
 	const myData = reactive({
 		recordVideoPath: '',
 		isCameraActive: true, // 预览视频开启状态
 		isRecording: false, // 是否在录制视频中
 		isAnswering: false,
 		canAnswer: false,
-		countdown: INITIAL_COUNTDOWN,
+		countdown: CONFIG.INITIAL_COUNTDOWN,
 		countdownInterval: null as number | null,
-		transitionPath: "https://mp-43f7552d-29af-4d0a-8672-7a2fcdd00dc7.cdn.bspapp.com/interview/iv-transition.mp4",
+		transitionPath: CONFIG.TRANSITION_VIDEO_PATH,
 		questionVideoPath: "",
 		questionText: "",
 		isInterviewFinished: false,
@@ -153,13 +162,18 @@
 	
 	// 当播放到末尾时触发 ended 事件
 	const videoEnded = () => {
-	    if (currentVideo.value === 'question') {
-	        currentVideo.value = 'transition';  // 面试题播放完后播放过渡视频
-			canAnswer.value = true;
-	        isButtonDisabled.value = false;  // 将按钮设置为可点击状态
-	    } else if (currentVideo.value === 'transition') {
-	        // canAnswer.value = false;
-	    }
+		if (currentVideo.value === 'question') {
+			setToTransitionVideo();
+		} else if (currentVideo.value === 'transition') {
+			// ... 其他逻辑
+		}
+	};
+	
+	// 切换到过渡视频并更新相关状态
+	const setToTransitionVideo = () => {
+	    currentVideo.value = 'transition';
+	    canAnswer.value = true;
+	    isButtonDisabled.value = false;
 	};
 
 	// 开始答题
@@ -181,23 +195,28 @@
 
 	// 结束答题
 	const stopAnswering = async () => {
-	    if (countdownInterval.value) {
-	        clearInterval(countdownInterval.value);
-	        countdown.value = 300; // 重置计时器
-	    }
-	    isAnswering.value = false;
-	
-	    if (currentQuestionIndex.value === questions.value.length - 1) {
-	        // 所有问题都已回答
-	        showEndVideo();
-	    } else {
-	        nextQuestion(); // 加载下一个问题
-	    }
-	
-	    if (isRecording.value) {
-	        await stopRecord();
-	        uploadVideo(recordVideoPath.value);
-	    }
+		try {
+			if (countdownInterval.value) {
+			    clearInterval(countdownInterval.value);
+			    countdown.value = 300; // 重置计时器
+			}
+			isAnswering.value = false;
+				
+			if (currentQuestionIndex.value === questions.value.length - 1) {
+			    // 所有问题都已回答
+			    showEndVideo();
+			} else {
+			    nextQuestion(); // 加载下一个问题
+			}
+				
+			if (isRecording.value) {
+			    await stopRecord();
+			    uploadVideo(recordVideoPath.value);
+			}
+		}catch(err){
+			console.error('Error while stopping the answer:', err);
+		}
+	    
 	};
 
 	
@@ -218,8 +237,8 @@
 	        // ...您可以继续添加更多问题...
 	    ];
 		resQuestions.unshift({
-			video: "https://mp-43f7552d-29af-4d0a-8672-7a2fcdd00dc7.cdn.bspapp.com/interview/iv-prologue.mp4",
-			text: "您好！欢迎使用我们的AI模拟面试应用。我将会是您今日的面试官。我们致力于为您提供一个公正和真实的面试体验，以帮助您更好地准备实际面试。在开始之前，能请您简短地介绍一下自己吗？"
+			video: CONFIG.PROLOGUE_VIDEO_PATH,
+			text: CONFIG.PROLOGUE_VIDEO_TEXT
 		})
 		
 		if (resQuestions.length) {
@@ -258,11 +277,9 @@
 		canAnswer.value = true;
 		currentVideo.value = 'question';
 
-	    const endVideoPath = "https://mp-43f7552d-29af-4d0a-8672-7a2fcdd00dc7.cdn.bspapp.com/interview/iv-end-video.mp4";
-	    
 	    // 设置结束视频
-	    questionVideoPath.value = endVideoPath;
-	    questionText.value = "您的本次面试已经顺利结束，感谢您的参与与努力。请您稍等片刻，我们正在为您生成专属的面试报告。稍后，您可以在'面试历史'里查看您的面试表现和反馈。再次感谢您，祝您一切顺利！"
+	    questionVideoPath.value = CONFIG.END_VIDEO_PATH;
+	    questionText.value = CONFIG.END_VIDEO_TEXT;
 	}
 	
 	// 上传视频到服务器
