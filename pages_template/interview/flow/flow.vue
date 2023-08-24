@@ -135,7 +135,7 @@
 	});
 	
 	// 自定义导航标题
-	const customNavTitle = () => {
+	const setCustomNavigationBarTitle = () => {
 		uni.setNavigationBarTitle({
 			title: flowNavTitle.value
 		})
@@ -150,17 +150,27 @@
 	
 	// 倒计时方法
 	const startCountdown = () => {
-		countdownInterval.value = setInterval(() => {
-			if (countdown.value > 0) {
-				countdown.value--;
-			} else {
-				clearInterval(countdownInterval.value!);
-				stopAnswering();
-			}
-		}, 1000);
+	    let lastTime = Date.now();
+	
+	    const updateCountdown = () => {
+	        const now = Date.now();
+	        const deltaTime = (now - lastTime) / 1000; // 计算时间差并转换为秒
+	        lastTime = now;
+	
+	        countdown.value -= deltaTime;
+	
+	        if (countdown.value <= 0) {
+	            countdown.value = 0;
+	            // 如果倒计时结束，您可以在此处添加其他逻辑，例如停止录制视频等
+	        } else {
+	            requestAnimationFrame(updateCountdown); // 如果倒计时未结束，继续更新
+	        }
+	    };
+	
+	    requestAnimationFrame(updateCountdown); // 开始倒计时
 	};
 	
-	// 当播放到末尾时触发 ended 事件
+	// 当视频播放结束时，根据当前视频类型进行相应的操作
 	const videoEnded = () => {
 		if (currentVideo.value === 'question') {
 			setToTransitionVideo();
@@ -192,6 +202,8 @@
 		}
 		
 	}
+	
+	const isLastQuestion = computed(() => currentQuestionIndex.value === questions.value.length - 1);
 
 	// 结束答题
 	const stopAnswering = async () => {
@@ -202,7 +214,7 @@
 			}
 			isAnswering.value = false;
 				
-			if (currentQuestionIndex.value === questions.value.length - 1) {
+			if (isLastQuestion.value) {
 			    // 所有问题都已回答
 			    showEndVideo();
 			} else {
@@ -222,32 +234,37 @@
 	
 	// 获取面试题API
 	const fetchInterviewQuestions = async () => {
-	    // 模拟延迟，以更真实地模仿API请求
-	    await new Promise(resolve => setTimeout(resolve, 1000));
-	
-	    const resQuestions = [
-	        {
-	            video: "https://mp-43f7552d-29af-4d0a-8672-7a2fcdd00dc7.cdn.bspapp.com/2023/08/11/83260029-33479829-1.HTMLWeb.mp4",
-	            text: "请解释一下什么是html，以及它在web开发中的作用是什么？"
-	        },
-	        {
-	            video: "https://mp-43f7552d-29af-4d0a-8672-7a2fcdd00dc7.cdn.bspapp.com/2023/08/10/83146051-49111684-2.HTML`DOCTYPE``html``head``body`.mp4",
-	            text: "请问HTML文档的基本结构是怎样的？你能描述一下`<!DOCTYPE>`、`<html>`、`<head>`和`<body>`标签的用途吗？"
-	        },
-	        // ...您可以继续添加更多问题...
-	    ];
-		resQuestions.unshift({
-			video: CONFIG.PROLOGUE_VIDEO_PATH,
-			text: CONFIG.PROLOGUE_VIDEO_TEXT
-		})
-		
-		if (resQuestions.length) {
-			questions.value = resQuestions;
-			questionVideoPath.value = resQuestions[0].video;
-			questionText.value = resQuestions[0].text;
-		} else {
-			console.error("没有获取到面试问题");
+		try {
+			// 模拟延迟，以更真实地模仿API请求
+			await new Promise(resolve => setTimeout(resolve, 1000));
+				
+			const resQuestions = [
+			    {
+			        video: "https://mp-43f7552d-29af-4d0a-8672-7a2fcdd00dc7.cdn.bspapp.com/2023/08/11/83260029-33479829-1.HTMLWeb.mp4",
+			        text: "请解释一下什么是html，以及它在web开发中的作用是什么？"
+			    },
+			    {
+			        video: "https://mp-43f7552d-29af-4d0a-8672-7a2fcdd00dc7.cdn.bspapp.com/2023/08/10/83146051-49111684-2.HTML`DOCTYPE``html``head``body`.mp4",
+			        text: "请问HTML文档的基本结构是怎样的？你能描述一下`<!DOCTYPE>`、`<html>`、`<head>`和`<body>`标签的用途吗？"
+			    },
+			    // ...您可以继续添加更多问题...
+			];
+			resQuestions.unshift({
+				video: CONFIG.PROLOGUE_VIDEO_PATH,
+				text: CONFIG.PROLOGUE_VIDEO_TEXT
+			})
+			
+			if (resQuestions.length) {
+				questions.value = resQuestions;
+				questionVideoPath.value = resQuestions[0].video;
+				questionText.value = resQuestions[0].text;
+			} else {
+				console.error("没有获取到面试问题");
+			}
+		}catch(err){
+			console.error('Error fetching questions:', err);
 		}
+	    
 	};
 	
 	// 展示下一个问题
@@ -361,7 +378,7 @@
 	}
 
 	onMounted(async () => {
-		customNavTitle()
+		setCustomNavigationBarTitle()
 		getSystemDimensions()
 		await fetchInterviewQuestions();
 	});
