@@ -196,7 +196,7 @@
 	// 是否为最后一个面试问题
 	const isLastQuestion = computed(() => currentQuestionIndex.value === questions.value.length - 1);
 
-	// 结束答题
+	// 回答完毕按钮点击事件
 	const stopAnswering = async () => {
 		try {
 			if (countdownInterval.value) {
