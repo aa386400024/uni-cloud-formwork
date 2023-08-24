@@ -44,7 +44,7 @@
 						shape="circle" 
 						type="primary" 
 						size="large" 
-						text="开始答题"
+						:text="isInterviewFinished ? '结束面试' : '开始答题'"
 						:disabled="!canAnswer"
 						@click="startAnswering" 
 					></u-button>
@@ -166,13 +166,16 @@
 	const startAnswering = () => {
 	    isAnswering.value = true;
 		isButtonDisabled.value = false;
-		canAnswer.value = false;
+		if(isInterviewFinished.value) {
+			console.log("关闭页面")
+		}else {
+			canAnswer.value = false;
+		}
 		startCountdown();
 	    if (isCameraActive.value) {
 	        startRecord();
 	    }
 	}
-
 
 	// 结束答题
 	const stopAnswering = async () => {
@@ -187,8 +190,6 @@
 	        uploadVideo(recordVideoPath.value);
 	    }
 	}
-	
-
 	
 	// 获取面试题API
 	const fetchInterviewQuestions = async () => {
@@ -237,19 +238,19 @@
 	        }
 	    } else {
 	        // 所有问题都已回答
-	        showEndVideoAndReportNotification();
+	        showEndVideo();
 	    }
 	}
-
 	
 	// 展示结束视频并通知用户报告正在生成
-	const showEndVideoAndReportNotification = () => {
-	    // 假设您有一个结束视频的路径
-	    const endVideoPath = "path_to_your_end_video.mp4";
+	const showEndVideo = () => {
+		isInterviewFinished.value = true;
+		canAnswer.value = true;
+	    const endVideoPath = "https://mp-43f7552d-29af-4d0a-8672-7a2fcdd00dc7.cdn.bspapp.com/interview/iv-end-video.mp4";
 	    
 	    // 设置结束视频
 	    questionVideoPath.value = endVideoPath;
-	    questionText.value = "您的面试已完成！请等待大约10分钟以生成报告。"
+	    questionText.value = "您的本次面试已经顺利结束，感谢您的参与与努力。请您稍等片刻，我们正在为您生成专属的面试报告。稍后，您可以在'面试历史'里查看您的面试表现和反馈。再次感谢您，祝您一切顺利！"
 	}
 	
 	// 上传视频到服务器
