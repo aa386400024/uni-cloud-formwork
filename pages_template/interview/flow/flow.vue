@@ -163,14 +163,14 @@
 	// 当视频播放结束时，根据当前视频类型进行相应的操作
 	const videoEnded = () => {
 		if (currentVideo.value === 'question') {
-			setToTransitionVideo();
+			switchToTransitionVideo();
 		} else if (currentVideo.value === 'transition') {
 			// ... 其他逻辑
 		}
 	};
 	
 	// 切换到过渡视频并更新相关状态
-	const setToTransitionVideo = () => {
+	const switchToTransitionVideo = () => {
 	    currentVideo.value = 'transition';
 	    canAnswer.value = true;
 	    isButtonDisabled.value = false;
