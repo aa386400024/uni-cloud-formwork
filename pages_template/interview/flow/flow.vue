@@ -164,17 +164,19 @@
 
 	// 开始答题
 	const startAnswering = () => {
-	    isAnswering.value = true;
-		isButtonDisabled.value = false;
 		if(isInterviewFinished.value) {
-			console.log("关闭页面")
+			vk.switchTab("/pages/home/index");
 		}else {
+			
+			isAnswering.value = true;
+			isButtonDisabled.value = false;
 			canAnswer.value = false;
+			startCountdown();
+			if (isCameraActive.value) {
+			    startRecord();
+			}
 		}
-		startCountdown();
-	    if (isCameraActive.value) {
-	        startRecord();
-	    }
+		
 	}
 
 	// 结束答题
@@ -254,6 +256,8 @@
 	const showEndVideo = () => {
 		isInterviewFinished.value = true;
 		canAnswer.value = true;
+		currentVideo.value = 'question';
+
 	    const endVideoPath = "https://mp-43f7552d-29af-4d0a-8672-7a2fcdd00dc7.cdn.bspapp.com/interview/iv-end-video.mp4";
 	    
 	    // 设置结束视频
