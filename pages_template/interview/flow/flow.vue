@@ -88,6 +88,7 @@
 		isAnswering: false,
 		canAnswer: false,
 		countdown: CONFIG.INITIAL_COUNTDOWN,
+		countdownInterval: null as number | null,
 		transitionPath: CONFIG.TRANSITION_VIDEO_PATH,
 		questionVideoPath: "",
 		questionText: "",
@@ -108,6 +109,7 @@
 		isAnswering,
 		canAnswer,
 		countdown,
+		countdownInterval,
 		transitionPath,
 		questionVideoPath,
 		questionText,
@@ -148,27 +150,14 @@
 	
 	// 倒计时方法
 	const startCountdown = () => {
-		isAnswering.value = true;  // 开始答题
-	    let lastTime = Date.now();
-	
-	    const updateCountdown = () => {
-	        if (!isAnswering.value) return;  // 添加这个条件来检查答题状态
-	
-	        const now = Date.now();
-	        const deltaTime = (now - lastTime) / 1000; // 计算时间差并转换为秒
-	        lastTime = now;
-	
-	        countdown.value -= deltaTime;
-	
-	        if (countdown.value <= 0) {
-	            countdown.value = 0;
-	            // 如果倒计时结束，您可以在此处添加其他逻辑，例如停止录制视频等
-	        } else {
-	            requestAnimationFrame(updateCountdown); // 如果倒计时未结束，继续更新
-	        }
-	    };
-	
-	    requestAnimationFrame(updateCountdown); // 开始倒计时
+		countdownInterval.value = setInterval(() => {
+			if (countdown.value > 0) {
+				countdown.value--;
+			} else {
+				clearInterval(countdownInterval.value!);
+				stopAnswering();
+			}
+		}, 1000);
 	};
 	
 	// 当视频播放结束时，根据当前视频类型进行相应的操作
@@ -209,26 +198,31 @@
 
 	// 结束答题
 	const stopAnswering = async () => {
-	    try {
-	        // 停止答题并重置倒计时
-	        isAnswering.value = false;
-	        countdown.value = CONFIG.INITIAL_COUNTDOWN;
-	
-	        if (isLastQuestion.value) {
-	            showEndVideo(); // 所有问题都已回答
-	        } else {
-	            nextQuestion(); // 加载下一个问题
-	        }
-	
-	        if (isRecording.value) {
-	            await stopRecord();
-	            uploadVideo(recordVideoPath.value);
-	        }
-	    } catch (err) {
-	        console.error('Error while stopping the answer:', err);
-	    }
+		try {
+			if (countdownInterval.value) {
+			    clearInterval(countdownInterval.value);
+			    countdown.value = 300; // 重置计时器
+			}
+			isAnswering.value = false;
+				
+			if (isLastQuestion.value) {
+			    // 所有问题都已回答
+			    showEndVideo();
+			} else {
+			    nextQuestion(); // 加载下一个问题
+			}
+				
+			if (isRecording.value) {
+			    await stopRecord();
+			    uploadVideo(recordVideoPath.value);
+			}
+		}catch(err){
+			console.error('Error while stopping the answer:', err);
+		}
+	    
 	};
 
+	
 	// 获取面试题API
 	const fetchInterviewQuestions = async () => {
 		try {
