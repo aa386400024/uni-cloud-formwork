@@ -184,12 +184,20 @@
 	        countdown.value = 300; // 重置计时器
 	    }
 	    isAnswering.value = false;
-	    nextQuestion(); // 加载下一个问题
-	    if(isRecording.value) {
+	
+	    if (currentQuestionIndex.value === questions.value.length - 1) {
+	        // 所有问题都已回答
+	        showEndVideo();
+	    } else {
+	        nextQuestion(); // 加载下一个问题
+	    }
+	
+	    if (isRecording.value) {
 	        await stopRecord();
 	        uploadVideo(recordVideoPath.value);
 	    }
-	}
+	};
+
 	
 	// 获取面试题API
 	const fetchInterviewQuestions = async () => {
