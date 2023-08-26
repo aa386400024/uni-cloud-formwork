@@ -69,7 +69,7 @@
 	import { reactive, ref, toRefs, computed, onMounted, onBeforeUnmount } from 'vue';
 	import { useInterviewStore } from '@/stores';
 	const interviewStore = useInterviewStore();
-	const flowNavTitle = computed(() => interviewStore.flowNavTitle);
+	const flowNavTitle = computed(() => interviewStore.currentJobInfo!.name);
 	
 	const CONFIG = {
 	    INITIAL_COUNTDOWN: 300,

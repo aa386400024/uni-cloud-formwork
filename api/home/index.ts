@@ -24,3 +24,15 @@ export async function fetchPositions(data: any): Promise<any> {
 	const response = await request(options)
 	return response.data
 }
+
+// 自定义面试风格数据接口
+export async function fetchIvCustom(data: any): Promise<any> {
+	const options: RequestOptions = {
+		url: 'client/interview/kh/customLList',
+		data,
+		cloudFunction: true,
+		title: '请求中...'
+	}
+	const response = await request(options)
+	return response.data
+}

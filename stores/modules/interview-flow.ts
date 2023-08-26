@@ -1,12 +1,15 @@
 import { defineStore } from 'pinia'
 
 interface interviewState {
-	flowNavTitle: string
+	currentJobInfo: {
+		name?: string,
+		position_id?: string
+	}
 }
 
 export const useInterviewStore = defineStore('interview', {
 	state: (): interviewState => {
-		return { flowNavTitle: '' } // 初始化 flowNavTitle
+		return { currentJobInfo: {} } // 初始化 currentJobInfo
 	},
 	actions: {
 		increment(this: interviewState): void {},
@@ -14,4 +17,4 @@ export const useInterviewStore = defineStore('interview', {
 })
 
 // 定义需要持久化的状态键
-export const interviewPersistStateKeys = [{ storeId: 'interview', key: 'flowNavTitle' }]
+export const interviewPersistStateKeys = [{ storeId: 'interview', key: 'currentJobInfo' }]

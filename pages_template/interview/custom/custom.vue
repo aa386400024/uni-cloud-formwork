@@ -36,7 +36,7 @@
 					</view>
 				</view>
 			</view>
-			<view class="skill-body border-radius-large">
+			<view class="skill-body border-radius-large"  v-if="skillRadios.length > 0">
 				<view class="title">技术栈</view>
 				<view class="skill-tag">
 					<view class="margin-right-xl margin-bottom-lg" v-for="(item, index) in skillRadios" :key="index">
@@ -68,30 +68,17 @@
 
 <script setup lang="ts">
 	import { reactive, toRefs, computed, onMounted } from 'vue';
+	import { fetchIvCustom } from '@/api/home';
+	import { useInterviewStore } from '@/stores';
+	const interviewStore = useInterviewStore();
+	const currentJobInfo = computed(() => interviewStore.currentJobInfo);
 	const myData = reactive({
 		customUrl: 'https://mp-43f7552d-29af-4d0a-8672-7a2fcdd00dc7.cdn.bspapp.com/interview/custom-interview-subject.png',
-		customImgWidth: 0,
+		customImgWidth: 0, 
 		windowHeight: 0,
-		styleRadios: [
-			{ checked: true, name: '技术面' },
-			{ checked: false, name: '行为面' },
-			{ checked: false, name: '混合面' }
-		],
-		levelRadios: [
-			{ checked: true, name: '初级' },
-			{ checked: false, name: '中级' },
-			{ checked: false, name: '高级' }
-		],
-		skillRadios: [
-			{ checked: true, name: 'html' },
-			{ checked: false, name: 'css' },
-			{ checked: false, name: 'javascript' },
-			{ checked: false, name: 'vue' },
-			{ checked: false, name: 'react' },
-			{ checked: false, name: 'angular' },
-			{ checked: false, name: 'webpack' },
-			{ checked: false, name: 'vite' },
-		],
+		styleRadios: [] as CustomRadio[],
+		levelRadios: [] as CustomRadio[],
+		skillRadios: [] as CustomRadio[],
 		interviewBtnCustomStyle: {
 			fontSize: "20px !important"
 		}
@@ -129,6 +116,7 @@
 	
 	// 技术栈tag点击事件
 	const skillRadiosClick = (name: number) => {
+		console.log(skillRadios.value[name], 'name')
 		skillRadios.value[name].checked = !skillRadios.value[name].checked;
 	};
 	
@@ -136,8 +124,28 @@
 		vk.redirectTo('/pages_template/interview/flow/flow');
 	}
 	
+	// 获取自定义面试数据
+	const fetchIvCustomApi = async () => {
+		const { position_id } = currentJobInfo.value
+		const params = {
+			position_id
+		}
+		try {
+			const res = await fetchIvCustom(params);
+			const { styleRadios, levelRadios, skillRadios } = res;
+			console.log(styleRadios, 'styleRadios')
+			myData.styleRadios = styleRadios || [];
+			        myData.levelRadios = levelRadios || [];
+			        myData.skillRadios = skillRadios || [];
+		} catch (error) {
+			console.error('Error during fetchIvCustomApi:', error);
+			// 可以在这里添加更多的错误处理逻辑，比如设置一个标志，让用户知道出现了错误
+		}
+	};
+	
 	onMounted(async () => {
 		setCustomImgWidth()
+		fetchIvCustomApi()
 	});
 </script>
 

@@ -198,7 +198,7 @@
 	
 	// 职位点击事件-跳转到面试页
 	const goToInterview = (job: any) => {
-		interviewStore.flowNavTitle = job.name;
+		interviewStore.currentJobInfo = job;
 		showPopup.value = true
 	}
 	
