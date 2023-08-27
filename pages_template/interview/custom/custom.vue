@@ -79,6 +79,9 @@
 		styleRadios: [] as CustomRadio[],
 		levelRadios: [] as CustomRadio[],
 		skillRadios: [] as CustomRadio[],
+		selectedStyleRadio: '',
+		selectedLevelRadio: '',
+		selectedSkillRadios: [] as string[],
 		interviewBtnCustomStyle: {
 			fontSize: "20px !important"
 		}
@@ -90,6 +93,9 @@
 		styleRadios,
 		levelRadios, 
 		skillRadios, 
+		selectedStyleRadio,
+		selectedLevelRadio,
+		selectedSkillRadios,
 		interviewBtnCustomStyle 
 	} = toRefs(myData)
 	
@@ -105,6 +111,7 @@
 		styleRadios.value.forEach((item, index) => {
 		    item.checked = index === name;
 		});
+		selectedStyleRadio.value = styleRadios.value.find(item => item.checked)?.value || '';
 	}
 	
 	// 面试难度tag点击事件
@@ -112,12 +119,14 @@
 		levelRadios.value.forEach((item, index) => {
 		    item.checked = index === name;
 		});
+		selectedLevelRadio.value = levelRadios.value.find(item => item.checked)?.value || '';
 	}
 	
 	// 技术栈tag点击事件
 	const skillRadiosClick = (name: number) => {
 		console.log(skillRadios.value[name], 'name')
 		skillRadios.value[name].checked = !skillRadios.value[name].checked;
+		selectedSkillRadios.value = skillRadios.value.filter(item => item.checked).map(item => item.value) || [];
 	};
 	
 	const startInterviewClick = () => {
@@ -135,8 +144,8 @@
 			const { styleRadios, levelRadios, skillRadios } = res;
 			console.log(styleRadios, 'styleRadios')
 			myData.styleRadios = styleRadios || [];
-			        myData.levelRadios = levelRadios || [];
-			        myData.skillRadios = skillRadios || [];
+			myData.levelRadios = levelRadios || [];
+			myData.skillRadios = skillRadios || [];
 		} catch (error) {
 			console.error('Error during fetchIvCustomApi:', error);
 			// 可以在这里添加更多的错误处理逻辑，比如设置一个标志，让用户知道出现了错误
