@@ -16,7 +16,7 @@ export const useInterviewStore = defineStore('interview', {
 	state: (): interviewState => {
 		return { 
 			currentJobInfo: {}, // 初始化 currentJobInfo
-			ivCustomParams: {
+			ivCustomParams: { // 初始化随机面试题参数
 				selectedStyleRadio: '',
 				selectedLevelRadio: '',
 				selectedSkillRadios: []

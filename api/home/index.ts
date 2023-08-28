@@ -36,3 +36,15 @@ export async function fetchIvCustom(data: any): Promise<any> {
 	const response = await request(options)
 	return response.data
 }
+
+// 根据面试风格，面试难度，技术栈随机获取5条面试题数据接口
+export async function fetchIvQuestion(data: FetchIvQuestion): Promise<any> {
+	const options: RequestOptions = {
+		url: 'client/interview/kh/questionList',
+		data,
+		cloudFunction: true,
+		title: '请求中...'
+	}
+	const response = await request(options)
+	return response.data
+}

@@ -67,7 +67,7 @@
 </template>
 
 <script setup lang="ts">
-	import { reactive, toRefs, computed, onMounted } from 'vue';
+	import { reactive, toRefs, Ref, computed, onMounted } from 'vue';
 	import { fetchIvCustom } from '@/api/home';
 	import { useInterviewStore } from '@/stores';
 	const interviewStore = useInterviewStore();
@@ -106,22 +106,24 @@
 		customImgWidth.value = systemInfo.safeArea!.width
 	}
 	
+	// 公共radioClick方法
+	const radioClick = (name: number, radios: Ref<CustomRadio[]>, selectedRadio: Ref<string>) => {
+	    radios.value.forEach((item, index) => {
+	        item.checked = index === name;
+	    });
+	    selectedRadio.value = radios.value.find(item => item.checked)?.value || '';
+	};
+	
 	// 面试风格tag点击事件
 	const styleRadioClick = (name: number) => {
-		styleRadios.value.forEach((item, index) => {
-		    item.checked = index === name;
-		});
-		selectedStyleRadio.value = styleRadios.value.find(item => item.checked)?.value || '';
-	}
+	    radioClick(name, styleRadios, selectedStyleRadio);
+	};
 	
 	// 面试难度tag点击事件
 	const levelRadioClick = (name: number) => {
-		levelRadios.value.forEach((item, index) => {
-		    item.checked = index === name;
-		});
-		selectedLevelRadio.value = levelRadios.value.find(item => item.checked)?.value || '';
-	}
-	
+	    radioClick(name, levelRadios, selectedLevelRadio);
+	};
+
 	// 技术栈tag点击事件
 	const skillRadiosClick = (name: number) => {
 		console.log(skillRadios.value[name], 'name')
@@ -129,8 +131,9 @@
 		selectedSkillRadios.value = skillRadios.value.filter(item => item.checked).map(item => item.value) || [];
 	};
 	
+	// 开始面试点击事件
 	const startInterviewClick = () => {
-		interviewStore.ivCustomParams = {
+		interviewStore.ivCustomParams = { 
 			selectedStyleRadio: selectedStyleRadio.value,
 			selectedLevelRadio: selectedLevelRadio.value,
 			selectedSkillRadios: selectedSkillRadios.value,
@@ -148,9 +151,9 @@
 			const res = await fetchIvCustom(params);
 			const { styleRadios, levelRadios, skillRadios } = res;
 			console.log(styleRadios, 'styleRadios')
-			myData.styleRadios = styleRadios || [];
-			myData.levelRadios = levelRadios || [];
-			myData.skillRadios = skillRadios || [];
+			myData.styleRadios.splice(0, myData.styleRadios.length, ...(styleRadios || []));
+			myData.levelRadios.splice(0, myData.levelRadios.length, ...(levelRadios || []));
+			myData.skillRadios.splice(0, myData.skillRadios.length, ...(skillRadios || []));
 			selectedStyleRadio.value = styleRadios.find((item: CustomRadio) => item.checked)?.value || '';
 			selectedLevelRadio.value = levelRadios.find((item: CustomRadio) => item.checked)?.value || '';
 			selectedSkillRadios.value = skillRadios.filter((item: CustomRadio) => item.checked).map((item: CustomRadio) => item.value) || [];

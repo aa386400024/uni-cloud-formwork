@@ -67,9 +67,11 @@
 
 <script setup lang="ts">
 	import { reactive, ref, toRefs, computed, onMounted, onBeforeUnmount } from 'vue';
+	import { fetchIvQuestion } from '@/api/home';
 	import { useInterviewStore } from '@/stores';
 	const interviewStore = useInterviewStore();
 	const flowNavTitle = computed(() => interviewStore.currentJobInfo!.name);
+	const ivCustomParams = computed(() => interviewStore.ivCustomParams);
 	
 	const CONFIG = {
 	    INITIAL_COUNTDOWN: 300,
@@ -367,10 +369,22 @@
 	        videoWidth.value = Math.round(sysHeight.value * videoAspectRatio);
 	    }
 	}
+	
+	// 随机获取5道面试题数据
+	const fetchIvQuestionApi = async () => {
+		try {
+			const res = await fetchIvQuestion(ivCustomParams.value);
+			console.log(res, 'resssssssssss')
+		} catch (error) {
+			console.error('Error during fetchIvQuestion:', error);
+			// 可以在这里添加更多的错误处理逻辑，比如设置一个标志，让用户知道出现了错误
+		}
+	};
 
 	onMounted(async () => {
-		setCustomNavigationBarTitle()
-		getSystemDimensions()
+		fetchIvQuestionApi();
+		setCustomNavigationBarTitle();
+		getSystemDimensions();
 		await fetchInterviewQuestions();
 	});
 	

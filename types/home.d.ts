@@ -18,3 +18,9 @@ declare interface CustomRadio {
 	value: string
 	checked: boolean
 }
+
+declare interface FetchIvQuestion {
+	selectedStyleRadio: string,
+	selectedLevelRadio: string,
+	selectedSkillRadios: string[]
+}
