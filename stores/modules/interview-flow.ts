@@ -4,12 +4,24 @@ interface interviewState {
 	currentJobInfo: {
 		name?: string,
 		position_id?: string
+	},
+	ivCustomParams: {
+		selectedStyleRadio: string,
+		selectedLevelRadio: string,
+		selectedSkillRadios: string[]
 	}
 }
 
 export const useInterviewStore = defineStore('interview', {
 	state: (): interviewState => {
-		return { currentJobInfo: {} } // 初始化 currentJobInfo
+		return { 
+			currentJobInfo: {}, // 初始化 currentJobInfo
+			ivCustomParams: {
+				selectedStyleRadio: '',
+				selectedLevelRadio: '',
+				selectedSkillRadios: []
+			}
+		} 
 	},
 	actions: {
 		increment(this: interviewState): void {},
@@ -17,4 +29,7 @@ export const useInterviewStore = defineStore('interview', {
 })
 
 // 定义需要持久化的状态键
-export const interviewPersistStateKeys = [{ storeId: 'interview', key: 'currentJobInfo' }]
+export const interviewPersistStateKeys = [
+	{ storeId: 'interview', key: 'currentJobInfo' },
+	{ storeId: 'interview', key: 'ivCustomParams' }
+]

@@ -130,6 +130,11 @@
 	};
 	
 	const startInterviewClick = () => {
+		interviewStore.ivCustomParams = {
+			selectedStyleRadio: selectedStyleRadio.value,
+			selectedLevelRadio: selectedLevelRadio.value,
+			selectedSkillRadios: selectedSkillRadios.value,
+		};
 		vk.redirectTo('/pages_template/interview/flow/flow');
 	}
 	
@@ -146,6 +151,9 @@
 			myData.styleRadios = styleRadios || [];
 			myData.levelRadios = levelRadios || [];
 			myData.skillRadios = skillRadios || [];
+			selectedStyleRadio.value = styleRadios.find((item: CustomRadio) => item.checked)?.value || '';
+			selectedLevelRadio.value = levelRadios.find((item: CustomRadio) => item.checked)?.value || '';
+			selectedSkillRadios.value = skillRadios.filter((item: CustomRadio) => item.checked).map((item: CustomRadio) => item.value) || [];
 		} catch (error) {
 			console.error('Error during fetchIvCustomApi:', error);
 			// 可以在这里添加更多的错误处理逻辑，比如设置一个标志，让用户知道出现了错误

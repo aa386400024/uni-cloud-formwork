@@ -80,12 +80,12 @@
 <script lang="ts" setup>
 	import { onMounted, reactive, ref, toRefs, computed } from 'vue';
 	import { useInterviewStore } from '@/stores';
-	import { useGlobalAPI } from '@/hooks/useGlobalAPI'
+	import { useGlobalAPI } from '@/hooks/useGlobalAPI';
 	import { fetchIndustries, fetchPositions } from '@/api/home';
 	import JobCard from '@/components/custom/card.vue';
 	import PermissionDrawer from './permission-drawer/permission-drawer.vue';
 	
-	const { apiWrapper } = useGlobalAPI()
+	const { apiWrapper } = useGlobalAPI();
 	const interviewStore = useInterviewStore();
 	const myData = reactive({
 		capsultBottom: 0,
