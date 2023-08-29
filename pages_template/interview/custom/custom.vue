@@ -134,6 +134,7 @@
 	// 开始面试点击事件
 	const startInterviewClick = () => {
 		interviewStore.ivCustomParams = { 
+			positionId: currentJobInfo.value.position_id || '',
 			selectedStyleRadio: selectedStyleRadio.value,
 			selectedLevelRadio: selectedLevelRadio.value,
 			selectedSkillRadios: selectedSkillRadios.value,

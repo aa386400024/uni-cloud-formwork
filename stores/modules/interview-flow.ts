@@ -6,6 +6,7 @@ interface interviewState {
 		position_id?: string
 	},
 	ivCustomParams: {
+		positionId: string,
 		selectedStyleRadio: string,
 		selectedLevelRadio: string,
 		selectedSkillRadios: string[]
@@ -17,6 +18,7 @@ export const useInterviewStore = defineStore('interview', {
 		return { 
 			currentJobInfo: {}, // 初始化 currentJobInfo
 			ivCustomParams: { // 初始化随机面试题参数
+				positionId: '',
 				selectedStyleRadio: '',
 				selectedLevelRadio: '',
 				selectedSkillRadios: []
