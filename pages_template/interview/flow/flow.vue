@@ -223,25 +223,12 @@
 		}
 	    
 	};
-
 	
-	// 获取面试题API
+	// 随机获取5道面试题数据
 	const fetchInterviewQuestions = async () => {
 		try {
-			// 模拟延迟，以更真实地模仿API请求
-			await new Promise(resolve => setTimeout(resolve, 1000));
-				
-			const resQuestions = [
-			    {
-			        video: "https://mp-43f7552d-29af-4d0a-8672-7a2fcdd00dc7.cdn.bspapp.com/2023/08/11/83260029-33479829-1.HTMLWeb.mp4",
-			        text: "请解释一下什么是html，以及它在web开发中的作用是什么？"
-			    },
-			    {
-			        video: "https://mp-43f7552d-29af-4d0a-8672-7a2fcdd00dc7.cdn.bspapp.com/2023/08/10/83146051-49111684-2.HTML`DOCTYPE``html``head``body`.mp4",
-			        text: "请问HTML文档的基本结构是怎样的？你能描述一下`<!DOCTYPE>`、`<html>`、`<head>`和`<body>`标签的用途吗？"
-			    },
-			    // ...您可以继续添加更多问题...
-			];
+			const res = await fetchIvQuestion(ivCustomParams.value);
+			let resQuestions = res.data || []
 			resQuestions.unshift({
 				video: CONFIG.PROLOGUE_VIDEO_PATH,
 				text: CONFIG.PROLOGUE_VIDEO_TEXT
@@ -254,10 +241,10 @@
 			} else {
 				console.error("没有获取到面试问题");
 			}
-		}catch(err){
-			console.error('Error fetching questions:', err);
+		} catch (error) {
+			console.error('Error during fetchInterviewQuestions', error);
+			// 可以在这里添加更多的错误处理逻辑，比如设置一个标志，让用户知道出现了错误
 		}
-	    
 	};
 	
 	// 展示下一个问题
@@ -369,20 +356,8 @@
 	        videoWidth.value = Math.round(sysHeight.value * videoAspectRatio);
 	    }
 	}
-	
-	// 随机获取5道面试题数据
-	const fetchIvQuestionApi = async () => {
-		try {
-			const res = await fetchIvQuestion(ivCustomParams.value);
-			console.log(res, 'resssssssssss')
-		} catch (error) {
-			console.error('Error during fetchIvQuestion:', error);
-			// 可以在这里添加更多的错误处理逻辑，比如设置一个标志，让用户知道出现了错误
-		}
-	};
 
 	onMounted(async () => {
-		fetchIvQuestionApi();
 		setCustomNavigationBarTitle();
 		getSystemDimensions();
 		await fetchInterviewQuestions();
