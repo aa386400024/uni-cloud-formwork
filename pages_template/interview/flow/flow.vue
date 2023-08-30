@@ -67,7 +67,7 @@
 
 <script setup lang="ts">
 	import { reactive, ref, toRefs, computed, onMounted, onBeforeUnmount } from 'vue';
-	import { fetchIvQuestion } from '@/api/home';
+	import { fetchIvQuestion, audioToText } from '@/api/home';
 	import { useInterviewStore } from '@/stores';
 	const interviewStore = useInterviewStore();
 	const flowNavTitle = computed(() => interviewStore.currentJobInfo!.name);
@@ -380,28 +380,40 @@
 	    recorderManager.stop();
 	};
 	
-	const accurateBasic = (file) => {
-	    vk.openapi.baidu.open.ocr.accurate_basic({
-	        title: "识别中...",
-	        data: {
-	            file: file
-	        },
-	        success: (res) => {
-	            this.data = res.data;
-	        },
-	    });
+	// 监听录音停止，获取临时文件路径
+	const onStopRecordingAudio = () => {
+		recorderManager.onStop((res) => {
+		    const { tempFilePath } = res;
+			vk.uploadFile({
+				filePath: tempFilePath,
+				success: (res: any) => {
+					const { url } = res;
+					audioToTextApi(url);
+				},
+				fail(err: any) {
+					console.log('Error:', err);
+				},
+				complete(complete: any) {
+					console.log(complete, 'complete')
+				}
+			});
+		});
+	}
+	
+	// 百度云语音转文字接口
+	const audioToTextApi = async (filePath: string) => {
+		const params = {
+			filePath: filePath
+		}
+	    const res = await audioToText(params);
+		console.log(res, 'audioToTextApi')
 	};
 
 	onMounted(async () => {
 		setCustomNavigationBarTitle();
 		getSystemDimensions();
 		await fetchInterviewQuestions();
-		recorderManager.onStop((res) => {
-		    console.log('recorder stop', res);
-		    const { tempFilePath } = res;
-		    // tempFilePath 是录音文件的临时路径
-			accurateBasic(tempFilePath);
-		});
+		onStopRecordingAudio();
 	});
 	
 	// 当组件卸载时，清除计时器

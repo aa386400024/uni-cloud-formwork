@@ -48,3 +48,14 @@ export async function fetchIvQuestion(data: FetchIvQuestion): Promise<any> {
 	const response = await request(options)
 	return response.data
 }
+
+// 百度智能云-音频文件转写API
+export async function audioToText(data: any): Promise<any> {
+	const options: RequestOptions = {
+		url: 'client/interview/kh/speechRecognition',
+		data,
+		cloudFunction: true,
+	}
+	const response = await request(options)
+	return response.data
+}
