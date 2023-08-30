@@ -82,6 +82,14 @@
 		END_VIDEO_TEXT: "您的本次面试已经顺利结束，感谢您的参与与努力。请您稍等片刻，我们正在为您生成专属的面试报告。稍后，您可以在'面试历史'里查看您的面试表现和反馈。再次感谢您，祝您一切顺利！"
 		// ... 其他硬编码的值
 	};
+	
+	const RECORDER_OPTIONS = {
+		duration: 300000,
+		sampleRate: 44100,
+		numberOfChannels: 1,
+		encodeBitRate: 192000,
+		format: 'PCM',
+	};
 
 	const myData = reactive({
 		recordVideoPath: '',
@@ -191,6 +199,7 @@
 			if (isCameraActive.value) {
 			    startRecord();
 			}
+			startRecordingAudio();
 		}
 		
 	}
@@ -218,6 +227,7 @@
 			    await stopRecord();
 			    uploadVideo(recordVideoPath.value);
 			}
+			stopRecordingAudio(); 
 		}catch(err){
 			console.error('Error while stopping the answer:', err);
 		}
@@ -356,6 +366,19 @@
 	        videoWidth.value = Math.round(sysHeight.value * videoAspectRatio);
 	    }
 	}
+	
+	// 获取全局唯一的录音管理器
+	const recorderManager = uni.getRecorderManager();
+	
+	// 开始录制音频
+	const startRecordingAudio = () => {
+	    recorderManager.start(RECORDER_OPTIONS);
+	};
+	
+	// 结束录制音频
+	const stopRecordingAudio = () => {
+	    recorderManager.stop();
+	};
 
 	onMounted(async () => {
 		setCustomNavigationBarTitle();
