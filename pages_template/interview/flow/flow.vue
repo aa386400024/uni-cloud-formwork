@@ -379,11 +379,29 @@
 	const stopRecordingAudio = () => {
 	    recorderManager.stop();
 	};
+	
+	const accurateBasic = (file) => {
+	    vk.openapi.baidu.open.ocr.accurate_basic({
+	        title: "识别中...",
+	        data: {
+	            file: file
+	        },
+	        success: (res) => {
+	            this.data = res.data;
+	        },
+	    });
+	};
 
 	onMounted(async () => {
 		setCustomNavigationBarTitle();
 		getSystemDimensions();
 		await fetchInterviewQuestions();
+		recorderManager.onStop((res) => {
+		    console.log('recorder stop', res);
+		    const { tempFilePath } = res;
+		    // tempFilePath 是录音文件的临时路径
+			accurateBasic(tempFilePath);
+		});
 	});
 	
 	// 当组件卸载时，清除计时器
