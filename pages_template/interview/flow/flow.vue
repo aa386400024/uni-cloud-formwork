@@ -85,10 +85,10 @@
 	
 	const RECORDER_OPTIONS = {
 		duration: 300000,
-		sampleRate: 44100,
+		sampleRate: 16000,
 		numberOfChannels: 1,
-		encodeBitRate: 192000,
-		format: 'PCM',
+		encodeBitRate: 48000,
+		format: 'mp3',
 	};
 
 	const myData = reactive({
