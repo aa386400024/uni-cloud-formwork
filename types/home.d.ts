@@ -24,3 +24,17 @@ declare interface FetchIvQuestion {
 	selectedLevelRadio: string,
 	selectedSkillRadios: string[]
 }
+
+declare interface UserAnswer {
+    question_id: string;
+    answer: string;
+    recording_url: string;
+    video_url: string;
+}
+
+declare interface Questions {
+    id: string;
+	value: string;
+	label: string;
+}
+

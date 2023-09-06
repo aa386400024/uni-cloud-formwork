@@ -92,47 +92,67 @@
 	};
 
 	const myData = reactive({
-		recordVideoPath: '',
-		isCameraActive: true, // 预览视频开启状态
-		isRecording: false, // 是否在录制视频中
-		isAnswering: false,
-		canAnswer: false,
-		countdown: CONFIG.INITIAL_COUNTDOWN,
-		countdownInterval: null as number | null,
-		transitionPath: CONFIG.TRANSITION_VIDEO_PATH,
-		questionVideoPath: "",
-		questionText: "",
-		isInterviewFinished: false,
-		questions: [],  // 存储所有的面试问题
-		currentQuestionIndex: 0,  // 当前问题的索引
-		currentVideo: 'question', // 'question', 'transition'
-		isButtonDisabled: true,
-		sysWidth: 0,
-		sysHeight: 0,
-		videoWidth: 0,
-		videoHeight: 0
-	})
+	    // 视频相关属性
+	    video: {
+	        recordVideoPath: '',
+	        isCameraActive: true, // 预览视频开启状态
+	        isRecording: false, // 是否在录制视频中
+	        transitionPath: CONFIG.TRANSITION_VIDEO_PATH,
+	        questionVideoPath: "",
+	        currentVideo: 'question', // 'question', 'transition'
+	    },
+	
+	    // 面试流程属性
+	    interview: {
+	        isAnswering: false,
+	        canAnswer: false,
+	        countdown: CONFIG.INITIAL_COUNTDOWN,
+	        countdownInterval: null as number | null,
+	        questionText: "",
+	        isInterviewFinished: false,
+	        questions: [] as Questions[],  // 存储所有的面试问题
+	        currentQuestionIndex: 0,  // 当前问题的索引
+			userAnswers: [] as UserAnswer[],  // 存储用户的回答
+	    },
+	
+	    // 界面/显示属性
+	    display: {
+	        isButtonDisabled: true,
+	        sysWidth: 0,
+	        sysHeight: 0,
+	        videoWidth: 0,
+	        videoHeight: 0
+	    }
+	});
 	const {
-		recordVideoPath,
-		isCameraActive,
+	    recordVideoPath,
+	    isCameraActive,
 		isRecording,
-		isAnswering,
-		canAnswer,
-		countdown,
-		countdownInterval,
 		transitionPath,
 		questionVideoPath,
-		questionText,
-		isInterviewFinished,
-		questions,
-		currentQuestionIndex,
-		currentVideo,
-		isButtonDisabled,
-		sysWidth,
-		sysHeight,
-		videoWidth,
-		videoHeight
-	} = toRefs(myData)
+		currentVideo
+	} = toRefs(myData.video);
+	
+	const {
+	    isAnswering,
+	    canAnswer,
+	    countdown,
+	    countdownInterval,
+	    questionText,
+	    isInterviewFinished,
+	    questions,
+	    currentQuestionIndex,
+		userAnswers
+	    // ... 其他面试相关属性
+	} = toRefs(myData.interview);
+	
+	const {
+	    isButtonDisabled,
+	    sysWidth,
+	    sysHeight,
+	    videoWidth,
+	    videoHeight
+	} = toRefs(myData.display);
 	
 	const cameraCtx = uni.createCameraContext();
 	
@@ -215,6 +235,16 @@
 			    countdown.value = 300; // 重置计时器
 			}
 			isAnswering.value = false;
+			
+			// 收集用户的回答
+			const currentQuestion: Questions = questions.value[currentQuestionIndex.value];
+			const userAnswer = {
+				question_id: currentQuestion.id, // 假设每个问题对象都有一个唯一的ID
+				answer: questionText.value, // 这里假设questionText是用户的回答
+				recording_url: "录音文件URL", // 这里需要你的录音逻辑来提供真实的URL
+				video_url: recordVideoPath.value // 这是录制的视频的临时路径
+			}; 
+			userAnswers.value.push(userAnswer);
 				
 			if (isLastQuestion.value) {
 			    // 所有问题都已回答
@@ -287,7 +317,33 @@
 	    // 设置结束视频
 	    questionVideoPath.value = CONFIG.END_VIDEO_PATH;
 	    questionText.value = CONFIG.END_VIDEO_TEXT;
+		
+		// 上传用户的回答到后端
+		uploadUserAnswers();
 	}
+	
+	// 上传用户的回答API
+	const uploadUserAnswers = async () => {
+	    try {
+	        const response = await vk.request({
+	            url: 'YOUR_BACKEND_ENDPOINT', // 你的后端API的URL
+	            method: 'POST',
+	            data: {
+	                user_id: "YOUR_USER_ID", // 你需要提供用户ID
+	                position_id: "YOUR_POSITION_ID", // 你需要提供职位ID
+	                answers: userAnswers.value
+	            }
+	        });
+	
+	        if (response.statusCode === 200) {
+	            console.log('User answers uploaded successfully');
+	        } else {
+	            console.error('Failed to upload user answers:', response.data);
+	        }
+	    } catch (error) {
+	        console.error('Error uploading user answers:', error);
+	    }
+	};
 	
 	// 上传视频到服务器
 	const uploadVideo = (recordVideoPath: string) => {
