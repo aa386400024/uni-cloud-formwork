@@ -346,14 +346,18 @@
 	
 	// 视频录制预览开关
 	const toggleCamera = () => {
-		isCameraActive.value = !isCameraActive.value;  // 切换摄像头状态
-		if (isCameraActive.value && isAnswering.value) {
-			startRecord()
-		}else {
-			if(isRecording.value) {  // 只有当摄像头正在录制时才尝试停止录制
-			    stopRecord();
-			}
-		}
+	    if (isAnswering.value) {
+			vk.toast("正在回答问题，不能切换摄像头");
+	        return;  // 如果正在回答问题，直接返回，不执行后面的代码
+	    }
+	    isCameraActive.value = !isCameraActive.value;  // 切换摄像头状态
+	    if (isCameraActive.value && isAnswering.value) {
+	        startRecord()
+	    } else {
+	        if (isRecording.value) {  // 只有当摄像头正在录制时才尝试停止录制
+	            stopRecord();
+	        }
+	    }
 	}
 
 	// 开始录制视频
