@@ -294,7 +294,7 @@
 	    currentQuestionIndex.value++;
 	    
 	    if (currentQuestionIndex.value < questions.value.length) {
-	        const currentQuestion = questions.value[currentQuestionIndex.value] as Questions;
+	        const currentQuestion = questions.value[currentQuestionIndex.value];
 	        
 	        if (currentQuestion) {
 	            questionVideoPath.value = currentQuestion.video;
