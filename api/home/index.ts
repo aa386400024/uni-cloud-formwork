@@ -59,3 +59,14 @@ export async function audioToText(data: any): Promise<any> {
 	const response = await request(options)
 	return response.data
 }
+
+// 提交面试答案
+export async function submitInterviewAnswer(data: InterviewAnswer): Promise<any> {
+	const options: RequestOptions = {
+		url: 'client/interview/kh/submitInterviewAnswer',
+		data,
+		cloudFunction: true,
+	}
+	const response = await request(options)
+	return response.data
+}

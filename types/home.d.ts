@@ -38,3 +38,13 @@ declare interface Questions {
 	label: string;
 }
 
+declare interface CurrentJobInfo {
+  name?: string;
+  position_id?: string;
+}
+
+declare interface InterviewAnswer {
+  currentJobInfo: CurrentJobInfo;
+  ivCustomParams: FetchIvQuestion;
+  answers: UserAnswer[];
+}

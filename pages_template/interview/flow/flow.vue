@@ -67,10 +67,11 @@
 
 <script setup lang="ts">
 	import { reactive, ref, toRefs, computed, onMounted, onBeforeUnmount } from 'vue';
-	import { fetchIvQuestion, audioToText } from '@/api/home';
+	import { fetchIvQuestion, submitInterviewAnswer, audioToText } from '@/api/home';
 	import { useInterviewStore } from '@/stores';
 	const interviewStore = useInterviewStore();
-	const flowNavTitle = computed(() => interviewStore.currentJobInfo!.name);
+	const currentJobInfo = computed(() => interviewStore.currentJobInfo);
+	const flowNavTitle = currentJobInfo.value ? currentJobInfo.value.name : '模拟面试';
 	const ivCustomParams = computed(() => interviewStore.ivCustomParams);
 	
 	const CONFIG = {
@@ -319,27 +320,19 @@
 	    questionText.value = CONFIG.END_VIDEO_TEXT;
 		
 		// 上传用户的回答到后端
-		uploadUserAnswers();
+		uploadUserAnswersApi();
 	}
 	
 	// 上传用户的回答API
-	const uploadUserAnswers = async () => {
+	const uploadUserAnswersApi = async () => {
+		const params: InterviewAnswer = {
+			currentJobInfo: currentJobInfo.value,
+			ivCustomParams: ivCustomParams.value,
+			answers: userAnswers.value || []
+		}
 	    try {
-	        const response = await vk.request({
-	            url: 'YOUR_BACKEND_ENDPOINT', // 你的后端API的URL
-	            method: 'POST',
-	            data: {
-	                user_id: "YOUR_USER_ID", // 你需要提供用户ID
-	                position_id: "YOUR_POSITION_ID", // 你需要提供职位ID
-	                answers: userAnswers.value
-	            }
-	        });
-	
-	        if (response.statusCode === 200) {
-	            console.log('User answers uploaded successfully');
-	        } else {
-	            console.error('Failed to upload user answers:', response.data);
-	        }
+			const res = await submitInterviewAnswer(params);
+			console.log(res, 'uploadUserAnswersApi');
 	    } catch (error) {
 	        console.error('Error uploading user answers:', error);
 	    }
