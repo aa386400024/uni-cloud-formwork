@@ -36,6 +36,8 @@ declare interface Questions {
     id: string;
 	value: string;
 	label: string;
+	video: string;
+	text: string;
 }
 
 declare interface CurrentJobInfo {

@@ -168,7 +168,7 @@
 	// 自定义导航标题
 	const setCustomNavigationBarTitle = () => {
 		uni.setNavigationBarTitle({
-			title: flowNavTitle.value
+			title: flowNavTitle || "模拟面试"
 		})
 	}
 	
@@ -294,7 +294,7 @@
 	    currentQuestionIndex.value++;
 	    
 	    if (currentQuestionIndex.value < questions.value.length) {
-	        const currentQuestion = questions.value[currentQuestionIndex.value];
+	        const currentQuestion = questions.value[currentQuestionIndex.value] as Questions;
 	        
 	        if (currentQuestion) {
 	            questionVideoPath.value = currentQuestion.video;
