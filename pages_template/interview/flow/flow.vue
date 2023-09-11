@@ -330,6 +330,7 @@
 			ivCustomParams: ivCustomParams.value,
 			answers: userAnswers.value || []
 		}
+		console.log(params, "uploadUserAnswersApi的参数")
 	    try {
 			const res = await submitInterviewAnswer(params);
 			console.log(res, 'uploadUserAnswersApi');
