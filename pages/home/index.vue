@@ -59,18 +59,34 @@
 			
 			<custom-gap></custom-gap>
 			
-			<view style="height: 1000px;"></view>
 		</view>
+		<u-popup
+			mode="bottom" 
+			round="20"
+			:show="showPopup" 
+			:customStyle="popupCustomStyle"
+			@close="closePopup" 
+			@open="openPopup"
+		>
+			<PermissionDrawer 
+				ref="childRef" 
+				@childClosePopup="childClosePopup"
+				@childStartMockInterview="childStartMockInterview"
+			/>
+		</u-popup>
 	</scroll-view>
 </template>
 
 <script lang="ts" setup>
-	import { onMounted, reactive, toRefs } from 'vue';
-	import { useGlobalAPI } from '@/hooks/useGlobalAPI'
+	import { onMounted, reactive, ref, toRefs, computed } from 'vue';
+	import { useInterviewStore } from '@/stores';
+	import { useGlobalAPI } from '@/hooks/useGlobalAPI';
 	import { fetchIndustries, fetchPositions } from '@/api/home';
 	import JobCard from '@/components/custom/card.vue';
-	const { apiWrapper } = useGlobalAPI()
-
+	import PermissionDrawer from './permission-drawer/permission-drawer.vue';
+	
+	const { apiWrapper } = useGlobalAPI();
+	const interviewStore = useInterviewStore();
 	const myData = reactive({
 		capsultBottom: 0,
 		offsetTop: 0,
@@ -81,6 +97,7 @@
 		navbarBgColor: 'transparent',
 		textColor: '#fff',
 		industriesList: [],
+		defaultIndustryId: "",
 		activeStyle: {
 			color: '#303133',
 			fontWeight: 'bold',
@@ -96,7 +113,11 @@
 			height: '36px',
 		},
 		positions: [],
-		platform: uni.$u.platform // 获取当前运行的平台名称
+		platform: uni.$u.platform, // 获取当前运行的平台名称
+		showPopup: false,
+		popupCustomStyle: {
+			backgroundColor: "#fff"
+		},
 	})
 	const {
 		customStyle, 
@@ -105,17 +126,25 @@
 		navbarBgColor, 
 		textColor, 
 		industriesList,
+		defaultIndustryId,
 		activeStyle,
 		inactiveStyle,
 		itemStyle,
 		positions,
 		platform,
+		showPopup,
+		popupCustomStyle,
 	} = toRefs(myData)
 	const lineBg = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAOCAYAAABdC15GAAAACXBIWXMAABYlAAAWJQFJUiTwAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAFxSURBVHgBzZNRTsJAEIb/WTW+lpiY+FZPIDew3ABP4GJ8hxsI9zBpOYHeQDwBPQI+mRiRvpLojtPdYhCorQqF/6GdbGd2vvwzBXZcNAt4oj1ANeUoAT5iqkUjbEFLHNmhD1YPEvpZ3ghkGlVDCkc94/BmHMq998I5ONiY1ZBfpKAyuOtgAc5yOEDmYEWNh32BHF91sGHZHmwW4azciN9aQwnz3SJEgOmte+R2tdLprTYoa50mvuomlLpD4Y3oQZnov6D2RzCqI93bWOHaEmAGqQUyRBlZR1WfarcD/EJ2z8DtzDGvsMCwpm8XOCfDUsVOCYhiqRxI/CTQo4UOvjzO7Pow18vfywneuUHHUUxLn55lLw5JFpZ8bEUcY8oXdOLWiHLTxvoGpLqoUmy6dBT15o/ox3znpoycAmxUsiJTbs1cmxeVKp+0zmFIS7bGWiVghC7Vwse8jFKAX9eljh4ggKLLv7uaQvG9/F59Oo2SouxPu7OTCxN/s8wAAAAASUVORK5CYII=";
 
-	const handleTabClick = (item) => {
-	    console.log('当前选中的行业:', item.name);
-	    // 在这里你可以根据选中的行业获取对应的职业数据
+	const childRef = ref<ChildComponentRef | null>(null);
+	
+	// 切换行业tab点击事件
+	const handleTabClick = (item: any) => {
+		const data = {
+			industry_id: item.industry_id
+		}
+	    fetchPositionApi(data)
 	}
 	
 	// 获取行业数据
@@ -123,6 +152,7 @@
 		try {
 			const res = await fetchIndustries();
 			industriesList.value = res.rows || []
+			defaultIndustryId.value = res.rows[0].industry_id
 		} catch (error) {
 			console.error('Error during fetchTodosCloud:', error);
 			// 可以在这里添加更多的错误处理逻辑，比如设置一个标志，让用户知道出现了错误
@@ -149,7 +179,8 @@
 		capsultBottom.value = menuButtonInfo.bottom;
 		offsetTop.value = systemInfo.statusBarHeight! + capsuleHeight + 6
 	}
-
+	
+	// 滚动事件
 	const handleScroll = async () => {
 		await apiWrapper.getBoundingRect('.top-banner').then(res => {
 			const { bottom } = res;
@@ -165,12 +196,32 @@
 		});
 	}
 	
-	const goToInterview = (job) => {
-		console.log('job', job)
-	  // 这里添加跳转到模拟面试页面的代码
-	  // 你可以使用job参数来获取被点击的职位的信息
-	};
-
+	// 职位点击事件-跳转到面试页
+	const goToInterview = (job: any) => {
+		interviewStore.currentJobInfo = job;
+		showPopup.value = true
+	}
+	
+	// 关闭弹出层
+	const closePopup = () => {
+		showPopup.value = false
+	}
+	
+	// 子组件关闭抽屉自定义事件
+	const childClosePopup = () => {
+		showPopup.value = false
+	}
+	
+	// 子组件开始模拟面试自定义事件
+	const childStartMockInterview = () => {
+		vk.navigateTo('/pages_template/interview/custom/custom');
+	}
+	
+	// 开启抽屉弹出层
+	const openPopup = () => {
+		childRef.value?.netWorkStatus();
+	}
+	
 	onMounted(async () => {
 		// #ifdef MP-WEIXIN
 		capsuleInfo()
@@ -178,7 +229,7 @@
 		
 		fetchIndustriesApi().then(() => {
 			const data = {
-				industry_id: '001'
+				industry_id: defaultIndustryId.value
 			}
 			fetchPositionApi(data)
 		})
@@ -190,6 +241,6 @@
 		position: relative;
 		height: 500rpx;
 		background-color: #ffaa00;
-	}
+	} 
 	
 </style>

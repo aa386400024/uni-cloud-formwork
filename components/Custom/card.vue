@@ -1,12 +1,12 @@
 <template>
-	<view class="card padding-md margin-bottom-md" @click="handleClick">
-		<image class="card-image margin-right-md" :src="position.img" />
-		<view class="card-content">
-			<view class="card-title margin-bottom-xs">{{ position.name }}</view>
-			<view class="card-description margin-bottom-xs">{{ position.description }}</view>
+	<view class="card padding-md margin-bottom-md border-radius-large box-shadow-md-sd-primary" @click="handleClick">
+		<image class="card-image margin-right-md border-radius-large box-shadow-md-sd-secondary"
+			:src="position.image_url" />
+		<view class="card-content margin-left-sm">
+			<view class="card-title margin-bottom-sm">{{ position.name }}</view>
+			<view class="card-description margin-bottom-lg">{{ position.description }}</view>
 			<view class="card-interviews">
-				<image class="margin-right-xs" src="/static/interview-icon.png" />
-				<text>{{ position.interviewed_count }} 模拟面试</text>
+				<text class="iconfont icon-yonghutongji" :data-text="position.interviewed_count + '人使用过'"></text>
 			</view>
 		</view>
 	</view>
@@ -34,7 +34,6 @@
 	.card {
 		@include flex-layout('start');
 		border: 1px solid #eee;
-		border-radius: 20rpx;
 		background-color: #fff;
 
 		.card-image {
@@ -47,21 +46,33 @@
 			flex-direction: column;
 
 			.card-title {
-				font-size: 18px;
-				font-weight: bold;
+				font-size: $uni-font-size-xl;
+				color: $uni-color-title;
+				font-weight: 700;
 			}
 
 			.card-description {
-				font-size: 14px;
+				font-size: $uni-font-size-base;
 				color: #666;
 			}
 
 			.card-interviews {
 				@include flex-layout('start');
 
-				image {
-					width: 16px;
-					height: 16px;
+				.icon-yonghutongji {
+					font-size: $uni-font-size-base;
+					position: relative;
+
+					&::before {
+						content: '\e620';
+						display: inline-block;
+						margin-right: 6rpx;
+					}
+
+					&::after {
+						content: attr(data-text);
+						display: inline-block;
+					}
 				}
 			}
 		}

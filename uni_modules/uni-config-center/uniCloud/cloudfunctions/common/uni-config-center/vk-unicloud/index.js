@@ -87,8 +87,8 @@ module.exports = {
 				// 百度开放平台 (主要用于身份证识别,营业执照识别等API)
 				// API Key申请地址：https://cloud.baidu.com/doc/OCR/s/rk3h7xzck 点击右上角注册
 				"baidu": {
-					"appid": "",    // 对应的API Key
-					"appsecret": "" // 对应的Secret Key
+					"appid": "NfBafclCh6qywb5gG8ZZukhL",    // 对应的API Key
+					"appsecret": "nS0RiQHAGXacDO35XMpfCmfuQz169jmR" // 对应的Secret Key
 				}
 			}
 		},

@@ -66,7 +66,7 @@ export default {
 		checkScore: "Please check your points after logging in",
 		currentScore: "The current score is ",
 		noScore: "There are currently no points",
-		notLogged: "not logged in",
+		notLogged: "Register/Login",
 	},
 	userinfo: {
 		navigationBarTitle:"My Profile",

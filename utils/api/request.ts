@@ -9,6 +9,8 @@ interface RequestOptions {
 	timeout?: number
 	cancelToken?: CancelToken
 	cloudFunction?: boolean
+	loading?: boolean | object
+	title?: string
 }
 
 interface VKCloudFunctionResult {
@@ -26,6 +28,8 @@ function request(
 		timeout = config.api.timeout,
 		cancelToken,
 		cloudFunction = false,
+		title,
+		loading = true
 	} = requestInterceptor(options)
 
 	if (cloudFunction) {
@@ -33,8 +37,9 @@ function request(
 		return new Promise((resolve, reject) => {
 			uni.vk.callFunction({
 				url,
-				title: '请求中...',
+				title,
 				data,
+				loading,
 				success(res: any) {
 					console.log('Cloud function call succeeded:', res)
 					resolve({ data: res })
