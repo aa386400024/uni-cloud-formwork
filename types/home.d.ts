@@ -33,7 +33,7 @@ declare interface UserAnswer {
 }
 
 declare interface Questions {
-    id: string;
+    question_id: string;
 	value: string;
 	label: string;
 	video: string;
