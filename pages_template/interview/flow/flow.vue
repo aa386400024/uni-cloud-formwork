@@ -94,6 +94,7 @@
 	};
 
 	const myData = reactive({
+		sessionId: '',
 	    // 视频相关属性
 	    video: {
 	        recordVideoPath: '',
@@ -329,7 +330,8 @@
 		const params: InterviewAnswer = {
 			currentJobInfo: currentJobInfo.value,
 			ivCustomParams: ivCustomParams.value,
-			answers: userAnswers.value || []
+			answers: userAnswers.value || [],
+			sessionId: myData.sessionId
 		}
 		console.log(params, "uploadUserAnswersApi的参数")
 	    try {
@@ -465,6 +467,7 @@
 	};
 
 	onMounted(async () => {
+		myData.sessionId = uuidv4();
 		setCustomNavigationBarTitle();
 		getSystemDimensions();
 		await fetchInterviewQuestions();
