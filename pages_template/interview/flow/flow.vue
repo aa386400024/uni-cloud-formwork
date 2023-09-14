@@ -67,7 +67,6 @@
 
 <script setup lang="ts">
 	import { reactive, ref, toRefs, computed, onMounted, onBeforeUnmount } from 'vue';
-	import { v4 as uuidv4 } from 'uuid';
 	import { fetchIvQuestion, submitInterviewAnswer, audioToText } from '@/api/home';
 	import { useInterviewStore } from '@/stores';
 	const interviewStore = useInterviewStore();
@@ -467,7 +466,8 @@
 	};
 
 	onMounted(async () => {
-		myData.sessionId = uuidv4();
+		myData.sessionId = uni.$u.guid();
+		console.log(myData.sessionId, 'myData.sessionId')
 		setCustomNavigationBarTitle();
 		getSystemDimensions();
 		await fetchInterviewQuestions();
