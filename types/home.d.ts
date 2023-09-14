@@ -49,4 +49,5 @@ declare interface InterviewAnswer {
   currentJobInfo: CurrentJobInfo;
   ivCustomParams: FetchIvQuestion;
   answers: UserAnswer[];
+  sessionId: string;
 }

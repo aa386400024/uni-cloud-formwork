@@ -67,6 +67,7 @@
 
 <script setup lang="ts">
 	import { reactive, ref, toRefs, computed, onMounted, onBeforeUnmount } from 'vue';
+	import { v4 as uuidv4 } from 'uuid';
 	import { fetchIvQuestion, submitInterviewAnswer, audioToText } from '@/api/home';
 	import { useInterviewStore } from '@/stores';
 	const interviewStore = useInterviewStore();
