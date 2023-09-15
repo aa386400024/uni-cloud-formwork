@@ -246,19 +246,17 @@
 			if (isRecording.value) {
 			    await stopRecord();
 			    uploadedVideoUrl = await uploadVideo(recordVideoPath.value) || "";
+				// 收集用户的回答
+				const currentQuestion: Questions = questions.value[currentQuestionIndex.value];
+				const userAnswer = {
+					question_id: currentQuestion.question_id, // 假设每个问题对象都有一个唯一的ID
+					answer: "Transcribing...", // 使用一个占位符
+					recording_url: "录音文件URL", // 这里需要你的录音逻辑来提供真实的URL
+					commonUUID: myData.commonUUID, 
+					video_url: uploadedVideoUrl || currentVideoUrl.value // 这是录制的视频的临时路径
+				}; 
+				userAnswers.value.push(userAnswer);
 			}
-			console.log(uploadedVideoUrl, 'uploadedVideoUrl')
-			
-			// 收集用户的回答
-			const currentQuestion: Questions = questions.value[currentQuestionIndex.value];
-			const userAnswer = {
-				question_id: currentQuestion.question_id, // 假设每个问题对象都有一个唯一的ID
-				answer: "Transcribing...", // 使用一个占位符
-				recording_url: "录音文件URL", // 这里需要你的录音逻辑来提供真实的URL
-				commonUUID: myData.commonUUID, 
-				video_url: uploadedVideoUrl || currentVideoUrl.value // 这是录制的视频的临时路径
-			}; 
-			userAnswers.value.push(userAnswer);
 				
 			if (isLastQuestion.value) {
 			    // 所有问题都已回答
