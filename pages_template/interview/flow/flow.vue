@@ -1,6 +1,7 @@
 <template>
 	<view  style="position: relative; width: 100vw; height: 100vh;">
 		<view>
+			<!-- 全屏视频元素，用于播放面试问题或过渡视频 -->
 			<video
 				class="fullscreen-video position-absolute top-0 left-0"
 				autoplay
@@ -94,6 +95,7 @@
 
 	const myData = reactive({
 		sessionId: '',
+		commonUUID: '',  // 为录制的视频和音频添加一个共同的UUID属性
 	    // 视频相关属性
 	    video: {
 	        recordVideoPath: '',
@@ -115,6 +117,7 @@
 	        questions: [] as Questions[],  // 存储所有的面试问题
 	        currentQuestionIndex: 0,  // 当前问题的索引
 			userAnswers: [] as UserAnswer[],  // 存储用户的回答
+			currentVideoUrl: "" // 当前录制的视频传到云存储的url
 	    },
 	
 	    // 界面/显示属性
@@ -144,7 +147,8 @@
 	    isInterviewFinished,
 	    questions,
 	    currentQuestionIndex,
-		userAnswers
+		userAnswers,
+		currentVideoUrl
 	    // ... 其他面试相关属性
 	} = toRefs(myData.interview);
 	
@@ -238,13 +242,21 @@
 			}
 			isAnswering.value = false;
 			
+			let uploadedVideoUrl = "";
+			if (isRecording.value) {
+			    await stopRecord();
+			    uploadedVideoUrl = await uploadVideo(recordVideoPath.value) || "";
+			}
+			console.log(uploadedVideoUrl, 'uploadedVideoUrl')
+			
 			// 收集用户的回答
 			const currentQuestion: Questions = questions.value[currentQuestionIndex.value];
 			const userAnswer = {
 				question_id: currentQuestion.question_id, // 假设每个问题对象都有一个唯一的ID
 				answer: "Transcribing...", // 使用一个占位符
 				recording_url: "录音文件URL", // 这里需要你的录音逻辑来提供真实的URL
-				video_url: recordVideoPath.value // 这是录制的视频的临时路径
+				commonUUID: myData.commonUUID, 
+				video_url: uploadedVideoUrl || currentVideoUrl.value // 这是录制的视频的临时路径
 			}; 
 			userAnswers.value.push(userAnswer);
 				
@@ -254,16 +266,10 @@
 			} else {
 			    nextQuestion(); // 加载下一个问题
 			}
-				
-			if (isRecording.value) {
-			    await stopRecord();
-			    uploadVideo(recordVideoPath.value);
-			}
 			stopRecordingAudio(); 
 		}catch(err){
 			console.error('Error while stopping the answer:', err);
 		}
-	    
 	};
 	
 	// 随机获取5道面试题数据
@@ -342,9 +348,26 @@
 	};
 	
 	// 上传视频到服务器
-	const uploadVideo = (recordVideoPath: string) => {
-		// 这里是您上传视频到服务器的逻辑
-		console.log(`上传视频: ${recordVideoPath}`);
+	const uploadVideo = async (recordVideoPath: string): Promise<string> => {
+	    // 这里是您上传视频到服务器的逻辑
+	    return new Promise(async (resolve, reject) => {
+	        vk.uploadFile({
+	            filePath: recordVideoPath,
+	            success: (res: any) => {
+	                const { url } = res;
+	                currentVideoUrl.value = url;
+	                console.log(`上传视频: ${recordVideoPath}`);
+	                resolve(url);  // 使用resolve返回视频的URL
+	            },
+	            fail(err: any) {
+	                console.log('Error:', err);
+	                reject(err);  // 使用reject返回错误
+	            },
+	            complete(complete: any) {
+	                console.log(complete, 'complete');
+	            }
+	        });
+	    });
 	}
 	
 	// 视频录制预览开关
@@ -389,7 +412,6 @@
 	        console.log('录制完成', res.tempVideoPath);
 			isRecording.value = false;  // 更新录制状态
 	        recordVideoPath.value = res.tempVideoPath;
-	
 	        // 其他处理逻辑...
 	
 	        return res;  // 返回录制的结果，如果需要的话
@@ -428,6 +450,7 @@
 	
 	// 开始录制音频
 	const startRecordingAudio = () => {
+		myData.commonUUID = uni.$u.guid();
 	    recorderManager.start(RECORDER_OPTIONS);
 	};
 	
@@ -444,7 +467,7 @@
 				filePath: tempFilePath,
 				success: (res: any) => {
 					const { url } = res;
-					audioToTextApi(url);
+					audioToTextApi(url, myData.commonUUID);
 				},
 				fail(err: any) {
 					console.log('Error:', err);
@@ -457,9 +480,10 @@
 	}
 	
 	// 百度云语音转文字接口
-	const audioToTextApi = async (filePath: string) => {
+	const audioToTextApi = async (filePath: string, commonUUID: string) => {
 		const params = {
-			filePath: filePath
+			filePath: filePath,
+			commonUUID: commonUUID
 		}
 	    const res = await audioToText(params);
 		console.log(res, 'audioToTextApi')

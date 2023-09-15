@@ -30,6 +30,7 @@ declare interface UserAnswer {
     answer: string;
     recording_url: string;
     video_url: string;
+	commonUUID: string;
 }
 
 declare interface Questions {
