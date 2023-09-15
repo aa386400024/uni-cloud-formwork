@@ -402,9 +402,15 @@
 	        const res = await new Promise<any>((resolve, reject) => {
 	            cameraCtx.stopRecord({
 	                success: resolve,
-	                fail: reject
+					fail(err: any) {
+						reject(err)
+					},
+					complete(complete: any) {
+					    reject(complete)
+					}
 	            });
 	        });
+			console.log(res, '停止录制视频stopRecord的res')
 	
 	        console.log('录制完成', res.tempVideoPath);
 			isRecording.value = false;  // 更新录制状态
