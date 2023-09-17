@@ -260,6 +260,7 @@
 	                video_url: uploadedVideoUrl || currentVideoUrl.value // 这是录制的视频的临时路径
 	            }; 
 	            userAnswers.value.push(userAnswer);
+				console.log(userAnswers.value, '用户答案userAnswers.value')
 	        }
 	
 	        stopRecordingAudio(); 
@@ -386,6 +387,7 @@
 	// 开始录制视频
 	const startRecord = () => {
 		cameraCtx.startRecord({
+			timeout: 300,
 			success: () => {
 				console.log('开始录制');
 			},
