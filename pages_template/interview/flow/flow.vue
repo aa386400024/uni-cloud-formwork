@@ -234,74 +234,77 @@
 	// 是否为最后一个面试问题
 	const isLastQuestion = computed(() => currentQuestionIndex.value === questions.value.length - 1);
 	
+	// 任务队列
+	const taskQueue: Array<() => Promise<void>> = [];
+	let isProcessingQueue = false;
+	
+	const processQueue = async () => {
+	    if (isProcessingQueue || taskQueue.length === 0) return;
+	    isProcessingQueue = true;
+	
+	    const task = taskQueue.shift();
+	    if (task) {
+	        await task();
+	    }
+	    isProcessingQueue = false;
+	    processQueue();
+	};
+	
 	// 回答完毕按钮点击事件，用于停止回答问题
 	const stopAnswering = async () => {
 	    try {
-	        // 如果存在倒计时的定时器
 	        if (countdownInterval.value) {
-	            // 清除该定时器，停止倒计时
 	            clearInterval(countdownInterval.value);
-	            // 将倒计时重置为300秒
 	            countdown.value = 300;
 	        }
-	        // 设置正在回答的状态为false，表示用户已停止回答
 	        isAnswering.value = false;
 	
-	        // 如果当前正在录制视频
 	        if (isRecording.value) {
-	            // 停止录制视频
 	            await stopRecord();
-	            // 停止录音
-	            stopRecordingAudio(); 
-				
-				// 立即进入下一个问题或显示结束视频
-				if (isLastQuestion.value) {
-				    showEndVideo();
-				} else {
-				    nextQuestion();
-				}
+	            stopRecordingAudio();
 	
-	            // 开始上传录制的视频，但不等待它完成
-	            uploadVideo(recordVideoPath.value).then(uploadedVideoUrl => {
-	                // 获取当前问题的信息
-	                const currentQuestion: Questions = questions.value[currentQuestionIndex.value];
-	                // 创建一个对象，用于收集用户的回答
-	                const userAnswer = {
-	                    question_id: currentQuestion.question_id,
-	                    answer: "Transcribing...",
-	                    recording_url: "录音文件URL",
-	                    commonUUID: myData.commonUUID,
-	                    video_url: uploadedVideoUrl || currentVideoUrl.value
-	                };
+	            if (isLastQuestion.value) {
+	                showEndVideo();
+	            } else {
+	                nextQuestion();
+	                myData.commonUUID = uni.$u.guid();  // 生成新的UUID
+	            }
 	
-	                // 在已收集的答案中查找是否已经存在具有相同question_id和commonUUID的答案
-	                const existingAnswer = userAnswers.value.find(answer => 
-	                    answer.question_id === userAnswer.question_id && 
-	                    answer.commonUUID === userAnswer.commonUUID
-	                );
+	            const uploadTask = async () => {
+	                try {
+	                    const uploadedVideoUrl = await uploadVideo(recordVideoPath.value);
+	                    const currentQuestion: Questions = questions.value[currentQuestionIndex.value];
+	                    const userAnswer = {
+	                        question_id: currentQuestion.question_id,
+	                        answer: "Transcribing...",
+	                        recording_url: "录音文件URL",
+	                        commonUUID: myData.commonUUID,
+	                        video_url: uploadedVideoUrl || currentVideoUrl.value
+	                    };
 	
-	                // 如果没有找到相同的答案
-	                if (!existingAnswer) {
-	                    // 将新的答案添加到答案数组中
-	                    userAnswers.value.push(userAnswer);
-	                    // 在控制台打印所有的答案，用于调试
-	                    console.log(userAnswers.value, '用户答案userAnswers.value');
-	                } else {
-	                    // 如果找到了相同的答案，给出警告
-	                    console.warn('Duplicate question_id and commonUUID detected:', userAnswer.question_id, userAnswer.commonUUID);
+	                    const existingAnswer = userAnswers.value.find(answer => 
+	                        answer.question_id === userAnswer.question_id && 
+	                        answer.commonUUID === userAnswer.commonUUID
+	                    );
+	
+	                    if (!existingAnswer) {
+	                        userAnswers.value.push(userAnswer);
+	                        console.log(userAnswers.value, '用户答案userAnswers.value');
+	                    } else {
+	                        console.warn('Duplicate question_id and commonUUID detected:', userAnswer.question_id, userAnswer.commonUUID);
+	                    }
+	                } catch (error) {
+	                    console.error('Upload error:', error);
 	                }
-	            }).catch(error => {
-	                // 处理上传失败的情况...
-	                console.error('Upload error:', error);
-	            });
+	            };
+	
+	            taskQueue.push(uploadTask);
+	            processQueue();
 	        }
 	    } catch(err) {
-	        // 如果在上面的代码中发生任何错误，将错误信息打印到控制台
 	        console.error('Error while stopping the answer:', err);
 	    }
 	};
-
-
 	
 	// 回答完毕按钮防抖
 	const debouncedStopAnswering = debounce(function() {
