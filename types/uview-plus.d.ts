@@ -7,6 +7,7 @@ declare global {
 	interface Uni extends _Uni {
 		$u: {
 			os(): string;
+			guid(): string;
 			platform: string;
 		};
 	}

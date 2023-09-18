@@ -233,53 +233,75 @@
 	
 	// 是否为最后一个面试问题
 	const isLastQuestion = computed(() => currentQuestionIndex.value === questions.value.length - 1);
-
-	// 回答完毕按钮点击事件
+	
+	// 回答完毕按钮点击事件，用于停止回答问题
 	const stopAnswering = async () => {
 	    try {
+	        // 如果存在倒计时的定时器
 	        if (countdownInterval.value) {
+	            // 清除该定时器，停止倒计时
 	            clearInterval(countdownInterval.value);
-	            countdown.value = 300; // 重置计时器
+	            // 将倒计时重置为300秒
+	            countdown.value = 300;
 	        }
+	        // 设置正在回答的状态为false，表示用户已停止回答
 	        isAnswering.value = false;
 	
+	        // 如果当前正在录制视频
 	        if (isRecording.value) {
+	            // 停止录制视频
 	            await stopRecord();
+	            // 停止录音
+	            stopRecordingAudio(); 
+				
+				// 立即进入下一个问题或显示结束视频
+				if (isLastQuestion.value) {
+				    showEndVideo();
+				} else {
+				    nextQuestion();
+				}
 	
-	            const uploadVideoPromise = uploadVideo(recordVideoPath.value);
-	            const nextQuestionOrEndVideoPromise = isLastQuestion.value ? showEndVideo() : nextQuestion();
+	            // 开始上传录制的视频，但不等待它完成
+	            uploadVideo(recordVideoPath.value).then(uploadedVideoUrl => {
+	                // 获取当前问题的信息
+	                const currentQuestion: Questions = questions.value[currentQuestionIndex.value];
+	                // 创建一个对象，用于收集用户的回答
+	                const userAnswer = {
+	                    question_id: currentQuestion.question_id,
+	                    answer: "Transcribing...",
+	                    recording_url: "录音文件URL",
+	                    commonUUID: myData.commonUUID,
+	                    video_url: uploadedVideoUrl || currentVideoUrl.value
+	                };
 	
-	            const [uploadedVideoUrl] = await Promise.all([uploadVideoPromise, nextQuestionOrEndVideoPromise]);
+	                // 在已收集的答案中查找是否已经存在具有相同question_id和commonUUID的答案
+	                const existingAnswer = userAnswers.value.find(answer => 
+	                    answer.question_id === userAnswer.question_id && 
+	                    answer.commonUUID === userAnswer.commonUUID
+	                );
 	
-	            // 收集用户的回答
-	            const currentQuestion: Questions = questions.value[currentQuestionIndex.value];
-	            const userAnswer = {
-	                question_id: currentQuestion.question_id, // 假设每个问题对象都有一个唯一的ID
-	                answer: "Transcribing...", // 使用一个占位符
-	                recording_url: "录音文件URL", // 这里需要你的录音逻辑来提供真实的URL
-	                commonUUID: myData.commonUUID, 
-	                video_url: uploadedVideoUrl || currentVideoUrl.value // 这是录制的视频的临时路径
-	            };
-	
-	            // 检查是否已经存在具有相同question_id和commonUUID的答案
-	            const existingAnswer = userAnswers.value.find(answer => 
-	                answer.question_id === userAnswer.question_id && 
-	                answer.commonUUID === userAnswer.commonUUID
-	            );
-	
-	            if (!existingAnswer) {
-	                userAnswers.value.push(userAnswer);
-	                console.log(userAnswers.value, '用户答案userAnswers.value');
-	            } else {
-	                console.warn('Duplicate question_id and commonUUID detected:', userAnswer.question_id, userAnswer.commonUUID);
-	            }
+	                // 如果没有找到相同的答案
+	                if (!existingAnswer) {
+	                    // 将新的答案添加到答案数组中
+	                    userAnswers.value.push(userAnswer);
+	                    // 在控制台打印所有的答案，用于调试
+	                    console.log(userAnswers.value, '用户答案userAnswers.value');
+	                } else {
+	                    // 如果找到了相同的答案，给出警告
+	                    console.warn('Duplicate question_id and commonUUID detected:', userAnswer.question_id, userAnswer.commonUUID);
+	                }
+	            }).catch(error => {
+	                // 处理上传失败的情况...
+	                console.error('Upload error:', error);
+	            });
 	        }
-	
-	        stopRecordingAudio(); 
 	    } catch(err) {
+	        // 如果在上面的代码中发生任何错误，将错误信息打印到控制台
 	        console.error('Error while stopping the answer:', err);
 	    }
 	};
+
+
 	
 	// 回答完毕按钮防抖
 	const debouncedStopAnswering = debounce(function() {
@@ -362,28 +384,51 @@
 	    }
 	};
 	
-	// 上传视频到服务器
-	const uploadVideo = async (recordVideoPath: string): Promise<string> => {
-	    // 这里是您上传视频到服务器的逻辑
-	    return new Promise(async (resolve, reject) => {
-	        vk.uploadFile({
-	            filePath: recordVideoPath,
-	            success: (res: any) => {
-	                const { url } = res;
-	                currentVideoUrl.value = url;
-	                console.log(`上传视频: ${recordVideoPath}`);
-	                resolve(url);  // 使用resolve返回视频的URL
-	            },
-	            fail(err: any) {
-	                console.log('Error:', err);
-	                reject(err);  // 使用reject返回错误
-	            },
-	            complete(complete: any) {
-	                console.log(complete, 'complete');
-	            }
-	        });
+	// 上传录制的视频到服务器
+	const uploadVideo = (recordVideoPath: string): Promise<string> => {
+	    return new Promise((resolve, reject) => {
+	        if (!recordVideoPath) {
+	            reject(new Error("Invalid video path provided"));
+	            return;
+	        }
+	
+	        let retryCount = 3;
+	
+	        const uploadWithRetry = () => {
+	            vk.uploadFile({
+	                filePath: recordVideoPath,
+	                onUploadProgress: (progressEvent: any) => {
+	                    const { progress } = progressEvent;
+	                    console.log(`Upload progress: ${progress}%`);
+	                },
+	                success: (res: any) => {
+	                    if (res && res.url) {
+	                        currentVideoUrl.value = res.url;
+	                        console.log(`Video uploaded successfully: ${recordVideoPath}`);
+	                        resolve(res.url);
+	                    } else {
+	                        reject(new Error("No URL returned from the upload"));
+	                    }
+	                },
+	                fail: (err: any) => {
+	                    if (retryCount > 0) {
+	                        retryCount--;
+	                        console.warn('Upload failed, retrying...');
+	                        setTimeout(uploadWithRetry, 5000); // 等待5秒后重试
+	                    } else {
+	                        console.error('Upload error after all retries:', err);
+	                        reject(err);
+	                    }
+	                },
+	                complete: (completeInfo: any) => {
+	                    console.log(completeInfo, 'Upload complete');
+	                }
+	            });
+	        };
+	
+	        uploadWithRetry();
 	    });
-	}
+	};
 	
 	// 视频录制预览开关
 	const toggleCamera = () => {
@@ -408,10 +453,10 @@
 			success: () => {
 				console.log('开始录制');
 			},
-			fail: (err) => {
+			fail: (err: any) => {
 				console.error('录制失败:', err);
 			}
-		});
+		} as any);
 		isRecording.value = true;
 	};
 
@@ -424,8 +469,8 @@
 					fail(err: any) {
 						reject(err)
 					},
-					complete(complete: any) {
-					    reject(complete)
+					complete: (completeInfo: any) => {
+					    console.log(completeInfo, 'completeInfo');
 					}
 	            });
 	        });
