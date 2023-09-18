@@ -56,7 +56,7 @@
 						size="large" 
 						:text="`回答完毕 ( ${formattedCountdown} )`"
 						:disabled="isButtonDisabled"
-						@click="stopAnswering" 
+						@click="debouncedStopAnswering" 
 					></u-button>
 				</view>
 			</view>
@@ -68,6 +68,7 @@
 
 <script setup lang="ts">
 	import { reactive, ref, toRefs, computed, onMounted, onBeforeUnmount } from 'vue';
+	import { debounce } from 'lodash';
 	import { fetchIvQuestion, submitInterviewAnswer, audioToText } from '@/api/home';
 	import { useInterviewStore } from '@/stores';
 	const interviewStore = useInterviewStore();
@@ -258,9 +259,20 @@
 	                recording_url: "录音文件URL", // 这里需要你的录音逻辑来提供真实的URL
 	                commonUUID: myData.commonUUID, 
 	                video_url: uploadedVideoUrl || currentVideoUrl.value // 这是录制的视频的临时路径
-	            }; 
-	            userAnswers.value.push(userAnswer);
-				console.log(userAnswers.value, '用户答案userAnswers.value')
+	            };
+	
+	            // 检查是否已经存在具有相同question_id和commonUUID的答案
+	            const existingAnswer = userAnswers.value.find(answer => 
+	                answer.question_id === userAnswer.question_id && 
+	                answer.commonUUID === userAnswer.commonUUID
+	            );
+	
+	            if (!existingAnswer) {
+	                userAnswers.value.push(userAnswer);
+	                console.log(userAnswers.value, '用户答案userAnswers.value');
+	            } else {
+	                console.warn('Duplicate question_id and commonUUID detected:', userAnswer.question_id, userAnswer.commonUUID);
+	            }
 	        }
 	
 	        stopRecordingAudio(); 
@@ -268,6 +280,11 @@
 	        console.error('Error while stopping the answer:', err);
 	    }
 	};
+	
+	// 回答完毕按钮防抖
+	const debouncedStopAnswering = debounce(function() {
+	    stopAnswering()
+	}, 300);  // 300毫秒的延迟，可以根据需要调整
 
 	
 	// 随机获取5道面试题数据
