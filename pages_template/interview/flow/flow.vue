@@ -357,7 +357,7 @@
 	}
 	
 	// 展示结束视频并通知用户报告正在生成
-	const showEndVideo = () => {
+	const showEndVideo = async () => {
 		isInterviewFinished.value = true;
 		canAnswer.value = true;
 		currentVideo.value = 'question';
@@ -365,6 +365,11 @@
 	    // 设置结束视频
 	    questionVideoPath.value = CONFIG.END_VIDEO_PATH;
 	    questionText.value = CONFIG.END_VIDEO_TEXT;
+		
+		// 等待所有上传任务完成
+		while (taskQueue.length > 0) {
+			await new Promise(resolve => setTimeout(resolve, 500)); // 等待500毫秒再检查
+		}
 		
 		// 上传用户的回答到后端
 		uploadUserAnswersApi();
