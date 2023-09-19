@@ -99,6 +99,7 @@
 		commonUUID: '',  // 为录制的视频和音频添加一个共同的UUID属性
 		startedAt: '',
 		endedAt: '',
+		isQuestionsFetched: false,
 	    // 视频相关属性
 	    video: {
 	        recordVideoPath: '',
@@ -234,8 +235,14 @@
 	}
 	
 	// 是否为最后一个面试问题
-	const isLastQuestion = computed(() => currentQuestionIndex.value === questions.value.length - 1);
 	
+	const isLastQuestion = computed(() => {
+	    console.log("Computing isLastQuestion:", currentQuestionIndex.value, questions.value.length);
+	    return currentQuestionIndex.value === questions.value.length - 1;
+	});
+
+
+	console.log(currentQuestionIndex.value, questions.value.length, "当前的面试题索引和questions的数组长度")
 	// 定义一个任务队列，这个队列将存储待执行的异步任务。
 	// 每个任务都是一个返回Promise<void>的函数。
 	const taskQueue: Array<() => Promise<void>> = [];
@@ -264,7 +271,6 @@
 	    if (task) {
 	        await task();
 	    }
-	
 	    // 任务完成后，设置标志为false，表示队列不再处理中。
 	    isProcessingQueue = false;
 	
@@ -286,7 +292,6 @@
 	        if (isRecording.value) {
 	            await stopRecord();
 	            stopRecordingAudio();
-	
 	            if (isLastQuestion.value) {
 	                showEndVideo();
 	            } else {
@@ -357,9 +362,11 @@
 				questions.value = resQuestions;
 				questionVideoPath.value = resQuestions[0].video;
 				questionText.value = resQuestions[0].text;
+				myData.isQuestionsFetched = true;
 			} else {
 				console.error("没有获取到面试问题");
 			}
+			console.log(questions.value.length, "fetchInterviewQuestions方法里的questions长度")
 		} catch (error) {
 			console.error('Error during fetchInterviewQuestions', error);
 			// 可以在这里添加更多的错误处理逻辑，比如设置一个标志，让用户知道出现了错误
