@@ -51,4 +51,6 @@ declare interface InterviewAnswer {
   ivCustomParams: FetchIvQuestion;
   answers: UserAnswer[];
   sessionId: string;
+  startedAt: string;
+  endedAt: string;
 }

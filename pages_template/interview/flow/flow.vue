@@ -97,6 +97,8 @@
 	const myData = reactive({
 		sessionId: '',
 		commonUUID: '',  // 为录制的视频和音频添加一个共同的UUID属性
+		startedAt: '',
+		endedAt: '',
 	    // 视频相关属性
 	    video: {
 	        recordVideoPath: '',
@@ -260,7 +262,7 @@
 	        isAnswering.value = false;
 	
 	        if (isRecording.value) {
-	            await stopRecord();
+	            stopRecord();
 	            stopRecordingAudio();
 	
 	            if (isLastQuestion.value) {
@@ -365,11 +367,7 @@
 	    // 设置结束视频
 	    questionVideoPath.value = CONFIG.END_VIDEO_PATH;
 	    questionText.value = CONFIG.END_VIDEO_TEXT;
-		
-		// 等待所有上传任务完成
-		while (taskQueue.length > 0) {
-			await new Promise(resolve => setTimeout(resolve, 500)); // 等待500毫秒再检查
-		}
+		myData.endedAt = vk.pubfn.timeFormat(new Date());
 		
 		// 上传用户的回答到后端
 		uploadUserAnswersApi();
@@ -381,7 +379,9 @@
 			currentJobInfo: currentJobInfo.value,
 			ivCustomParams: ivCustomParams.value,
 			answers: userAnswers.value || [],
-			sessionId: myData.sessionId
+			sessionId: myData.sessionId,
+			startedAt: myData.startedAt,
+			endedAt: myData.endedAt
 		}
 		console.log(params, "uploadUserAnswersApi的参数")
 	    try {
@@ -405,10 +405,10 @@
 	        const uploadWithRetry = () => {
 	            vk.uploadFile({
 	                filePath: recordVideoPath,
-	                onUploadProgress: (progressEvent: any) => {
-	                    const { progress } = progressEvent;
-	                    console.log(`Upload progress: ${progress}%`);
-	                },
+	                // onUploadProgress: (progressEvent: any) => {
+	                //     const { progress } = progressEvent;
+	                //     console.log(`Upload progress: ${progress}%`);
+	                // },
 	                success: (res: any) => {
 	                    if (res && res.url) {
 	                        currentVideoUrl.value = res.url;
@@ -566,6 +566,7 @@
 
 	onMounted(async () => {
 		myData.sessionId = uni.$u.guid();
+		myData.startedAt = vk.pubfn.timeFormat(new Date());
 		console.log(myData.sessionId, 'myData.sessionId')
 		setCustomNavigationBarTitle();
 		getSystemDimensions();
