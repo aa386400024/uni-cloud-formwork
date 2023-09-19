@@ -236,21 +236,43 @@
 	// 是否为最后一个面试问题
 	const isLastQuestion = computed(() => currentQuestionIndex.value === questions.value.length - 1);
 	
-	// 任务队列
+	// 定义一个任务队列，这个队列将存储待执行的异步任务。
+	// 每个任务都是一个返回Promise<void>的函数。
 	const taskQueue: Array<() => Promise<void>> = [];
+	
+	// 一个标志，用于表示队列是否正在处理中。
+	// 这确保在任何给定时刻，只有一个任务正在执行。
 	let isProcessingQueue = false;
 	
-	const processQueue = async () => {
-	    if (isProcessingQueue || taskQueue.length === 0) return;
+	// 定义一个处理队列的异步函数。
+	// 这个函数接受一个onComplete回调，当队列中的所有任务都完成时，这个回调会被调用。
+	const processQueue = async (onComplete: () => void) => {
+	    // 如果队列正在处理中，或者队列为空，则直接调用onComplete回调并返回。
+	    if (isProcessingQueue || taskQueue.length === 0) {
+	        onComplete();
+	        return;
+	    }
+	
+	    // 设置标志为true，表示队列正在处理中。
 	    isProcessingQueue = true;
 	
+	    // 从队列的开始处取出一个任务。
 	    const task = taskQueue.shift();
+	
+	    // 如果存在这个任务，则执行它。
+	    // 使用await确保在继续之前等待任务完成。
 	    if (task) {
 	        await task();
 	    }
+	
+	    // 任务完成后，设置标志为false，表示队列不再处理中。
 	    isProcessingQueue = false;
-	    processQueue();
+	
+	    // 递归调用processQueue函数，以确保队列中的下一个任务（如果存在）会被执行。
+	    // 这确保了队列中的所有任务都会按顺序执行。
+	    processQueue(onComplete);
 	};
+	
 	
 	// 回答完毕按钮点击事件，用于停止回答问题
 	const stopAnswering = async () => {
@@ -262,14 +284,14 @@
 	        isAnswering.value = false;
 	
 	        if (isRecording.value) {
-	            stopRecord();
+	            await stopRecord();
 	            stopRecordingAudio();
 	
 	            if (isLastQuestion.value) {
 	                showEndVideo();
 	            } else {
 	                nextQuestion();
-	                myData.commonUUID = uni.$u.guid();  // 生成新的UUID
+					myData.commonUUID = uni.$u.guid();  // 生成新的UUID
 	            }
 	
 	            const uploadTask = async () => {
@@ -301,7 +323,12 @@
 	            };
 	
 	            taskQueue.push(uploadTask);
-	            processQueue();
+	            processQueue(() => {
+					// 当队列中的所有任务都完成后，调用uploadUserAnswersApi
+					if (isLastQuestion.value) {
+						uploadUserAnswersApi();
+					}
+				});
 	        }
 	    } catch(err) {
 	        console.error('Error while stopping the answer:', err);
@@ -368,9 +395,6 @@
 	    questionVideoPath.value = CONFIG.END_VIDEO_PATH;
 	    questionText.value = CONFIG.END_VIDEO_TEXT;
 		myData.endedAt = vk.pubfn.timeFormat(new Date());
-		
-		// 上传用户的回答到后端
-		uploadUserAnswersApi();
 	}
 	
 	// 上传用户的回答API
