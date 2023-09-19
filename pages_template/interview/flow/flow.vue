@@ -300,6 +300,8 @@
 	                    const currentQuestion: Questions = questions.value[currentQuestionIndex.value];
 	                    const userAnswer = {
 	                        question_id: currentQuestion.question_id,
+							question_text: currentQuestion.question_text,
+							skills: currentQuestion.skills,
 	                        answer: "Transcribing...",
 	                        recording_url: "录音文件URL",
 	                        commonUUID: myData.commonUUID,

@@ -27,6 +27,8 @@ declare interface FetchIvQuestion {
 
 declare interface UserAnswer {
     question_id: string;
+	question_text: string;
+	skills: string[];
     answer: string;
     recording_url: string;
     video_url: string;
@@ -35,6 +37,8 @@ declare interface UserAnswer {
 
 declare interface Questions {
     question_id: string;
+	question_text: string;
+	skills: string[];
 	value: string;
 	label: string;
 	video: string;
