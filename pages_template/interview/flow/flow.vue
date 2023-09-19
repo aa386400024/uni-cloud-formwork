@@ -300,7 +300,7 @@
 	                    const currentQuestion: Questions = questions.value[currentQuestionIndex.value];
 	                    const userAnswer = {
 	                        question_id: currentQuestion.question_id,
-							question_text: currentQuestion.question_text,
+							question_text: currentQuestion.text,
 							skills: currentQuestion.skills,
 	                        answer: "Transcribing...",
 	                        recording_url: "录音文件URL",
@@ -584,7 +584,8 @@
 	const audioToTextApi = async (filePath: string, commonUUID: string) => {
 		const params = {
 			filePath: filePath,
-			commonUUID: commonUUID
+			commonUUID: commonUUID,
+			sessionId: myData.sessionId
 		}
 	    const res = await audioToText(params);
 		console.log(res, 'audioToTextApi')
