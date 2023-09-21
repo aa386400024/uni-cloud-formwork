@@ -195,7 +195,7 @@
 				countdown.value--;
 			} else {
 				clearInterval(countdownInterval.value!);
-				stopAnswering();
+				debouncedStopAnswering();  // 使用防抖版本的stopAnswering
 			}
 		}, 1000);
 	};
@@ -238,9 +238,10 @@
 	
 	const isLastQuestion = computed(() => {
 	    console.log("Computing isLastQuestion:", currentQuestionIndex.value, questions.value.length);
-	    return currentQuestionIndex.value === questions.value.length - 1;
+	    const result = currentQuestionIndex.value === questions.value.length - 1;
+	    console.log("isLastQuestion result:", result);
+	    return result;
 	});
-
 
 	console.log(currentQuestionIndex.value, questions.value.length, "当前的面试题索引和questions的数组长度")
 	// 定义一个任务队列，这个队列将存储待执行的异步任务。
@@ -248,39 +249,26 @@
 	const taskQueue: Array<() => Promise<void>> = [];
 	
 	// 一个标志，用于表示队列是否正在处理中。
-	// 这确保在任何给定时刻，只有一个任务正在执行。
 	let isProcessingQueue = false;
 	
-	// 定义一个处理队列的异步函数。
-	// 这个函数接受一个onComplete回调，当队列中的所有任务都完成时，这个回调会被调用。
 	const processQueue = async (onComplete: () => void) => {
-	    // 如果队列正在处理中，或者队列为空，则直接调用onComplete回调并返回。
 	    if (isProcessingQueue || taskQueue.length === 0) {
 	        onComplete();
 	        return;
 	    }
 	
-	    // 设置标志为true，表示队列正在处理中。
 	    isProcessingQueue = true;
 	
-	    // 从队列的开始处取出一个任务。
 	    const task = taskQueue.shift();
 	
-	    // 如果存在这个任务，则执行它。
-	    // 使用await确保在继续之前等待任务完成。
 	    if (task) {
 	        await task();
 	    }
-	    // 任务完成后，设置标志为false，表示队列不再处理中。
 	    isProcessingQueue = false;
 	
-	    // 递归调用processQueue函数，以确保队列中的下一个任务（如果存在）会被执行。
-	    // 这确保了队列中的所有任务都会按顺序执行。
 	    processQueue(onComplete);
 	};
 	
-	
-	// 回答完毕按钮点击事件，用于停止回答问题
 	const stopAnswering = async () => {
 	    try {
 	        if (countdownInterval.value) {
@@ -292,55 +280,64 @@
 	        if (isRecording.value) {
 	            await stopRecord();
 	            stopRecordingAudio();
-	            if (isLastQuestion.value) {
+	
+	            const wasLastQuestionWhenStarted = isLastQuestion.value;
+	
+	            if (wasLastQuestionWhenStarted) {
 	                showEndVideo();
 	            } else {
 	                nextQuestion();
-					myData.commonUUID = uni.$u.guid();  // 生成新的UUID
+	                myData.commonUUID = uni.$u.guid();  // 生成新的UUID
 	            }
 	
-	            const uploadTask = async () => {
-	                try {
-	                    const uploadedVideoUrl = await uploadVideo(recordVideoPath.value);
-	                    const currentQuestion: Questions = questions.value[currentQuestionIndex.value];
-	                    const userAnswer = {
-	                        question_id: currentQuestion.question_id,
-							question_text: currentQuestion.text,
-							skills: currentQuestion.skills,
-	                        answer: "Transcribing...",
-	                        recording_url: "录音文件URL",
-	                        commonUUID: myData.commonUUID,
-	                        video_url: uploadedVideoUrl || currentVideoUrl.value
-	                    };
+	            const uploadTask = async (): Promise<void> => {
+	                return new Promise(async (resolve, reject) => {
+	                    try {
+	                        const uploadedVideoUrl = await uploadVideo(recordVideoPath.value);
+	                        const currentQuestion: Questions = questions.value[currentQuestionIndex.value];
+	                        const userAnswer = {
+	                            question_id: currentQuestion.question_id,
+	                            question_text: currentQuestion.text,
+	                            skills: currentQuestion.skills,
+	                            answer: "Transcribing...",
+	                            recording_url: "录音文件URL",
+	                            commonUUID: myData.commonUUID,
+	                            video_url: uploadedVideoUrl || currentVideoUrl.value
+	                        };
 	
-	                    const existingAnswer = userAnswers.value.find(answer => 
-	                        answer.question_id === userAnswer.question_id && 
-	                        answer.commonUUID === userAnswer.commonUUID
-	                    );
+	                        const existingAnswer = userAnswers.value.find(answer => 
+	                            answer.question_id === userAnswer.question_id && 
+	                            answer.commonUUID === userAnswer.commonUUID
+	                        );
 	
-	                    if (!existingAnswer) {
-	                        userAnswers.value.push(userAnswer);
-	                        console.log(userAnswers.value, '用户答案userAnswers.value');
-	                    } else {
-	                        console.warn('Duplicate question_id and commonUUID detected:', userAnswer.question_id, userAnswer.commonUUID);
+	                        if (!existingAnswer) {
+	                            userAnswers.value.push(userAnswer);
+	                        } else {
+	                            console.warn('Duplicate question_id and commonUUID detected:', userAnswer.question_id, userAnswer.commonUUID);
+	                        }
+	
+	                        resolve();
+	                    } catch (error) {
+	                        console.error('Upload error:', error);
+	                        reject(error);
 	                    }
-	                } catch (error) {
-	                    console.error('Upload error:', error);
-	                }
+	                });
 	            };
 	
 	            taskQueue.push(uploadTask);
-	            processQueue(() => {
-					// 当队列中的所有任务都完成后，调用uploadUserAnswersApi
-					if (isLastQuestion.value) {
-						uploadUserAnswersApi();
-					}
-				});
+	            processQueue(async () => {
+	                if (wasLastQuestionWhenStarted) {
+	                    uploadUserAnswersApi();
+	                }
+	            });
 	        }
 	    } catch(err) {
 	        console.error('Error while stopping the answer:', err);
 	    }
 	};
+
+
+
 	
 	// 回答完毕按钮防抖
 	const debouncedStopAnswering = debounce(function() {
@@ -377,18 +374,21 @@
 	const nextQuestion = () => {
 		console.log("nextQuestion method called");  // 添加这一行
 	    currentQuestionIndex.value++;
+		console.log("Updated currentQuestionIndex to:", currentQuestionIndex.value);
 	    
 	    if (currentQuestionIndex.value < questions.value.length) {
 	        const currentQuestion = questions.value[currentQuestionIndex.value];
-	        
+	        console.log("Loading next question:", currentQuestion);
 	        if (currentQuestion) {
 	            questionVideoPath.value = currentQuestion.video;
 	            questionText.value = currentQuestion.text;
 	            currentVideo.value = 'question';  // 这里确保设置为播放问题视频
+				console.log("Set currentVideo to 'question'");
 	        } else {
 	            console.error("当前问题索引超出问题数组范围");
 	        }
 	    } else {
+			console.log("All questions answered. Showing end video.");
 	        // 所有问题都已回答
 	        showEndVideo();
 	    }
@@ -408,6 +408,7 @@
 	
 	// 上传用户的回答API
 	const uploadUserAnswersApi = async () => {
+		console.log("Starting uploadUserAnswersApi");
 		const params: InterviewAnswer = {
 			currentJobInfo: currentJobInfo.value,
 			ivCustomParams: ivCustomParams.value,
@@ -419,10 +420,11 @@
 		console.log(params, "uploadUserAnswersApi的参数")
 	    try {
 			const res = await submitInterviewAnswer(params);
-			console.log(res, 'uploadUserAnswersApi');
+			console.log(res, 'uploadUserAnswersApi result');
 	    } catch (error) {
 	        console.error('Error uploading user answers:', error);
 	    }
+		console.log("Finished uploadUserAnswersApi");
 	};
 	
 	// 上传录制的视频到服务器
