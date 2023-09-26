@@ -234,55 +234,63 @@
 		
 	}
 	
-	// 是否为最后一个面试问题
-	
+	// 计算属性，判断是否为最后一个面试问题
 	const isLastQuestion = computed(() => {
-	    console.log("Computing isLastQuestion:", currentQuestionIndex.value, questions.value.length);
+	    // 如果当前问题索引等于问题数组长度减1，返回true，否则返回false
 	    const result = currentQuestionIndex.value === questions.value.length - 1;
-	    console.log("isLastQuestion result:", result);
 	    return result;
 	});
-
-	console.log(currentQuestionIndex.value, questions.value.length, "当前的面试题索引和questions的数组长度")
-	// 定义一个任务队列，这个队列将存储待执行的异步任务。
-	// 每个任务都是一个返回Promise<void>的函数。
-	const taskQueue: Array<() => Promise<void>> = [];
 	
-	// 一个标志，用于表示队列是否正在处理中。
+	// 创建一个任务队列，用于存储一系列的异步任务
+	const taskQueue: Array<() => Promise<void>> = [];
+	// 用于标识是否正在处理任务队列
 	let isProcessingQueue = false;
 	
+	// 定义一个异步函数来处理任务队列
 	const processQueue = async (onComplete: () => void) => {
+	    // 如果正在处理任务队列或者任务队列为空，则调用onComplete回调并返回
 	    if (isProcessingQueue || taskQueue.length === 0) {
 	        onComplete();
 	        return;
 	    }
 	
+	    // 标记为正在处理任务队列
 	    isProcessingQueue = true;
 	
+	    // 从任务队列中取出一个任务
 	    const task = taskQueue.shift();
 	
+	    // 如果存在任务，则等待任务完成
 	    if (task) {
 	        await task();
 	    }
+	    // 重置标识为未在处理任务队列
 	    isProcessingQueue = false;
 	
+	    // 递归调用自身，处理下一个任务
 	    processQueue(onComplete);
 	};
 	
+	// 定义一个异步函数来停止回答
 	const stopAnswering = async () => {
 	    try {
+	        // 如果存在倒计时间隔，则清除间隔，并重置倒计时为300
 	        if (countdownInterval.value) {
 	            clearInterval(countdownInterval.value);
 	            countdown.value = 300;
 	        }
+	        // 标记为不在回答状态
 	        isAnswering.value = false;
 	
+	        // 如果正在记录，则停止记录并停止录音
 	        if (isRecording.value) {
 	            await stopRecord();
 	            stopRecordingAudio();
 	
+	            // 获取停止时是否为最后一个问题的标识
 	            const wasLastQuestionWhenStarted = isLastQuestion.value;
 	
+	            // 如果是最后一个问题，则显示结束视频，否则加载下一个问题，并生成新的UUID
 	            if (wasLastQuestionWhenStarted) {
 	                showEndVideo();
 	            } else {
@@ -290,11 +298,15 @@
 	                myData.commonUUID = uni.$u.guid();  // 生成新的UUID
 	            }
 	
+	            // 定义一个上传任务
 	            const uploadTask = async (): Promise<void> => {
 	                return new Promise(async (resolve, reject) => {
 	                    try {
+	                        // 上传视频并获取上传后的视频URL
 	                        const uploadedVideoUrl = await uploadVideo(recordVideoPath.value);
+	                        // 获取当前问题
 	                        const currentQuestion: Questions = questions.value[currentQuestionIndex.value];
+	                        // 构造用户回答对象
 	                        const userAnswer = {
 	                            question_id: currentQuestion.question_id,
 	                            question_text: currentQuestion.text,
@@ -305,26 +317,32 @@
 	                            video_url: uploadedVideoUrl || currentVideoUrl.value
 	                        };
 	
+	                        // 在用户回答数组中查找是否已存在相同问题ID和commonUUID的回答
 	                        const existingAnswer = userAnswers.value.find(answer => 
 	                            answer.question_id === userAnswer.question_id && 
 	                            answer.commonUUID === userAnswer.commonUUID
 	                        );
 	
+	                        // 如果不存在相同的回答，则将新回答添加到用户回答数组，否则在控制台打印警告
 	                        if (!existingAnswer) {
 	                            userAnswers.value.push(userAnswer);
 	                        } else {
 	                            console.warn('Duplicate question_id and commonUUID detected:', userAnswer.question_id, userAnswer.commonUUID);
 	                        }
 	
+	                        // 任务完成，解析Promise
 	                        resolve();
 	                    } catch (error) {
+	                        // 打印上传错误，并拒绝Promise
 	                        console.error('Upload error:', error);
 	                        reject(error);
 	                    }
 	                });
 	            };
 	
+	            // 将上传任务添加到任务队列
 	            taskQueue.push(uploadTask);
+	            // 处理任务队列，并在完成后检查是否为最后一个问题，如果是，则调用上传用户回答API
 	            processQueue(async () => {
 	                if (wasLastQuestionWhenStarted) {
 	                    uploadUserAnswersApi();
@@ -332,19 +350,16 @@
 	            });
 	        }
 	    } catch(err) {
+	        // 在控制台打印停止回答时的错误
 	        console.error('Error while stopping the answer:', err);
 	    }
 	};
 
-
-
-	
 	// 回答完毕按钮防抖
 	const debouncedStopAnswering = debounce(function() {
 	    stopAnswering()
 	}, 300);  // 300毫秒的延迟，可以根据需要调整
 
-	
 	// 随机获取5道面试题数据
 	const fetchInterviewQuestions = async () => {
 		try {
