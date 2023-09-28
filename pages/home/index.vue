@@ -2,7 +2,6 @@
 	<!-- #ifdef MP-WEIXIN -->
 	<ws-wx-privacy 
 		id="privacy-popup"
-		style="z-index: 100000 !important;"
 	></ws-wx-privacy>
 	<!-- #endif -->
 	<scroll-view enable-flex style="height: 100vh;" scroll-y @scroll="handleScroll">
@@ -265,5 +264,7 @@
 		height: 500rpx;
 		background-color: #ffaa00;
 	} 
-	
+	::v-deep .u-sticky {
+		z-index: 1 !important;
+	}
 </style>
