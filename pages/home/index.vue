@@ -1,4 +1,12 @@
 <template>
+	<!-- #ifdef MP-WEIXIN -->
+	<ws-wx-privacy 
+		id="privacy-popup" 
+		@disagree="handleDisagree"
+		@agree="handleAgree"
+		style="z-index: 100000 !important;"
+	></ws-wx-privacy>
+	<!-- #endif -->
 	<scroll-view enable-flex style="height: 100vh;" scroll-y @scroll="handleScroll">
 		<view class="top-banner"></view>
 		<u-sticky v-if="offsetTop || platform === 'h5'" :offsetTop="offsetTop" bgColor="#fff">
@@ -139,6 +147,33 @@
 
 	const childRef = ref<ChildComponentRef | null>(null);
 	
+	const handleDisagree = () => {
+		// 处理用户不同意隐私协议的逻辑
+		console.log("handleDisagree");
+	}
+	
+	const handleAgree = () => {
+		// 处理用户同意隐私协议的逻辑
+		console.log("handleAgree");
+	}
+	
+	// 查看用户是否授权
+	const doRequire = () => {
+		uni.requirePrivacyAuthorize({
+			success: () => {
+				console.log('同意');
+				// 用户同意授权
+				// 继续小程序逻辑
+			},
+			fail: () => {
+				console.log('拒绝');
+			}, // 用户拒绝授权
+			complete: (complete) => {
+				console.log(complete, "complete")
+			}
+		})
+	}
+	
 	// 切换行业tab点击事件
 	const handleTabClick = (item: any) => {
 		const data = {
@@ -225,6 +260,7 @@
 	onMounted(async () => {
 		// #ifdef MP-WEIXIN
 		capsuleInfo()
+		doRequire()
 		// #endif
 		
 		fetchIndustriesApi().then(() => {
