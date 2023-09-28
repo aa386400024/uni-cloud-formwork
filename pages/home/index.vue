@@ -21,7 +21,7 @@
 				<template #right>
 					<view
 						style="padding-left: 4px; margin-right: 4px;"
-						@tap="$u.toast('插槽被点击')"
+						@tap="uni.$u.toast('插槽被点击')"
 					>
 						<u-icon
 							name="list"
