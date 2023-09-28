@@ -1,14 +1,13 @@
-import type { Uni as _Uni } from '@dcloudio/types';
- 
-declare global {
-	/**
-	*拓展全局变量Uni
-	*/
-	interface Uni extends _Uni {
-		$u: {
-			os(): string;
-			guid(): string;
-			platform: string;
+import Vue from 'vue';
+
+declare module 'vue/types/vue' {
+	interface Vue {
+		$u : {
+			os() : string;
+			guid() : string;
+			platform : string;
+			toast(message : string) : void;
+			// ...其它可能的方法和属性
 		};
 	}
 }

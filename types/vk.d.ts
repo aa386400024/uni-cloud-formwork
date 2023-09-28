@@ -17,4 +17,8 @@ declare global {
 			}): void;
 		};
 	}
+	var vk: {
+		navigateTo(url: string): void;
+		// ...其他方法和属性
+	};
 }

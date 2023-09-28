@@ -1,9 +1,7 @@
 <template>
 	<!-- #ifdef MP-WEIXIN -->
 	<ws-wx-privacy 
-		id="privacy-popup" 
-		@disagree="handleDisagree"
-		@agree="handleAgree"
+		id="privacy-popup"
 		style="z-index: 100000 !important;"
 	></ws-wx-privacy>
 	<!-- #endif -->
@@ -64,7 +62,6 @@
 				:position="item"
 				@click="goToInterview"
 			></job-card>
-			
 			<custom-gap></custom-gap>
 			
 		</view>
@@ -86,7 +83,7 @@
 </template>
 
 <script lang="ts" setup>
-	import { onMounted, reactive, ref, toRefs, computed } from 'vue';
+	import { onMounted, reactive, ref, toRefs } from 'vue';
 	import { useInterviewStore } from '@/stores';
 	import { useGlobalAPI } from '@/hooks/useGlobalAPI';
 	import { fetchIndustries, fetchPositions } from '@/api/home';
@@ -147,17 +144,7 @@
 
 	const childRef = ref<ChildComponentRef | null>(null);
 	
-	const handleDisagree = () => {
-		// 处理用户不同意隐私协议的逻辑
-		console.log("handleDisagree");
-	}
-	
-	const handleAgree = () => {
-		// 处理用户同意隐私协议的逻辑
-		console.log("handleAgree");
-	}
-	
-	// 查看用户是否授权
+	// 查看用户是否授权隐私协议
 	const doRequire = () => {
 		uni.requirePrivacyAuthorize({
 			success: () => {
