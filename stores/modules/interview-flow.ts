@@ -3,7 +3,8 @@ import { defineStore } from 'pinia'
 interface interviewState {
 	currentJobInfo: {
 		name?: string,
-		position_id?: string
+		position_id?: string,
+		industry_name?: string,
 	},
 	ivCustomParams: {
 		positionId: string,

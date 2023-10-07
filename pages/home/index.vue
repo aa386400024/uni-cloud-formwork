@@ -102,6 +102,7 @@
 		textColor: '#fff',
 		industriesList: [],
 		defaultIndustryId: "",
+		currentIndustryName: "",
 		activeStyle: {
 			color: '#303133',
 			fontWeight: 'bold',
@@ -131,6 +132,7 @@
 		textColor, 
 		industriesList,
 		defaultIndustryId,
+		currentIndustryName,
 		activeStyle,
 		inactiveStyle,
 		itemStyle,
@@ -162,6 +164,7 @@
 	
 	// 切换行业tab点击事件
 	const handleTabClick = (item: any) => {
+		currentIndustryName.value = item.name;
 		const data = {
 			industry_id: item.industry_id
 		}
@@ -173,7 +176,8 @@
 		try {
 			const res = await fetchIndustries();
 			industriesList.value = res.rows || []
-			defaultIndustryId.value = res.rows[0].industry_id
+			defaultIndustryId.value = res.rows[0].industry_id;
+			currentIndustryName.value = res.rows[0].name;
 		} catch (error) {
 			console.error('Error during fetchTodosCloud:', error);
 			// 可以在这里添加更多的错误处理逻辑，比如设置一个标志，让用户知道出现了错误
@@ -220,6 +224,7 @@
 	// 职位点击事件-跳转到面试页
 	const goToInterview = (job: any) => {
 		interviewStore.currentJobInfo = job;
+		interviewStore.currentJobInfo.industry_name = currentIndustryName.value;
 		showPopup.value = true
 	}
 	
