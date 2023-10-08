@@ -281,6 +281,10 @@
 	        }
 	        // 标记为不在回答状态
 	        isAnswering.value = false;
+			
+			// 获取当前问题
+			const currentQuestion: Questions = questions.value[currentQuestionIndex.value];
+			console.log(questions.value, currentQuestionIndex.value, "currentQuestionIndex.value")
 	
 	        // 如果正在记录，则停止记录并停止录音
 	        if (isRecording.value) {
@@ -304,8 +308,6 @@
 	                    try {
 	                        // 上传视频并获取上传后的视频URL
 	                        const uploadedVideoUrl = await uploadVideo(recordVideoPath.value);
-	                        // 获取当前问题
-	                        const currentQuestion: Questions = questions.value[currentQuestionIndex.value];
 	                        // 构造用户回答对象
 	                        const userAnswer = {
 	                            question_id: currentQuestion.question_id,
