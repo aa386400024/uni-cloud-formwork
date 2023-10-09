@@ -1,6 +1,6 @@
 <template>
 	<uni-sign-in ref="signIn"></uni-sign-in>
-	
+	<official-account v-if="showOfficial"></official-account>
 	<view class="top-nav padding-md">
 		<view class="user-info" :style="{paddingTop: offsetTop + 'px'}">
 			<view class="left">
@@ -73,6 +73,7 @@
 			{ id: 3, number: 5, description: '连续学习' },
 			{ id: 4, number: 3, description: '邀请好友' }
 		],
+		showOfficial: false,
 		gridList: [
 			{
 				name: 'photo',
@@ -112,7 +113,7 @@
 			},
 		],
 	})
-	const { offsetTop, statsList, gridList } = toRefs(myData)
+	const { offsetTop, statsList, gridList, showOfficial } = toRefs(myData)
 	const { userInfo, hasLogin } = toRefs(storeOriginal);
 	
 	// 微信小程序获取胶囊区域距离顶部的位置
@@ -132,6 +133,9 @@
 	// 点击九宫格事件
 	const handleGridClick = (grid: Grid) => {
 		console.log(`点击了第${grid.name}个`);
+		if (grid.title === '公众号') {
+			showOfficial.value = true;
+		}
 	}
 	
 	// 前往会员开通页
