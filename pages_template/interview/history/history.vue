@@ -79,7 +79,7 @@
 		}
 	};
 
-	// 计算持续时间
+	// 计算面试持续时间
 	const getDuration = (start : string, end : string) => {
 		const startTime = new Date(start);
 		const endTime = new Date(end);
