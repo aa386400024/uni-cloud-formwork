@@ -12,7 +12,7 @@
 			<view v-for="interview in interviewsList" :key="interview.session_id" class="interview-card">
 				<!-- 报告生成的状态显示 -->
 				<view class="status-indicator">
-					{{interview.isCompleted ? '已生成' : '生成中'}}
+					{{interview.status.is_feedback_generated ? '已生成' : '生成中'}}
 				</view>
 
 				<view class="left-content">

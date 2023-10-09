@@ -38,17 +38,24 @@ declare interface InterviewAnswer {
   endedAt: string;
 }
 
+interface InterviewStatus {
+    is_completed?: boolean;  // 假设您的代码中有这个字段，我在此添加它
+    is_assessed?: boolean;   // 同上
+    is_passed?: boolean;     // 同上
+    is_feedback_generated: boolean;
+}
+
 declare interface Interviews {
     session_id: string;
 	interview_started_at: string;
 	interview_ended_at: string;
 	interview_level?: string;
 	interview_style?: string;
-	isCompleted?: string;
 	position_name: string;
 	label: string;
 	video: string;
 	text: string;
+	status: InterviewStatus;
 }
 
 declare interface IvHsitory {
