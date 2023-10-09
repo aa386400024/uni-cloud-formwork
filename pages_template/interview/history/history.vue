@@ -37,26 +37,30 @@
 </template>
 
 <script lang="ts" setup>
-	import { reactive, toRefs, computed, onMounted } from 'vue';
+	import { reactive, toRefs, computed, onMounted, onUnmounted } from 'vue';
 	import { fetchInterviews } from '@/api/interview';
 
 	type PagingType = {
 		complete : (rows : any[]) => void;
-		// ... 其他你需要的属性和方法
+		reload: () => void;
 	};
 	const myData = reactive({
 		paging: {
 			complete: (rows : any[]) => {
 				console.log("Completed with rows:", rows);
-			}
-			// ... 其他你需要的属性和方法
+			},
 		} as PagingType,
-		interviewsList: [] as Interviews[]
+		interviewsList: [] as Interviews[],
+		pollingInterval: null as number | null,
+		currentPage: 1,
+		pageSize: 10
 	})
 	const {
 		paging,
-		interviewsList
+		interviewsList,
+		pollingInterval,
 	} = toRefs(myData);
+	
 	
 	// 点击input事件
 	const handleSearchInput = () => {
@@ -97,9 +101,18 @@
 		fetchInterviewsApi(pageNo, pageSize);
 	}
 
-	onMounted(() => {
-
-	});
+	// onMounted(() => {
+	//     // 设置轮询，例如每10秒查询一次
+	//     pollingInterval.value = setInterval(() => {
+	//         paging.value.reload();
+	//     }, 30 * 1000);
+	// });
+	// onUnmounted(() => {
+	//     // 当组件被销毁时，清除定时器
+	//     if (pollingInterval.value) {
+	//         clearInterval(pollingInterval.value);
+	//     }
+	// });
 </script>
 
 <style lang="scss">
