@@ -29,7 +29,7 @@
 				</view>
 				<view>
 					<u-button type="primary" shape="circle" text="查看报告" size="small"
-						@click="toViewReport(interview.session_id)"></u-button>
+						@click="toViewReport(interview)"></u-button>
 				</view>
 			</view>
 		</view>
@@ -38,7 +38,7 @@
 
 <script lang="ts" setup>
 	import { reactive, toRefs, computed, onMounted, onUnmounted } from 'vue';
-	import { fetchInterviews } from '@/api/interview';
+	import { fetchIvHistory } from '@/api/interview';
 
 	type PagingType = {
 		complete : (rows : any[]) => void;
@@ -68,17 +68,17 @@
 	};
 	
 	// 获取面试历史数据
-	const fetchInterviewsApi = async (pageNo : number, pageSize : number) => {
+	const fetchIvHistoryApi = async (pageNo : number, pageSize : number) => {
 		try {
 			let params = {
 				pageNo,
 				pageSize
 			}
-			const res = await fetchInterviews(params);  // 假设您有一个叫 fetchInterviews 的函数与 API 交互
+			const res = await fetchIvHistory(params);
 			interviewsList.value = res.rows || [];
 			paging.value?.complete(res.rows);
 		} catch (error) {
-			console.error('Error during fetchInterviews:', error);
+			console.error('Error during fetchIvHistory:', error);
 			// 可以在这里添加更多的错误处理逻辑，比如设置一个标志，让用户知道出现了错误
 		}
 	};
@@ -92,13 +92,17 @@
 	};
 	
 	// 跳转到面试报告详情页
-	const toViewReport = (id : string) => {
-		console.log("Viewing details for interview with ID:", id);
+	const toViewReport = (params: Interviews) => {
+	    const { answers, ...selectedParams } = params; // 从params中排除answers属性
+	    const paramString = encodeURIComponent(JSON.stringify(selectedParams));
+	    uni.navigateTo({
+	        url: `/pages_template/interview/feedback/feedback?params=${paramString}`
+	    });
 	};
 
 	// @query所绑定的方法不要自己调用！！需要刷新列表数据时，只需要调用paging.value.reload()即可
 	const queryList = (pageNo : number, pageSize : number) => {
-		fetchInterviewsApi(pageNo, pageSize);
+		fetchIvHistoryApi(pageNo, pageSize);
 	}
 
 	// onMounted(() => {

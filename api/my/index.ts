@@ -3,7 +3,7 @@
 import { request, RequestOptions } from '@/utils/api/request'
 
 // 行业数据接口
-export async function fetchInterviews(): Promise<any> {
+export async function fetchIvHistory(): Promise<any> {
 	const options: RequestOptions = {
 		url: 'client/industries/pub/getList',
 		cloudFunction: true,

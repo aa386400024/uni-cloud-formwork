@@ -56,9 +56,15 @@ declare interface Interviews {
 	video: string;
 	text: string;
 	status: InterviewStatus;
+	answers: any;
 }
 
 declare interface IvHsitory {
     pageNo: number;
 	pageSize: number;
 }
+
+declare interface IvFeedback {
+    session_id: string;
+}
+

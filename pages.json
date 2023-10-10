@@ -446,6 +446,12 @@
 						"navigationBarTitleText": "自定义模拟面试",
 						"enablePullDownRefresh": false
 					}
+				}, {
+					"path": "interview/feedback/feedback",
+					"style": {
+						"navigationBarTitleText": "面试报告",
+						"enablePullDownRefresh": false
+					}
 				}
 			]
 		}

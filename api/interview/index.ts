@@ -2,10 +2,22 @@
 
 import { request, RequestOptions } from '@/utils/api/request'
 
-// 行业数据接口
-export async function fetchInterviews(data: IvHsitory): Promise<any> {
+// 面试历史数据接口
+export async function fetchIvHistory(data: IvHsitory): Promise<any> {
 	const options: RequestOptions = {
 		url: 'client/interview/kh/ivHistoryList',
+		cloudFunction: true,
+		title: '请求中...',
+		data
+	}
+	const response = await request(options)
+	return response.data
+}
+
+// 面试历史数据接口
+export async function fetchIvFeedback(data: IvFeedback): Promise<any> {
+	const options: RequestOptions = {
+		url: 'client/interview/kh/feedback',
 		cloudFunction: true,
 		title: '请求中...',
 		data
