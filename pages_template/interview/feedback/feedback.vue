@@ -27,9 +27,14 @@
 	import { ref, reactive, toRefs, onMounted } from 'vue';
 	import { onLoad } from "@dcloudio/uni-app";
 	import { fetchIvFeedback } from '@/api/interview';
+	
+	interface ParamsType {
+	    session_id?: string;  // 假设 session_id 是一个可选的字符串，您可以根据实际情况调整
+	    // 其他可能的属性
+	}
 
 	const myData = reactive({
-		params: {},
+		params: {} as ParamsType,
 		position_name: "前端开发工程师", // 从您的数据中获取
 		industry_name: "互联网", // 从您的数据中获取
 		feedbacksList: [
@@ -64,7 +69,7 @@
 	});
 	
 	onMounted(() => {
-	    fetchIvFeedbackApi(params.value)
+	    fetchIvFeedbackApi(params.value.session_id)
 	});
 </script>
 
