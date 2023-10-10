@@ -65,7 +65,6 @@
 	    if (option.params) {
 	        params.value = JSON.parse(decodeURIComponent(option.params));
 	    }
-	    console.log("页面B onLoad:", params.value);
 	});
 	
 	onMounted(() => {
