@@ -23,7 +23,7 @@
 						<text class="info-text">面试时间: {{ formatTime(interview.interview_started_at) }}</text>
 					</view>
 					<view class="info-text-wrapper">
-						<text class="info-text">持续时间:
+						<text class="info-text">面试时长:
 							{{ getDuration(interview.interview_started_at, interview.interview_ended_at) }} 分钟</text>
 					</view>
 				</view>

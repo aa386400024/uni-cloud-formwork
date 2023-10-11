@@ -1,15 +1,56 @@
 <template>
 	<view class="container">
 		<view class="header-section">
-			<u-image :show-loading="false" :src="headerSectionUrl" width="100%"></u-image>
-			<text class="position-name">{{ interviewInfo.position_name }} - {{ interviewInfo.industry_name }}</text>
-			<view class="info-box">
-				<text class="info-item">用户名：张春龙</text>
-				<text class="info-item">面试时间：{{ interviewInfo.interview_started_at }}</text>
-				<text class="info-item">面试时长：2分钟11秒</text>
-				<text class="info-item">面试难度：初级</text>
-				<text class="info-item">面试风格：技术面试</text>
-				<text class="info-item">评估技能：{{ interviewInfo.interview_skills.join('、') }}</text>
+			<image style="width: 100%; background-color: #eeeeee;" mode="widthFix" :src="headerSectionUrl"
+			                        ></image>
+			<view class="header-content">
+				<text class="position-name">{{ interviewInfo.position_name }} - {{ interviewInfo.industry_name }}</text>
+				<view class="info-box">
+					<!-- <view class="info-item">
+						<text class="label">用户名</text>
+						<text class="value">张春龙</text>
+					</view> -->
+					<view class="info-item">
+						<view class="info-content">
+							<!-- <image src="/path/to/your/icon.png" class="info-icon" /> -->
+							<view class="text-content">
+								<text class="label">面试时间</text>
+								<text class="value">{{ interviewInfo.interview_started_at }}</text>
+							</view>
+						</view>
+					</view>
+					<view class="info-item">
+						<view class="info-content">
+							<!-- <image src="/path/to/your/icon.png" class="info-icon" /> -->
+							<view class="text-content">
+								<text class="label">面试时长</text>
+								<text class="value">2分钟11秒</text>
+							</view>
+						</view>
+					</view>
+					<view class="info-item">
+						<view class="info-content">
+							<!-- <image src="/path/to/your/icon.png" class="info-icon" /> -->
+							<view class="text-content">
+								<text class="label">面试难度</text>
+								<text class="value">初级</text>
+							</view>
+						</view>
+					</view>
+					<view class="info-item">
+						<view class="info-content">
+							<!-- <image src="/path/to/your/icon.png" class="info-icon" /> -->
+							<view class="text-content">
+								<text class="label">面试风格</text>
+								<text class="value">技术面试</text>
+							</view>
+						</view>
+					</view>
+					<!-- <view class="info-item">
+						<text class="label">评估技能</text>
+						<text class="value">{{ interviewInfo.interview_skills.join('、') }}</text>
+					</view> -->
+				</view>
 			</view>
 		</view>
 		{{interviewInfo}}
@@ -29,7 +70,7 @@
 
 	const myData = reactive({
 		interviewInfo: {} as interviewInfoType,
-		headerSectionUrl: "https://mp-43f7552d-29af-4d0a-8672-7a2fcdd00dc7.cdn.bspapp.com/interview/feedback/feedback-header.png",
+		headerSectionUrl: "https://mp-43f7552d-29af-4d0a-8672-7a2fcdd00dc7.cdn.bspapp.com/interview/feedback/feedback-header-section.png",
 		feedbacksList: [
 			// 从您的数据中获取
 		],
@@ -69,25 +110,57 @@
 
 <style lang="scss" scoped>
 	.container {
-		.position-name {
-			margin-top: 20rpx;
-			padding: 10rpx;
-			font-weight: bold;
-		}
-
-		.info-box {
-			display: flex;
-			flex-wrap: wrap;
-			margin-top: 20rpx;
-			border: 2rpx solid #e0e0e0;
-			padding: 10rpx;
-		}
-
-		.info-item {
-			flex: 1 0 50%; // 这样保证一行显示2个
-			padding: 10rpx;
-			font-size: 20rpx;
+		height: 100%;
+		background-color: #9381FF;
+		.header-section {
+			position: relative;
+			align-items: flex-start;
+			.header-content {
+				position: absolute;
+				left: 0;
+				right: 0;
+				bottom: 200rpx;
+				.position-name {
+					margin-top: 20rpx;
+					padding: 0 20rpx;
+					font-weight: bold;
+					color: #fff;
+				}
+			
+				.info-box {
+					display: flex;
+					flex-wrap: wrap;
+					margin: 10rpx;
+				}
+			
+				.info-item {
+					flex: 1 0 42%; // 这样保证一行显示2个
+					padding: 10rpx 20rpx;
+					margin: 10rpx;
+					font-size: 20rpx;
+					display: flex;
+					flex-direction: column; // 设置为列方向，使文本显示在不同的行上
+					border: 2rpx solid #fff;
+					border-radius: 14rpx;
+					color: #fff;
+			
+					.info-content {
+						display: flex;
+						align-items: flex-start; // 这将使图标和文本内容顶部对齐
+					}
+			
+					.text-content {
+						display: flex;
+						flex-direction: column;
+					}
+			
+					.info-icon {
+						width: 20rpx; // 或者您想要的任何大小
+						height: 20rpx; // 或者您想要的任何大小
+						margin-right: 10rpx; // 这将在图标和文本之间添加一些空间
+					}
+				}
+			}
 		}
 	}
 </style>
-
