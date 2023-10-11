@@ -111,7 +111,7 @@
 <style lang="scss" scoped>
 	.container {
 		height: 100%;
-		background-color: #9381FF;
+		background-color: #8084FA;
 		.header-section {
 			position: relative;
 			align-items: flex-start;
@@ -135,12 +135,13 @@
 			
 				.info-item {
 					flex: 1 0 42%; // 这样保证一行显示2个
-					padding: 10rpx 20rpx;
+					padding: 16rpx 20rpx;
 					margin: 10rpx;
 					font-size: 20rpx;
 					display: flex;
 					flex-direction: column; // 设置为列方向，使文本显示在不同的行上
-					border: 2rpx solid #fff;
+					// border: 2rpx solid #fff;
+					background-color: rgba(202, 215, 255, 0.3);
 					border-radius: 14rpx;
 					color: #fff;
 			
