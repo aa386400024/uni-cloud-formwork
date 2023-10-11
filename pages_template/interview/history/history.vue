@@ -20,7 +20,7 @@
 						<text class="card-title">{{ interview.position_name }}</text>
 					</view>
 					<view class="info-text-wrapper">
-						<text class="info-text">面试时间: {{ interview.interview_started_at }}</text>
+						<text class="info-text">面试时间: {{ formatTime(interview.interview_started_at) }}</text>
 					</view>
 					<view class="info-text-wrapper">
 						<text class="info-text">持续时间:
@@ -51,14 +51,14 @@
 			},
 		} as PagingType,
 		interviewsList: [] as Interviews[],
-		pollingInterval: null as number | null,
+		// pollingInterval: null as number | null,
 		currentPage: 1,
 		pageSize: 10
 	})
 	const {
 		paging,
 		interviewsList,
-		pollingInterval,
+		// pollingInterval,
 	} = toRefs(myData);
 	
 	
@@ -90,6 +90,13 @@
 		const durationMinutes = Math.round((endTime.getTime() - startTime.getTime()) / (1000 * 60));
 		return durationMinutes;
 	};
+	
+	const formatTime = (timeStr: string) => {
+	    const date = new Date(timeStr);
+		const newDate = vk.pubfn.timeFormat(date,"yyyy-MM-dd hh:mm");
+		return newDate
+	}
+
 	
 	// 跳转到面试报告详情页
 	const toViewReport = (params: Interviews) => {

@@ -1,42 +1,35 @@
 <template>
 	<view class="container">
-		{{params}}
-		<view class="title-section">
-			<text class="position-name">{{ position_name }}</text>
-			<text class="industry-name">{{ industry_name }}</text>
-		</view>
-		<view v-for="(feedbackItem, index) in feedbacksList" :key="index" class="feedback-item">
-			<view class="question-section">
-				<text>{{ feedbackItem.question }}</text>
-			</view>
-			<video :src="answers[index].video_url" controls></video>
-			<view class="user-answer-section">
-				<text>{{ feedbackItem.userAnswer }}</text>
-			</view>
-			<view class="feedback-section">
-				<text>{{ feedbackItem.feedback }}</text>
-			</view>
-			<view class="suggested-answer-section">
-				<text>{{ feedbackItem.recommendedAnswer }}</text>
+		<view class="header-section">
+			<u-image :show-loading="false" :src="headerSectionUrl" width="100%"></u-image>
+			<text class="position-name">{{ interviewInfo.position_name }} - {{ interviewInfo.industry_name }}</text>
+			<view class="info-box">
+				<text class="info-item">用户名：张春龙</text>
+				<text class="info-item">面试时间：{{ interviewInfo.interview_started_at }}</text>
+				<text class="info-item">面试时长：2分钟11秒</text>
+				<text class="info-item">面试难度：初级</text>
+				<text class="info-item">面试风格：技术面试</text>
+				<text class="info-item">评估技能：{{ interviewInfo.interview_skills.join('、') }}</text>
 			</view>
 		</view>
+		{{interviewInfo}}
 	</view>
 </template>
 
 <script setup lang="ts">
-	import { ref, reactive, toRefs, onMounted } from 'vue';
+	import { reactive, toRefs, onMounted } from 'vue';
 	import { onLoad } from "@dcloudio/uni-app";
 	import { fetchIvFeedback } from '@/api/interview';
-	
-	interface ParamsType {
-	    session_id?: string;  // 假设 session_id 是一个可选的字符串，您可以根据实际情况调整
-	    // 其他可能的属性
+
+	interface interviewInfoType {
+		session_id ?: string;
+		position_name : string;
+		industry_name : string;
 	}
 
 	const myData = reactive({
-		params: {} as ParamsType,
-		position_name: "前端开发工程师", // 从您的数据中获取
-		industry_name: "互联网", // 从您的数据中获取
+		interviewInfo: {} as interviewInfoType,
+		headerSectionUrl: "https://mp-43f7552d-29af-4d0a-8672-7a2fcdd00dc7.cdn.bspapp.com/interview/feedback/feedback-header.png",
 		feedbacksList: [
 			// 从您的数据中获取
 		],
@@ -45,8 +38,8 @@
 		]
 	})
 
-	const { params, position_name, industry_name, feedbacksList, answers } = toRefs(myData);
-	
+	const { interviewInfo, headerSectionUrl, feedbacksList, answers } = toRefs(myData);
+
 	// 获取面试反馈数据
 	const fetchIvFeedbackApi = async (session_id : string) => {
 		try {
@@ -62,51 +55,39 @@
 	};
 
 	onLoad((option) => {
-	    if (option.params) {
-	        params.value = JSON.parse(decodeURIComponent(option.params));
-	    }
+		if (option.params) {
+			interviewInfo.value = JSON.parse(decodeURIComponent(option.params));
+		}
 	});
-	
+
 	onMounted(() => {
-	    fetchIvFeedbackApi(params.value.session_id)
+		if (interviewInfo.value.session_id) {
+			fetchIvFeedbackApi(interviewInfo.value.session_id);
+		}
 	});
 </script>
 
-<style scoped>
-	/* 你可以在这里添加 CSS 样式来匹配你的设计 */
+<style lang="scss" scoped>
 	.container {
-		/* 样式 */
-	}
+		.position-name {
+			margin-top: 20rpx;
+			padding: 10rpx;
+			font-weight: bold;
+		}
 
-	.title-section {
-		/* 样式 */
-	}
+		.info-box {
+			display: flex;
+			flex-wrap: wrap;
+			margin-top: 20rpx;
+			border: 2rpx solid #e0e0e0;
+			padding: 10rpx;
+		}
 
-	.position-name {
-		/* 样式 */
-	}
-
-	.industry-name {
-		/* 样式 */
-	}
-
-	.feedback-item {
-		/* 样式 */
-	}
-
-	.question-section {
-		/* 样式 */
-	}
-
-	.user-answer-section {
-		/* 样式 */
-	}
-
-	.feedback-section {
-		/* 样式 */
-	}
-
-	.suggested-answer-section {
-		/* 样式 */
+		.info-item {
+			flex: 1 0 50%; // 这样保证一行显示2个
+			padding: 10rpx;
+			font-size: 20rpx;
+		}
 	}
 </style>
+
