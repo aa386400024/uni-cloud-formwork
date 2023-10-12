@@ -17,7 +17,9 @@
 				</view>
 			</view>
 		</view>
+
 		<view class="charts-box">
+			<qiun-data-charts type="arcbar" :opts="totalScoreOpts" :chartData="totalScoreChartData" />
 			<qiun-data-charts type="rose" :opts="scorePieOpts" :chartData="scorePieData" />
 		</view>
 		{{scorePieData}}
@@ -43,6 +45,27 @@
 	const myData = reactive({
 		interviewInfo: {} as interviewInfoType,
 		headerSectionUrl: "https://mp-43f7552d-29af-4d0a-8672-7a2fcdd00dc7.cdn.bspapp.com/interview/feedback/feedback-header-report.png",
+		totalScoreChartData: {},
+		totalScoreOpts: {
+			color: ["#1890FF", "#91CB74", "#FAC858", "#EE6666", "#73C0DE", "#3CA272", "#FC8452", "#9A60B4", "#ea7ccc"],
+			padding: undefined,
+			title: {},
+			subtitle: {
+				name: "综合评分",
+				fontSize: 25,
+				color: "#666666"
+			},
+			extra: {
+				arcbar: {
+					type: "circle",
+					width: 12,
+					backgroundColor: "#E9E9E9",
+					startAngle: 1.5,
+					endAngle: 0.25,
+					gap: 2
+				}
+			}
+		},
 		scorePieData: {},
 		scorePieOpts: {
 			color: ["#1890FF", "#91CB74", "#FAC858", "#EE6666", "#73C0DE", "#3CA272", "#FC8452", "#9A60B4", "#ea7ccc"],
@@ -70,7 +93,7 @@
 		}
 	})
 
-	const { interviewInfo, headerSectionUrl, scorePieData, scorePieOpts } = toRefs(myData);
+	const { interviewInfo, headerSectionUrl, totalScoreChartData, totalScoreOpts, scorePieData, scorePieOpts } = toRefs(myData);
 
 	// 获取面试反馈数据
 	const fetchIvFeedbackApi = async (session_id : string) => {
@@ -82,6 +105,8 @@
 
 			const feedbacks = res.data || {};
 			scorePieData.value = feedbacks.percentages || {}
+			totalScoreChartData.value = feedbacks.totalPercentage || {}
+			totalScoreOpts.value.title = feedbacks.totalPercentage.title || {}
 		} catch (error) {
 			console.error('Error during fetchIvHistory:', error);
 			// 可以在这里添加更多的错误处理逻辑，比如设置一个标志，让用户知道出现了错误
