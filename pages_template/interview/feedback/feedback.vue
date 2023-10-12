@@ -17,7 +17,10 @@
 				</view>
 			</view>
 		</view>
-		{{interviewInfo}}
+		<view class="charts-box">
+			<qiun-data-charts type="rose" :opts="scorePieOpts" :chartData="scorePieData" />
+		</view>
+		{{scorePieData}}
 	</view>
 </template>
 
@@ -27,25 +30,47 @@
 	import { fetchIvFeedback } from '@/api/interview';
 
 	interface interviewInfoType {
-		session_id?: string;
-		position_name: string;
-		industry_name: string;
-		interview_started_at: string;
-		interview_ended_at: string;
-		interview_duration: string;
-		interview_level_name: string;
-		interview_style_name: string;
+		session_id ?: string;
+		position_name : string;
+		industry_name : string;
+		interview_started_at : string;
+		interview_ended_at : string;
+		interview_duration : string;
+		interview_level_name : string;
+		interview_style_name : string;
 	}
 
 	const myData = reactive({
 		interviewInfo: {} as interviewInfoType,
 		headerSectionUrl: "https://mp-43f7552d-29af-4d0a-8672-7a2fcdd00dc7.cdn.bspapp.com/interview/feedback/feedback-header-report.png",
-		feedbacksList: [
-			// 从您的数据中获取
-		],
+		scorePieData: {},
+		scorePieOpts: {
+			color: ["#1890FF", "#91CB74", "#FAC858", "#EE6666", "#73C0DE", "#3CA272", "#FC8452", "#9A60B4", "#ea7ccc"],
+			padding: [5, 5, 5, 5],
+			enableScroll: false,
+			legend: {
+				show: true,
+				position: "left",
+				lineHeight: 25
+			},
+			extra: {
+				rose: {
+					type: "radius",
+					minRadius: 50,
+					activeOpacity: 0.5,
+					activeRadius: 10,
+					offsetAngle: 0,
+					labelWidth: 15,
+					border: true,
+					borderWidth: 2,
+					borderColor: "#FFFFFF",
+					linearType: "custom"
+				}
+			}
+		}
 	})
 
-	const { interviewInfo, headerSectionUrl, feedbacksList } = toRefs(myData);
+	const { interviewInfo, headerSectionUrl, scorePieData, scorePieOpts } = toRefs(myData);
 
 	// 获取面试反馈数据
 	const fetchIvFeedbackApi = async (session_id : string) => {
@@ -54,7 +79,9 @@
 				session_id
 			}
 			const res = await fetchIvFeedback(params);
-			feedbacksList.value = res.rows || [];
+
+			const feedbacks = res.data || {};
+			scorePieData.value = feedbacks.percentages || {}
 		} catch (error) {
 			console.error('Error during fetchIvHistory:', error);
 			// 可以在这里添加更多的错误处理逻辑，比如设置一个标志，让用户知道出现了错误
@@ -70,7 +97,7 @@
 		];
 	});
 
-	onLoad((option: any) => {
+	onLoad((option : any) => {
 		if (option.params) {
 			interviewInfo.value = JSON.parse(decodeURIComponent(option.params));
 		}
@@ -145,6 +172,11 @@
 					}
 				}
 			}
+		}
+
+		.charts-box {
+			width: 100%;
+			height: 300px;
 		}
 	}
 </style>
