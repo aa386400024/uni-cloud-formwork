@@ -30,7 +30,7 @@
 	import { reactive, toRefs, onMounted, computed } from 'vue';
 	import { onLoad } from "@dcloudio/uni-app";
 	import { fetchIvFeedback } from '@/api/interview';
-
+	const CHART_COLOR = ["#1890FF", "#91CB74", "#FAC858", "#EE6666", "#73C0DE", "#3CA272", "#FC8452", "#9A60B4", "#ea7ccc"]
 	interface interviewInfoType {
 		session_id ?: string;
 		position_name : string;
@@ -47,7 +47,7 @@
 		headerSectionUrl: "https://mp-43f7552d-29af-4d0a-8672-7a2fcdd00dc7.cdn.bspapp.com/interview/feedback/feedback-header-report.png",
 		totalScoreChartData: {},
 		totalScoreOpts: {
-			color: ["#1890FF", "#91CB74", "#FAC858", "#EE6666", "#73C0DE", "#3CA272", "#FC8452", "#9A60B4", "#ea7ccc"],
+			color: CHART_COLOR,
 			padding: undefined,
 			title: {},
 			subtitle: {
@@ -68,7 +68,7 @@
 		},
 		scorePieData: {},
 		scorePieOpts: {
-			color: ["#1890FF", "#91CB74", "#FAC858", "#EE6666", "#73C0DE", "#3CA272", "#FC8452", "#9A60B4", "#ea7ccc"],
+			color: CHART_COLOR,
 			padding: [5, 5, 5, 5],
 			enableScroll: false,
 			legend: {
