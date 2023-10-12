@@ -49,6 +49,7 @@ declare interface Interviews {
     session_id: string;
 	interview_started_at: string;
 	interview_ended_at: string;
+	interview_duration: string;
 	interview_level?: string;
 	interview_style?: string;
 	position_name: string;

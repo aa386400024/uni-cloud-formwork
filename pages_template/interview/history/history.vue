@@ -24,7 +24,7 @@
 					</view>
 					<view class="info-text-wrapper">
 						<text class="info-text">面试时长:
-							{{ getDuration(interview.interview_started_at, interview.interview_ended_at) }} 分钟</text>
+							{{ interview.interview_duration }} 分钟</text>
 					</view>
 				</view>
 				<view>
@@ -82,14 +82,6 @@
 			// 可以在这里添加更多的错误处理逻辑，比如设置一个标志，让用户知道出现了错误
 		}
 	};
-
-	// 计算面试持续时间
-	const getDuration = (start : string, end : string) => {
-		const startTime = new Date(start);
-		const endTime = new Date(end);
-		const durationMinutes = Math.round((endTime.getTime() - startTime.getTime()) / (1000 * 60));
-		return durationMinutes;
-	};
 	
 	const formatTime = (timeStr: string) => {
 	    const date = new Date(timeStr);
@@ -97,7 +89,6 @@
 		return newDate
 	}
 
-	
 	// 跳转到面试报告详情页
 	const toViewReport = (params: Interviews) => {
 	    const { answers, ...selectedParams } = params; // 从params中排除answers属性
