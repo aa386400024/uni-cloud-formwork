@@ -24,7 +24,7 @@
 					</view>
 					<view class="info-text-wrapper">
 						<text class="info-text">面试时长:
-							{{ interview.interview_duration }} 分钟</text>
+							{{ interview.interview_duration }}</text>
 					</view>
 				</view>
 				<view>
