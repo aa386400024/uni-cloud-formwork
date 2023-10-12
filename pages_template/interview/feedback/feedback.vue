@@ -20,9 +20,10 @@
 
 		<view class="charts-box">
 			<qiun-data-charts type="arcbar" :opts="totalScoreOpts" :chartData="totalScoreChartData" />
+		</view>
+		<view class="charts-box">
 			<qiun-data-charts type="rose" :opts="scorePieOpts" :chartData="scorePieData" />
 		</view>
-		{{scorePieData}}
 	</view>
 </template>
 
