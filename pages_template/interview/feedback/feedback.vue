@@ -23,11 +23,15 @@
 				<qiun-data-charts type="arcbar" :opts="totalScoreOpts" :chartData="totalScoreChartData" />
 			</view>
 		</view>
-		<view class="charts-box">
-			<qiun-data-charts type="rose" :opts="scorePieOpts" :chartData="scorePieData" />
+		<view class="main-section">
+			<view class="charts-box">
+				<qiun-data-charts type="rose" :opts="scorePieOpts" :chartData="scorePieData" />
+			</view>
 		</view>
-		<view class="charts-box">
-			<qiun-data-charts type="radar" :opts="radarOpts" :chartData="radarData" />
+		<view class="main-section">
+			<view class="charts-box">
+				<qiun-data-charts type="radar" :opts="radarOpts" :chartData="radarData" />
+			</view>
 		</view>
 	</view>
 </template>
@@ -230,9 +234,9 @@
 		}
 
 		.main-section {
-			height: 300rpx;
+			// height: 300rpx;
 			background-color: #fff;
-			margin: 10rpx 40rpx;
+			margin: 20rpx 40rpx;
 			border-radius: 20rpx;
 			.total-score-chart-box {
 				width: 260rpx;
@@ -241,7 +245,7 @@
 		}
 		.charts-box {
 			width: 100%;
-			height: 300rpx;
+			// height: 300rpx;
 		}
 	}
 </style>
