@@ -24,6 +24,9 @@
 		<view class="charts-box">
 			<qiun-data-charts type="rose" :opts="scorePieOpts" :chartData="scorePieData" />
 		</view>
+		<view class="charts-box">
+			<qiun-data-charts type="radar" :opts="radarOpts" :chartData="radarData" />
+		</view>
 	</view>
 </template>
 
@@ -91,10 +94,32 @@
 					linearType: "custom"
 				}
 			}
+		},
+		radarData: {},
+		radarOpts: {
+			color: CHART_COLOR,
+			padding: [5, 5, 5, 5],
+			dataLabel: false,
+			enableScroll: false,
+			legend: {
+				show: false,
+				position: "right",
+				lineHeight: 25
+			},
+			extra: {
+				radar: {
+					gridType: "circle",
+					gridColor: "#CCCCCC",
+					gridCount: 3,
+					opacity: 0.2,
+					max: 10,
+					labelShow: true
+				}
+			}
 		}
 	})
 
-	const { interviewInfo, headerSectionUrl, totalScoreChartData, totalScoreOpts, scorePieData, scorePieOpts } = toRefs(myData);
+	const { interviewInfo, headerSectionUrl, totalScoreChartData, totalScoreOpts, scorePieData, scorePieOpts, radarData, radarOpts } = toRefs(myData);
 
 	// 获取面试反馈数据
 	const fetchIvFeedbackApi = async (session_id : string) => {
@@ -108,6 +133,7 @@
 			scorePieData.value = feedbacks.percentages || {}
 			totalScoreChartData.value = feedbacks.totalPercentage || {}
 			totalScoreOpts.value.title = feedbacks.totalPercentage.title || {}
+			radarData.value = feedbacks.radarChart || {}
 		} catch (error) {
 			console.error('Error during fetchIvHistory:', error);
 			// 可以在这里添加更多的错误处理逻辑，比如设置一个标志，让用户知道出现了错误
