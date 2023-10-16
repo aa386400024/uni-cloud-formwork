@@ -17,9 +17,11 @@
 				</view>
 			</view>
 		</view>
-
-		<view class="charts-box">
-			<qiun-data-charts type="arcbar" :opts="totalScoreOpts" :chartData="totalScoreChartData" />
+		
+		<view class="main-section">
+			<view class="total-score-chart-box">
+				<qiun-data-charts type="arcbar" :opts="totalScoreOpts" :chartData="totalScoreChartData" />
+			</view>
 		</view>
 		<view class="charts-box">
 			<qiun-data-charts type="rose" :opts="scorePieOpts" :chartData="scorePieData" />
@@ -56,13 +58,13 @@
 			title: {},
 			subtitle: {
 				name: "综合评分",
-				fontSize: 25,
+				fontSize: 14,
 				color: "#666666"
 			},
 			extra: {
 				arcbar: {
 					type: "circle",
-					width: 12,
+					width: 8,
 					backgroundColor: "#E9E9E9",
 					startAngle: 1.5,
 					endAngle: 0.25,
@@ -184,7 +186,8 @@
 
 				.position-name {
 					margin-top: 20rpx;
-					padding: 0 20rpx;
+					margin-bottom: 10rpx;
+					padding: 0 40rpx;
 					font-weight: bold;
 					color: #fff;
 				}
@@ -192,7 +195,7 @@
 				.info-box {
 					display: flex;
 					flex-wrap: wrap;
-					margin: 10rpx;
+					margin: 12rpx 30rpx 0;
 				}
 
 				.info-item {
@@ -226,9 +229,19 @@
 			}
 		}
 
+		.main-section {
+			height: 300rpx;
+			background-color: #fff;
+			margin: 10rpx 40rpx;
+			border-radius: 20rpx;
+			.total-score-chart-box {
+				width: 260rpx;
+				height: 260rpx;
+			}
+		}
 		.charts-box {
 			width: 100%;
-			height: 300px;
+			height: 300rpx;
 		}
 	}
 </style>
