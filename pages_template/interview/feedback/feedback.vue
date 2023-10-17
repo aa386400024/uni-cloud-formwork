@@ -17,22 +17,43 @@
 				</view>
 			</view>
 		</view>
-		
-		<view class="main-section">
-			<view class="total-score-chart-box">
-				<qiun-data-charts type="arcbar" :opts="totalScoreOpts" :chartData="totalScoreChartData" />
+
+		<view class="second-title assessment-title">面试表现综合评估</view>
+		<view class="summary-section">
+			<view class="overview">
+				<view class="third-title">概览</view>
+				<view class="overview-chart">
+					<qiun-data-charts type="arcbar" :opts="totalScoreOpts" :chartData="totalScoreChartData" />
+				</view>
+			</view>
+			<view class="feedback">
+				<view class="third-title">综合评价与建议</view>
+				<view class="feedback-evaluation">
+					<text>评价</text>
+				</view>
+				<view class="feedback-suggestions">
+					<text>建议</text>
+				</view>
+			</view>
+			<view class="score-distribution">
+				<view class="third-title">得分分布</view>
+				<view class="distribution-chart">
+					<qiun-data-charts type="rose" :opts="scorePieOpts" :chartData="scorePieData" />
+				</view>
+			</view>
+			<view class="skills-assessment">
+				<view class="third-title">技能维度评估</view>
+				<view class="skills-chart">
+					<qiun-data-charts type="radar" :opts="radarOpts" :chartData="radarData" />
+				</view>
 			</view>
 		</view>
-		<view class="main-section">
-			<view class="charts-box">
-				<qiun-data-charts type="rose" :opts="scorePieOpts" :chartData="scorePieData" />
-			</view>
+
+		<view class="second-title details-title">题目细节分析</view>
+		<view class="details-section">
+			<view class="question-analysis"></view>
 		</view>
-		<view class="main-section">
-			<view class="charts-box">
-				<qiun-data-charts type="radar" :opts="radarOpts" :chartData="radarData" />
-			</view>
-		</view>
+
 	</view>
 </template>
 
@@ -191,7 +212,7 @@
 				.position-name {
 					margin-top: 20rpx;
 					margin-bottom: 10rpx;
-					padding: 0 40rpx;
+					padding: 0 30rpx;
 					font-weight: bold;
 					color: #fff;
 				}
@@ -199,7 +220,7 @@
 				.info-box {
 					display: flex;
 					flex-wrap: wrap;
-					margin: 12rpx 30rpx 0;
+					margin: 12rpx 20rpx 0;
 				}
 
 				.info-item {
@@ -233,16 +254,45 @@
 			}
 		}
 
-		.main-section {
-			// height: 300rpx;
-			background-color: #fff;
-			margin: 20rpx 40rpx;
-			border-radius: 20rpx;
-			.total-score-chart-box {
-				width: 260rpx;
-				height: 260rpx;
+		.second-title {
+			text-align: center;
+			font-weight: bold;
+			font-size: 38rpx;
+			color: #fff;
+			margin-top: 30rpx;
+		}
+
+		.third-title {
+			padding: 40rpx 0;
+			font-weight: bold;
+			font-size: 1.02rem;
+			&::before {
+				content: "";
+				border-left: 15rpx solid #b8860b;
+				border-radius: 0 4rpx 4rpx 0;
+				height: 48rpx;
+				width: 0;
+				display: inline-block;
+				margin-right: 10rpx;
+				vertical-align: -12rpx;
 			}
 		}
+
+
+		.summary-section {
+			background-color: #fff;
+			margin: 20rpx 30rpx;
+			border-radius: 20rpx;
+
+			.overview {
+				.overview-chart {
+					width: 260rpx;
+					height: 260rpx;
+				}
+			}
+
+		}
+
 		.charts-box {
 			width: 100%;
 			// height: 300rpx;
