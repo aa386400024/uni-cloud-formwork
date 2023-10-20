@@ -349,7 +349,7 @@
 			padding: 40rpx 0 20rpx;
 			font-weight: bold;
 			font-size: 1.02rem;
-
+			color: $uni-color-title;
 			&::before {
 				content: "";
 				border-left: 15rpx solid #b8860b;
@@ -374,7 +374,7 @@
 				.overview-content {
 					display: flex;
 					justify-content: space-between;
-					padding: 0 40rpx;
+					padding: 0 30rpx;
 					.overview-info {
 						width: 100%;
 						height: 100%;
@@ -382,11 +382,12 @@
 							text-align: center;
 						}
 						.overview-evaluation {
-							font-size: 24rpx;
-							margin-top: 30rpx;
+							margin-top: 18rpx;
+							padding-right: 18rpx;
 							text {
-								padding-right: 20rpx;
-								line-height: 40rpx;
+								font-size: 24rpx;
+								line-height: 42rpx;
+								color: $uni-color-paragraph;
 							}
 						}
 					}
