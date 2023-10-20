@@ -31,11 +31,20 @@ export default {
             type: [String, Number],
             default: defprops.codeInput.space
         },
-        // 预置值
-        value: {
-            type: [String, Number],
-            default: defprops.codeInput.value
-        },
+		// #ifdef VUE3
+		// 预置值
+		modelValue: {
+			type: [String, Number],
+			default: defprops.codeInput.value
+		},
+		// #endif
+		// #ifdef VUE2
+		// 预置值
+		value: {
+			type: [String, Number],
+			default: defprops.codeInput.value
+		},
+		// #endif
         // 是否自动获取焦点
         focus: {
             type: Boolean,

@@ -24,9 +24,8 @@
 				<view class="third-title">概览</view>
 				<view class="overview-content">
 					<view class="overview-info">
-						<view class="summary-scores">
-							<text>{{totalScore + "/10"}}</text>
-							<text>{{evaluation.label}}</text>
+						<view class="evaluate">
+							<text :style="{color: evaluation.color}">{{evaluation.label}}</text>
 						</view>
 						<view class="overview-evaluation">
 							<text>{{evaluation.message}}</text>
@@ -40,10 +39,10 @@
 			<view class="feedback">
 				<view class="third-title">评价与建议</view>
 				<view class="feedback-evaluation">
-					<text>评价</text>
+					<text>{{generalFeedback}}</text>
 				</view>
 				<view class="feedback-suggestions">
-					<text>建议</text>
+					<text>{{improvementSuggestions}}</text>
 				</view>
 			</view>
 			<view class="score-distribution">
@@ -93,17 +92,18 @@
 	interface Evaluation {
 	    label: string;
 	    message: string;
-		color?: string;
+		color: string;
 	}
 
 	const myData = reactive({
 		interviewInfo: {} as interviewInfoType,
 		headerSectionUrl: "https://mp-43f7552d-29af-4d0a-8672-7a2fcdd00dc7.cdn.bspapp.com/interview/feedback/feedback-header-report.png",
-		totalScore: null,
 		evaluation: {
 			label: "",
 			message: ""
 		} as Evaluation,
+		generalFeedback: "",
+		improvementSuggestions: "",
 		totalScoreChartData: {},
 		totalScoreOpts: {
 			color: CHART_COLOR,
@@ -132,7 +132,7 @@
 			enableScroll: false,
 			legend: {
 				show: true,
-				position: "left",
+				position: "bottom",
 				lineHeight: 25
 			},
 			extra: {
@@ -157,8 +157,8 @@
 			dataLabel: false,
 			enableScroll: false,
 			legend: {
-				show: false,
-				position: "right",
+				show: true,
+				position: "bottom",
 				lineHeight: 25
 			},
 			extra: {
@@ -208,8 +208,9 @@
 	const {
 		interviewInfo,
 		headerSectionUrl,
-		totalScore,
 		evaluation,
+		generalFeedback,
+		improvementSuggestions,
 		totalScoreChartData,
 		totalScoreOpts,
 		scorePieData,
@@ -231,10 +232,13 @@
 			const feedbacks = res.data || {};
 			const { overview } = feedbacks;
 			// 概览-进度条
-			totalScore.value = overview.totalScore || null;
 			evaluation.value = overview.evaluation || {};
 			totalScoreChartData.value = overview.dashboardData || {};
 			totalScoreOpts.value.title = overview.dashboardData.title || {};
+			
+			// 综合评价和改进建议
+			generalFeedback.value = feedbacks.generalFeedback || '';
+			improvementSuggestions.value = feedbacks.improvementSuggestions || '';
 			
 			// 得分分布-玫瑰图
 			scorePieData.value = feedbacks.percentages || {}
@@ -378,8 +382,11 @@
 					.overview-info {
 						width: 100%;
 						height: 100%;
-						.summary-scores {
+						.evaluate {
 							text-align: center;
+							text {
+								font-weight: bold;
+							}
 						}
 						.overview-evaluation {
 							margin-top: 18rpx;
