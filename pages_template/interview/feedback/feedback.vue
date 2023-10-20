@@ -22,12 +22,23 @@
 		<view class="summary-section">
 			<view class="overview">
 				<view class="third-title">概览</view>
-				<view class="overview-chart">
-					<qiun-data-charts type="arcbar" :opts="totalScoreOpts" :chartData="totalScoreChartData" />
+				<view class="overview-content">
+					<view class="overview-info">
+						<view class="summary-scores">
+							<text>{{totalScore + "/10"}}</text>
+							<text>{{evaluation.label}}</text>
+						</view>
+						<view class="overview-evaluation">
+							<text>{{evaluation.message}}</text>
+						</view>
+					</view>
+					<view class="overview-chart">
+						<qiun-data-charts type="arcbar" :opts="totalScoreOpts" :chartData="totalScoreChartData" />
+					</view>
 				</view>
 			</view>
 			<view class="feedback">
-				<view class="third-title">综合评价与建议</view>
+				<view class="third-title">评价与建议</view>
 				<view class="feedback-evaluation">
 					<text>评价</text>
 				</view>
@@ -51,9 +62,15 @@
 
 		<view class="second-title details-title">题目细节分析</view>
 		<view class="details-section">
-			<view class="question-analysis"></view>
+			<view class="question-analysis">
+				<view class="tabs-container">
+					<view v-for="(tab, index) in subsectionList" :key="index"
+						:class="['tab-item', { 'active': currentTabIndex === index }]" @tap="switchTab(index)">
+						{{ tab.label }}
+					</view>
+				</view>
+			</view>
 		</view>
-
 	</view>
 </template>
 
@@ -72,10 +89,21 @@
 		interview_level_name : string;
 		interview_style_name : string;
 	}
+	
+	interface Evaluation {
+	    label: string;
+	    message: string;
+		color?: string;
+	}
 
 	const myData = reactive({
 		interviewInfo: {} as interviewInfoType,
 		headerSectionUrl: "https://mp-43f7552d-29af-4d0a-8672-7a2fcdd00dc7.cdn.bspapp.com/interview/feedback/feedback-header-report.png",
+		totalScore: null,
+		evaluation: {
+			label: "",
+			message: ""
+		} as Evaluation,
 		totalScoreChartData: {},
 		totalScoreOpts: {
 			color: CHART_COLOR,
@@ -143,10 +171,54 @@
 					labelShow: true
 				}
 			}
-		}
+		},
+		subsectionList: [{
+			label: "系统",
+			currentQuestionIndex: 0,
+			questions: [{
+				text: '信福e家下载链接'
+			}, {
+				text: '如何预约大方腾讯会议？'
+			}, {
+				text: '如何下载OA移动端？'
+			}, {
+				text: '中信证券的app下载链接'
+			},]
+		},
+		{
+			label: "人员",
+			currentQuestionIndex: 0,
+			questions: [{
+				text: '如何查询历史假期记录?'
+			}, {
+				text: '如何查询员工信息?'
+			},]
+		},
+		{
+			label: "操作",
+			currentQuestionIndex: 0,
+			questions: [{
+				text: '如何下载OA移动端?'
+			},]
+		},
+		],
+		currentTabIndex: 0
 	})
 
-	const { interviewInfo, headerSectionUrl, totalScoreChartData, totalScoreOpts, scorePieData, scorePieOpts, radarData, radarOpts } = toRefs(myData);
+	const {
+		interviewInfo,
+		headerSectionUrl,
+		totalScore,
+		evaluation,
+		totalScoreChartData,
+		totalScoreOpts,
+		scorePieData,
+		scorePieOpts,
+		radarData,
+		radarOpts,
+		subsectionList,
+		currentTabIndex
+	} = toRefs(myData);
 
 	// 获取面试反馈数据
 	const fetchIvFeedbackApi = async (session_id : string) => {
@@ -157,9 +229,17 @@
 			const res = await fetchIvFeedback(params);
 
 			const feedbacks = res.data || {};
+			const { overview } = feedbacks;
+			// 概览-进度条
+			totalScore.value = overview.totalScore || null;
+			evaluation.value = overview.evaluation || {};
+			totalScoreChartData.value = overview.dashboardData || {};
+			totalScoreOpts.value.title = overview.dashboardData.title || {};
+			
+			// 得分分布-玫瑰图
 			scorePieData.value = feedbacks.percentages || {}
-			totalScoreChartData.value = feedbacks.totalPercentage || {}
-			totalScoreOpts.value.title = feedbacks.totalPercentage.title || {}
+			
+			// 技能维度评估-雷达图
 			radarData.value = feedbacks.radarChart || {}
 		} catch (error) {
 			console.error('Error during fetchIvHistory:', error);
@@ -175,6 +255,9 @@
 			{ label: '面试风格', value: interviewInfo.value.interview_style_name }
 		];
 	});
+	const switchTab = (index: number) => {
+		currentTabIndex.value = index;
+	}
 
 	onLoad((option : any) => {
 		if (option.params) {
@@ -263,9 +346,10 @@
 		}
 
 		.third-title {
-			padding: 40rpx 0;
+			padding: 40rpx 0 20rpx;
 			font-weight: bold;
 			font-size: 1.02rem;
+
 			&::before {
 				content: "";
 				border-left: 15rpx solid #b8860b;
@@ -278,16 +362,80 @@
 			}
 		}
 
-
-		.summary-section {
+		.summary-section,
+		.details-section {
 			background-color: #fff;
 			margin: 20rpx 30rpx;
 			border-radius: 20rpx;
+		}
 
+		.summary-section {
 			.overview {
-				.overview-chart {
-					width: 260rpx;
-					height: 260rpx;
+				.overview-content {
+					display: flex;
+					justify-content: space-between;
+					padding: 0 40rpx;
+					.overview-info {
+						width: 100%;
+						height: 100%;
+						.summary-scores {
+							text-align: center;
+						}
+						.overview-evaluation {
+							font-size: 24rpx;
+							margin-top: 30rpx;
+							text {
+								padding-right: 20rpx;
+								line-height: 40rpx;
+							}
+						}
+					}
+					.overview-chart {
+						width: 250rpx;
+						height: 250rpx;
+					}
+				}
+			}
+		}
+
+		.details-section {
+			height: 600rpx;
+
+			.question-analysis {
+				.tabs-container {
+					display: flex;
+					flex-direction: row;
+					width: 100%;
+					justify-content: flex-start;
+				}
+
+				.tab-item {
+					// flex: 1;
+					padding: 0 30rpx;
+					text-align: center;
+					color: #646464;
+					position: relative;
+					font-size: 30rpx;
+
+					&:first-child {
+						padding-left: 0;
+					}
+
+					&.active {
+						color: #d20a10 !important;
+						font-weight: bold;
+					}
+
+					&:not(:last-child):after {
+						content: "";
+						position: absolute;
+						right: 0;
+						top: 50%;
+						transform: translateY(-50%);
+						width: 2px;
+						height: 40%;
+						background-color: #e0e0e0;
+					}
 				}
 			}
 
