@@ -5,6 +5,7 @@
 		<button @tap="increment">Increment</button>
 		<button @click="incrementApi">Increment</button>
 		<u-button type="warning" text="月落" @click="callVKFunction"></u-button>
+		<u-button type="warning" text="生成面试题" @click="generateIvQuastion"></u-button>
 		<text>API Result: {{ apiResult }}</text>
 		{{os}}
 		<text>{{navbar.top}}</text>
@@ -67,6 +68,21 @@
 			}
 		});
 	};
+	
+	const generateIvQuastion = () => {
+		uni.vk.callFunction({
+			url: 'client/openai/pub/generate-iv-quastion',
+			title: '请求中...',
+			data: {
+				
+			},
+			success: (data) => {
+				
+			}
+		});
+	}
+	
+	
 	const os = uni.$u.os()
 	console.log(os, 'osos');
 	const rightClick = () => {

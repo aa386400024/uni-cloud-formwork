@@ -62,13 +62,32 @@
 		<view class="second-title details-title">题目细节分析</view>
 		<view class="details-section">
 			<view class="question-analysis">
-				<view class="tabs-container">
-					<view v-for="(tab, index) in subsectionList" :key="index"
-						:class="['tab-item', { 'active': currentTabIndex === index }]" @tap="switchTab(index)">
-						{{ tab.label }}
+				<u-subsection fontSize="14" mode="button" :list="subsectionList" :current="currentQuestionIndex"
+					@change="sectionQuestionChange"></u-subsection>
+			</view>
+			<view v-if="questionsFeedback[currentQuestionIndex]" class="feedback-section">
+				<!-- 显示面试问题 -->
+				<view class="interview-question">
+					{{ questionsFeedback[currentQuestionIndex].question }}
+				</view>
+
+				<view v-for="feedback in questionsFeedback[currentQuestionIndex].feedbacks" :key="feedback.index"
+					class="feedback-item">
+					<view v-if="feedback.type === '改进建议' || feedback.type === '推荐答案'" class="long-feedback">
+						<view class="feedback-type">{{ feedback.type }}</view>
+						<view class="long-feedback-score common-feedback-style">{{ feedback.score }}</view>
 					</view>
+					<view v-else class="feedback-header">
+						<view class="feedback-type">{{ feedback.type }}</view>
+						<view class="feedback-score">{{ feedback.score }}</view>
+					</view>
+					<view class="feedback-description common-feedback-style" v-if="feedback.description">{{ feedback.description }}</view>
 				</view>
 			</view>
+
+		</view>
+		<view class="footer-section">
+
 		</view>
 	</view>
 </template>
@@ -78,22 +97,6 @@
 	import { onLoad } from "@dcloudio/uni-app";
 	import { fetchIvFeedback } from '@/api/interview';
 	const CHART_COLOR = ["#1890FF", "#91CB74", "#FAC858", "#EE6666", "#73C0DE", "#3CA272", "#FC8452", "#9A60B4", "#ea7ccc"]
-	interface interviewInfoType {
-		session_id ?: string;
-		position_name : string;
-		industry_name : string;
-		interview_started_at : string;
-		interview_ended_at : string;
-		interview_duration : string;
-		interview_level_name : string;
-		interview_style_name : string;
-	}
-	
-	interface Evaluation {
-	    label: string;
-	    message: string;
-		color: string;
-	}
 
 	const myData = reactive({
 		interviewInfo: {} as interviewInfoType,
@@ -172,37 +175,9 @@
 				}
 			}
 		},
-		subsectionList: [{
-			label: "系统",
-			currentQuestionIndex: 0,
-			questions: [{
-				text: '信福e家下载链接'
-			}, {
-				text: '如何预约大方腾讯会议？'
-			}, {
-				text: '如何下载OA移动端？'
-			}, {
-				text: '中信证券的app下载链接'
-			},]
-		},
-		{
-			label: "人员",
-			currentQuestionIndex: 0,
-			questions: [{
-				text: '如何查询历史假期记录?'
-			}, {
-				text: '如何查询员工信息?'
-			},]
-		},
-		{
-			label: "操作",
-			currentQuestionIndex: 0,
-			questions: [{
-				text: '如何下载OA移动端?'
-			},]
-		},
-		],
-		currentTabIndex: 0
+		questionsFeedback: [] as QuestionsFeedback[],
+		subsectionList: [] as { name : string }[],
+		currentQuestionIndex: 0,
 	})
 
 	const {
@@ -217,8 +192,9 @@
 		scorePieOpts,
 		radarData,
 		radarOpts,
+		questionsFeedback,
+		currentQuestionIndex,
 		subsectionList,
-		currentTabIndex
 	} = toRefs(myData);
 
 	// 获取面试反馈数据
@@ -235,21 +211,27 @@
 			evaluation.value = overview.evaluation || {};
 			totalScoreChartData.value = overview.dashboardData || {};
 			totalScoreOpts.value.title = overview.dashboardData.title || {};
-			
+
 			// 综合评价和改进建议
 			generalFeedback.value = feedbacks.generalFeedback || '';
 			improvementSuggestions.value = feedbacks.improvementSuggestions || '';
-			
+
 			// 得分分布-玫瑰图
-			scorePieData.value = feedbacks.percentages || {}
-			
+			scorePieData.value = feedbacks.percentages || {};
+
 			// 技能维度评估-雷达图
-			radarData.value = feedbacks.radarChart || {}
+			radarData.value = feedbacks.radarChart || {};
+
+			// 问题反馈内容
+			questionsFeedback.value = feedbacks.feedback || [];
+			// 问题分段器数据
+			subsectionList.value = questionsFeedback.value.map((_, index) => ({ name: `T${index + 1}` }));
 		} catch (error) {
 			console.error('Error during fetchIvHistory:', error);
 			// 可以在这里添加更多的错误处理逻辑，比如设置一个标志，让用户知道出现了错误
 		}
 	};
+
 
 	const infoItems = computed(() => {
 		return [
@@ -259,8 +241,10 @@
 			{ label: '面试风格', value: interviewInfo.value.interview_style_name }
 		];
 	});
-	const switchTab = (index: number) => {
-		currentTabIndex.value = index;
+
+	// 面试题分段器切换事件
+	const sectionQuestionChange = (index : number) => {
+		currentQuestionIndex.value = index;
 	}
 
 	onLoad((option : any) => {
@@ -354,6 +338,7 @@
 			font-weight: bold;
 			font-size: 1.02rem;
 			color: $uni-color-title;
+
 			&::before {
 				content: "";
 				border-left: 15rpx solid #b8860b;
@@ -373,24 +358,33 @@
 			border-radius: 20rpx;
 		}
 
+		.footer-section {
+			height: 200rpx;
+		}
+
 		.summary-section {
 			.overview {
 				.overview-content {
 					display: flex;
 					justify-content: space-between;
 					padding: 0 30rpx;
+
 					.overview-info {
 						width: 100%;
 						height: 100%;
+
 						.evaluate {
 							text-align: center;
+
 							text {
 								font-weight: bold;
 							}
 						}
+
 						.overview-evaluation {
 							margin-top: 18rpx;
 							padding-right: 18rpx;
+							
 							text {
 								font-size: 24rpx;
 								line-height: 42rpx;
@@ -398,6 +392,7 @@
 							}
 						}
 					}
+
 					.overview-chart {
 						width: 250rpx;
 						height: 250rpx;
@@ -407,46 +402,69 @@
 		}
 
 		.details-section {
-			height: 600rpx;
+			.feedback-section {
+				padding: 30rpx;
 
-			.question-analysis {
-				.tabs-container {
-					display: flex;
-					flex-direction: row;
-					width: 100%;
-					justify-content: flex-start;
+				.interview-question {
+					font-size: 28rpx;
+					font-weight: bold;
+					margin-bottom: 30rpx;
+					padding: 16rpx;
+					line-height: 50rpx;
+					color: $uni-color-title;
+					border: 1px dashed orangered;
+					border-radius: 12rpx;
+				}
+				
+				.common-feedback-style {
+					font-size: 26rpx;
+					margin-top: 16rpx;
+					padding: 16rpx;
+					line-height: 50rpx;
+					color: $uni-color-subtitle;
+					border: 1px solid rgba(0, 0, 0, 0.1);
+					border-radius: 12rpx;
+					box-shadow: 2px 4px 6px 0px rgba(0, 0, 0, 0.1);
 				}
 
-				.tab-item {
-					// flex: 1;
-					padding: 0 30rpx;
-					text-align: center;
-					color: #646464;
-					position: relative;
-					font-size: 30rpx;
+				.feedback-item {
+					margin-bottom: 40rpx;
 
-					&:first-child {
-						padding-left: 0;
+					.long-feedback {
+						margin-bottom: 10rpx;
+
+						.feedback-type {
+							text-align: left;
+							font-weight: bold;
+							color: $uni-color-title;
+						}
+
+						.long-feedback-score {
+							@extend .common-feedback-style;
+						}
 					}
 
-					&.active {
-						color: #d20a10 !important;
+					.feedback-header {
+						display: flex;
+						justify-content: space-between;
+						margin-bottom: 10rpx;
 						font-weight: bold;
+
+						.feedback-type {
+							text-align: left;
+							color: $uni-color-title;
+						}
+
+						.feedback-score {
+							text-align: right;
+						}
 					}
 
-					&:not(:last-child):after {
-						content: "";
-						position: absolute;
-						right: 0;
-						top: 50%;
-						transform: translateY(-50%);
-						width: 2px;
-						height: 40%;
-						background-color: #e0e0e0;
+					.feedback-description {
+						@extend .common-feedback-style;
 					}
 				}
 			}
-
 		}
 
 		.charts-box {

@@ -24,3 +24,11 @@ export async function fetchTodosCloud(): Promise<any> {
 }
 
 // 在此文件中定义更多与todos相关的API请求函数...
+export async function generateIvQuastion(): Promise<any> {
+	const options: RequestOptions = {
+		url: 'client/openai/pub/generate-iv-quastion',
+		cloudFunction: true,
+	}
+	const response = await request(options)
+	return response.data
+}
