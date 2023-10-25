@@ -18,7 +18,6 @@
 	import { useCounterStore } from '@/stores';
 	import { todos } from '@/api';
 	import { fetchTodosCloud } from '@/api/todos';
-	import { completions } from '@/api/openai';
 	import { useGlobalAPI } from '@/hooks/useGlobalAPI'
 	const { apiWrapper, config } = useGlobalAPI()
 	const navbar = apiWrapper.navbar; 
@@ -36,17 +35,6 @@
 			console.log(apiResult.value, 'responseresponseresponse');
 		} catch (error) {
 			console.error('Error during fetchTodosCloud:', error);
-			// 可以在这里添加更多的错误处理逻辑，比如设置一个标志，让用户知道出现了错误
-		}
-	};
-	
-	const completionsApi = async (data: any) => {
-		try {
-			const response = await completions(data);
-			apiResult.value = response.data;
-			console.log(apiResult.value, 'completions');
-		} catch (error) {
-			console.error('Error during completions:', error);
 			// 可以在这里添加更多的错误处理逻辑，比如设置一个标志，让用户知道出现了错误
 		}
 	};
@@ -126,8 +114,6 @@
 				}
 		   ]
 		}
-
-		completionsApi(data)
 		const todoList = await todos.fetchTodos();
 	});
 </script>
