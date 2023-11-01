@@ -39,10 +39,20 @@
 			<view class="feedback">
 				<view class="third-title">评价与建议</view>
 				<view class="feedback-evaluation">
-					<text>{{generalFeedback}}</text>
+					<view class="title margin-top-sm margin-bottom-md">
+						<text class="title-with-dot">综合评价</text>
+					</view>
+					<view class="content">
+						<text>{{generalFeedback}}</text>
+					</view>
 				</view>
 				<view class="feedback-suggestions">
-					<text>{{improvementSuggestions}}</text>
+					<view class="title margin-top-sm margin-bottom-md">
+						<text class="title-with-dot">改进建议</text>
+					</view>
+					<view class="content">
+						<text>{{improvementSuggestions}}</text>
+					</view>
 				</view>
 			</view>
 			<view class="score-distribution">
@@ -52,7 +62,7 @@
 				</view>
 			</view>
 			<view class="skills-assessment">
-				<view class="third-title">技能维度评估</view>
+				<view class="third-title">职位核心能力</view>
 				<view class="skills-chart">
 					<qiun-data-charts type="radar" :opts="radarOpts" :chartData="radarData" />
 				</view>
@@ -261,6 +271,7 @@
 </script>
 
 <style lang="scss" scoped>
+	@import '@/common/css/mixins.scss'; // 导入你的mixin文件
 	.container {
 		height: 100%;
 		background-color: #8084FA;
@@ -348,6 +359,34 @@
 				display: inline-block;
 				margin-right: 10rpx;
 				vertical-align: -12rpx;
+			}
+		}
+		.title-with-dot {
+			@include title-decoration(dot); // 使用圆点装饰
+		}
+		
+		.feedback-evaluation, .feedback-suggestions {
+			.title {
+				text-align: center;
+				font-size: 30rpx;
+				font-weight: 400;
+			}
+			.content {
+				display: flex;
+				flex-direction: column;
+				text-align: justify;
+			
+				text {
+					margin-bottom: 40rpx;
+					padding: 0 40rpx;
+					line-height: 50rpx;
+					font-size: 26rpx;
+					color: $uni-color-subtitle;
+				
+					&:not(:last-child) {
+						justify-content: space-between;
+					}
+				}
 			}
 		}
 

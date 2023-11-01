@@ -157,3 +157,58 @@
 		font-style: $style;
 	}
 }
+
+// 标题文字装饰
+@mixin title-decoration($decoration: dot) {
+  position: relative;
+  padding: 0 20rpx; // 根据需求调整间距
+
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  // 圆点装饰
+  @if $decoration == dot {
+    &::before,
+    &::after {
+      width: 10rpx; // 圆点大小
+      height: 10rpx; // 圆点大小
+      border-radius: 50%;
+      background-color: #666; // 圆点颜色
+    }
+
+    &::before {
+      left: 0;
+      transform: translate(-100%, -50%);
+    }
+
+    &::after {
+      right: 0;
+      transform: translate(100%, -50%);
+    }
+  }
+
+  // 横线装饰
+  @else if $decoration == line {
+    &::before,
+    &::after {
+      width: 40rpx; // 横线宽度
+      height: 4rpx; // 横线高度
+      background-color: #333; // 横线颜色
+    }
+
+    &::before {
+      left: 0;
+      transform: translateX(-100%);
+    }
+
+    &::after {
+      right: 0;
+      transform: translateX(100%);
+    }
+  }
+}

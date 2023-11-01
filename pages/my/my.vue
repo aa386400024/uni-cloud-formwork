@@ -14,8 +14,8 @@
 						<text class="uer-name" v-if="hasLogin">{{userInfo.nickname||userInfo.username||userInfo.mobile}}酷酷的张大炮</text>
 						<text class="iconfont icon-VIP1 not-logged-prompt margin-top-xs"> 开通会员，享受更多特权！</text>
 					</view>
-					<view v-else>
-						<text class="uer-name" >{{$t('mine.notLogged')}}</text>
+					<view v-else @click="toLogin">
+						<text class="uer-name">{{$t('mine.notLogged')}}</text>
 						<text class="not-logged-prompt margin-top-xs">登录后可体验更多服务 > </text>
 					</view>
 				</view>
@@ -115,6 +115,13 @@
 	})
 	const { offsetTop, statsList, gridList, showOfficial } = toRefs(myData)
 	const { userInfo, hasLogin } = toRefs(storeOriginal);
+	
+	// 跳转到登录页
+	const toLogin = () => {
+		uni.navigateTo({
+			url: '/pages_sub/login/login'
+		})
+	}
 	
 	// 微信小程序获取胶囊区域距离顶部的位置
 	const capsuleInfo = () => {

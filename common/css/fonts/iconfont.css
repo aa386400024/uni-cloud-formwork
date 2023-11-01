@@ -1,9 +1,9 @@
 /* 在线链接服务仅供平台体验和调试使用，平台不承诺服务的稳定性，企业客户需下载字体包自行发布使用并做好备份。 */
 @font-face {
   font-family: 'iconfont';  /* Project id 4153686 */
-  src: url('https://at.alicdn.com/t/c/font_4153686_gu8yncnb4l.woff2?t=1697535244212') format('woff2'),
-       url('https://at.alicdn.com/t/c/font_4153686_gu8yncnb4l.woff?t=1697535244212') format('woff'),
-       url('https://at.alicdn.com/t/c/font_4153686_gu8yncnb4l.ttf?t=1697535244212') format('truetype');
+  src: url('https://at.alicdn.com/t/c/font_4153686_euvvsiusqh.woff2?t=1698832293914') format('woff2'),
+       url('https://at.alicdn.com/t/c/font_4153686_euvvsiusqh.woff?t=1698832293914') format('woff'),
+       url('https://at.alicdn.com/t/c/font_4153686_euvvsiusqh.ttf?t=1698832293914') format('truetype');
 }
 
 .iconfont {
@@ -12,6 +12,18 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-zhuce:before {
+  content: "\e607";
+}
+
+.icon-mima:before {
+  content: "\e605";
+}
+
+.icon-tianchongxing-:before {
+  content: "\e63a";
 }
 
 .icon-fuzhushuxian:before {

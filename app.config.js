@@ -114,24 +114,24 @@ export default {
   // 自定义拦截器
   interceptor: {
 
-    // login:function(obj){
-    // 	let { vk, params, res } = obj;
-    // 	//console.log("params:",params);
-    // 	//console.log("res:",res);
-    // 	if(!params.noAlert){
-    // 		vk.alert(res.msg);
-    // 	}
-    // 	console.log("跳自己的登录页面");
-    // 	// 上方代码可自己修改，写成你自己的逻辑处理。
-    // },
+    login:function(obj){
+    	let { vk, params, res } = obj;
+    	console.log("params:",params);
+    	console.log("res:",res);
+    	if(!params.noAlert){
+    		vk.alert(res.msg);
+    	}
+    	console.log("跳自己的登录页面");
+    	// 上方代码可自己修改，写成你自己的逻辑处理。
+    },
 
-    // fail:function(obj){
-    // 	let { vk, params, res } = obj;
-    // 	//console.log("params:",params);
-    // 	//console.log("res:",res);
-    // 	return false;// 返回false则取消框架内置fail的逻辑,返回true则会继续执行框架内置fail的逻辑
-    // 	// 上方代码可自己修改，写成你自己的逻辑处理。
-    // }
+    fail:function(obj){
+    	let { vk, params, res } = obj;
+    	console.log("params:",params);
+    	console.log("res:",res);
+    	return false;// 返回false则取消框架内置fail的逻辑,返回true则会继续执行框架内置fail的逻辑
+    	// 上方代码可自己修改，写成你自己的逻辑处理。
+    }
 
   }
 }

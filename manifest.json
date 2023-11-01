@@ -1,13 +1,13 @@
 {
-    "name" : "uni-cloud-formwork",
+    "name" : "vk-interview",
     "appid" : "__UNI__FDA04E6",
     "description" : "云端一体应用快速开发基本项目模版",
     "versionName" : "",
     "versionCode" : "100",
     "transformPx" : false,
-	"networkTimeout": {
-		"uploadFile": 600000
-	},
+    "networkTimeout" : {
+        "uploadFile" : 600000
+    },
     "app-plus" : {
         "usingComponents" : true,
         "nvueStyleCompiler" : "uni-app",
@@ -58,8 +58,8 @@
         "optimization" : {
             "subPackages" : true
         },
-		"lazyCodeLoading": "requiredComponents",
-		"__usePrivacyCheck__": true
+        "lazyCodeLoading" : "requiredComponents",
+        "__usePrivacyCheck__" : true
     },
     "mp-alipay" : {
         "usingComponents" : true
