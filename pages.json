@@ -272,6 +272,22 @@
 						"navigationBarTitleText" : "忘记密码",
 						"enablePullDownRefresh" : false
 					}
+				},
+				{
+					"path" : "user-agreement/user-agreement",
+					"style" : 
+					{
+						"navigationBarTitleText" : "用户协议",
+						"enablePullDownRefresh" : false
+					}
+				},
+				{
+					"path" : "privacy-policy/privacy-policy",
+					"style" : 
+					{
+						"navigationBarTitleText" : "隐私政策",
+						"enablePullDownRefresh" : false
+					}
 				}
 
 			]

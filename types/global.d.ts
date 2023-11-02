@@ -1,4 +1,11 @@
 import { ComponentCustomProperties } from 'vue'
+
+declare module '@vue/runtime-core' {
+  interface ComponentCustomProperties {
+    getOpenerEventChannel: () => any;
+  }
+}
+
 declare global {
 	namespace NodeJS {
 		interface Global {
@@ -11,6 +18,5 @@ declare global {
 		}
 	}
 }
-
 
 export {}

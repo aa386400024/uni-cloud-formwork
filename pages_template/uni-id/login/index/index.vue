@@ -155,6 +155,7 @@
 					&& pages[pages.length-2].route.indexOf('login/index') == -1
 				){
 					const eventChannel = that.getOpenerEventChannel();
+					console.log(eventChannel,'eventChannel11111')
 					eventChannel.emit('loginSuccess', {});
 					vk.navigateBack();
 				}else{

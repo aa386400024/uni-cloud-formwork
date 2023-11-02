@@ -1,6 +1,5 @@
 <template>
 	<view>
-		<u-toast ref="uToastRef" position="top"></u-toast>
 		<view class="header-container">
 			<view class="header-content">
 				<view class="header-title">面试无忧</view>
@@ -11,59 +10,197 @@
 			<view class="form-view">
 				<view class="form-item username">
 					<u-input clearable placeholder="请输入您的用户名/手机号" border="surround" shape="circle"
-						placeholderStyle="font-size: 16px;" maxlength="30" :customStyle="customStyle"
+						placeholderStyle="font-size: 16px;" :customStyle="inputCustomStyle"
 						v-model="loginForm.username"></u-input>
 				</view>
 				<view class="form-item password">
 					<u-input clearable placeholder="请输入您的密码" border="surround" type="password" shape="circle"
-						placeholderStyle="font-size: 16px;" maxlength="30" :customStyle="customStyle"
+						placeholderStyle="font-size: 16px;" :customStyle="inputCustomStyle"
 						v-model="loginForm.password"></u-input>
 				</view>
 			</view>
 			<view class="additional-actions">
 				<view class="action-item" @click="goToRegister">
-					<text class="iconfont icon-zhuce"> 去注册</text>
+					<text class="iconfont icon-zhuce"> 注册账号</text>
 				</view>
 				<view class="action-item" @click="resetPassword">
 					<text class="iconfont icon-tianchongxing-"> 忘记密码</text>
 				</view>
+			</view>
+			<view class="login-by-username-view">
+				<u-button shape="circle" type="primary" size="large" text="登 录" @click="handleLoginBtn"></u-button>
+			</view>
+			<view class="dividing-line-view">
+				<text class="dividing-line">OR</text>
+			</view>
+			<view class="login-by-wx-view">
+				<u-button shape="circle" type="primary" size="large" text="微信一键登录" :customStyle="wxBtnCustomStyle"
+					@click="handleLoginByWxBtn"></u-button>
+			</view>
+			<view class="agreement-view">
+				<u-checkbox-group v-model="loginForm.agreement" @change="checkboxChange">
+					<u-checkbox shape="circle" name="agreement"></u-checkbox>
+				</u-checkbox-group>
+
+				<text>我已阅读并同意</text>
+				<navigator url="/pages_sub/user-agreement/user-agreement" hover-class="none">
+					<text class="link-text">《用户协议》</text>
+				</navigator>
+				<text>与</text>
+				<navigator url="/pages_sub/privacy-policy/privacy-policy" hover-class="none">
+					<text class="link-text">《隐私政策》</text>
+				</navigator>
 			</view>
 		</view>
 	</view>
 </template>
 
 <script lang="ts" setup>
-	import { reactive, toRefs, ref, onMounted, computed } from 'vue';
+	import { reactive, toRefs, ref, onMounted, computed, getCurrentInstance } from 'vue';
+
+	const eventChannelRef = ref(null); // 创建一个响应式引用用于存储 eventChannel
 
 	const myData = reactive({
 		loginForm: {
-			username: "",
-			password: ""
+			username: "aa386400025",
+			password: "123456",
+			agreement: true,
 		},
-		customStyle: {
+		inputCustomStyle: {
 			height: "50px",
 			paddingLeft: "20px",
-		}
+		},
+		wxBtnCustomStyle: {
+			backgroundColor: "rgba(0, 206, 209, .5)",
+			borderColor: "rgba(0, 206, 209, .5)",
+		},
+
 	})
 
-	const { loginForm, customStyle } = toRefs(myData);
-	
+	const { loginForm, inputCustomStyle, wxBtnCustomStyle } = toRefs(myData);
+
 	// 跳转到注册页
 	const goToRegister = () => {
 		uni.navigateTo({
 			url: '/pages_sub/register/register'
 		})
 	}
-	
+
 	// 跳转到忘记密码页
 	const resetPassword = () => {
 		uni.navigateTo({
 			url: '/pages_sub/reset-password/reset-password'
 		})
 	}
+
+	onMounted(() => {
+		const instance = getCurrentInstance();
+		if (!instance || !instance.proxy) {
+			throw new Error('getCurrentInstance().proxy is null');
+		}
+		const proxy = instance.proxy;
+		eventChannelRef.value = proxy.getOpenerEventChannel();
+		// ... 其他 onMounted 逻辑
+	});
+
+	const loginSuccess = (data : any) => {
+		// 检查是否有指定跳转的页面
+		// 如果有，则执行原始页面的跳转逻辑，并终止当前函数的执行
+		if (vk.navigate.getOriginalPage()) {
+			vk.navigate.originalTo();
+			return;
+		}
+
+		// 获取当前应用的页面栈数组
+		const pages = getCurrentPages();
+		console.log(pages.length, pages[pages.length - 1].route, 'pagespagespagespagespages');
+
+		// 判断页面栈是否满足以下条件：
+		// 1. 页面栈长度大于1，表示有多个页面
+		// 2. 倒数第二个页面存在
+		// 3. 倒数第二个页面的路由存在
+		// 4. 倒数第二个页面的路由不是登录页面（'login/index'）
+		// 如果以上条件都满足，执行以下逻辑
+		if (
+			pages.length > 1 &&
+			pages[pages.length - 2] &&
+			pages[pages.length - 2].route &&
+			pages[pages.length - 2].route.indexOf('login/login') === -1
+		) {
+			// 检查 eventChannelRef.value 是否存在
+			// 如果存在，使用 eventChannelRef.value 来访问 eventChannel
+			// 并且触发 'loginSuccess' 事件，向可能监听该事件的页面传递消息
+			if (eventChannelRef.value) {
+				eventChannelRef.value.emit('loginSuccess', {});
+				// 返回上一个页面
+				vk.navigateBack();
+			}
+		} else {
+			console.log('进入首页');
+			// 如果不满足上述条件，或者倒数第二个页面是登录页面
+			// 则导航至应用首页
+			vk.navigateToHome();
+		}
+	};
+
+	// 账号密码登录
+	const handleLoginBtn = () => {
+		const { username, password, agreement } = loginForm.value;
+
+		// 检查用户名和密码是否为空
+		if (!username.trim() || !password.trim()) {
+			vk.toast('用户名和密码不能为空', "none");
+			return;
+		}
+
+		// 检查用户名长度
+		if (username.length < 4) {
+			vk.toast('账号至少4位数', "none");
+			return;
+		}
+
+		// 检查密码格式
+		if (!vk.pubfn.test(password, 'pwd')) {
+			vk.toast('密码以字母开头，长度在6~18之间，只能包含字母、数字和下划线', "none");
+			return;
+		}
+
+		// 检查是否勾选了隐私协议
+		if (!agreement) {
+			vk.toast('请阅读并同意用户协议及隐私政策', "none");
+			return;
+		}
+
+		// 如果以上校验都通过了，可以执行登录操作
+		vk.userCenter.login({
+			data: loginForm.value,
+			success: (data : any) => {
+				vk.toast("登陆成功!");
+				setTimeout(() => {
+					// 跳转到首页,或页面返回
+					loginSuccess(data);
+				}, 1000);
+			}
+		});
+	}
+
+
+	// 复选框勾选事件
+	const checkboxChange = (value : string) => {
+		console.log('复选框状态变化了，当前值为:', value);
+		loginForm.value.agreement = value.includes('agreement');
+	};
+
+
+	// 微信一键登录
+	const handleLoginByWxBtn = () => {
+
+	}
 </script>
 
 <style lang="scss" scoped>
+	@import '@/common/css/mixins.scss';
+
 	.header-container {
 		width: 100%;
 		height: 450rpx;
@@ -82,35 +219,69 @@
 				margin-bottom: 20rpx;
 			}
 
-			.header-subtitle {
-				// 一些关于 header-subtitle 的样式
-			}
+			.header-subtitle {}
 		}
 	}
 
 	.login-sections {
+		position: relative; // 确保父容器是相对定位
+		height: calc(100vh - 450rpx); // 限制最大高度，确保内容不会超出视口高度
+
 		.form-view {
 			.form-item {
 				margin-bottom: 40rpx;
 
 			}
 		}
-	}
 
-	.additional-actions {
-		display: flex;
-		justify-content: space-between;
-		margin-top: 20rpx;
-
-		.action-item {
+		.additional-actions {
 			display: flex;
-			align-items: center;
-			color: $uni-text-color-grey;
-			font-size: 16px;
+			justify-content: space-between;
+			margin-top: 20rpx;
 
-			.icon-zhuce, .icon-tianchongxing- {
-				
+			.action-item {
+				display: flex;
+				align-items: center;
+				color: $uni-text-color-grey;
+				font-size: 16px;
+
+				.icon-zhuce,
+				.icon-tianchongxing- {}
 			}
 		}
+
+		.login-by-username-view {
+			margin-top: 70rpx;
+		}
+
+		.login-by-wx-view {}
+
+		.dividing-line-view {
+			text-align: center;
+			width: 100%;
+			margin: 40rpx 0;
+			color: #ddd;
+
+			.dividing-line {
+				@include title-decoration(line, 290rpx, 2rpx);
+			}
+		}
+
+		.agreement-view {
+			position: absolute;
+			bottom: 50rpx;
+			left: 0;
+			width: 100%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-size: 12px;
+
+			.link-text {
+				color: #1E90FF;
+				margin: 0 5rpx;
+			}
+		}
+
 	}
 </style>

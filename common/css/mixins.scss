@@ -159,7 +159,8 @@
 }
 
 // 标题文字装饰
-@mixin title-decoration($decoration: dot) {
+// 标题文字装饰
+@mixin title-decoration($decoration: dot, $line-width: 40rpx,  $line-height: 4rpx) {
   position: relative;
   padding: 0 20rpx; // 根据需求调整间距
 
@@ -196,9 +197,9 @@
   @else if $decoration == line {
     &::before,
     &::after {
-      width: 40rpx; // 横线宽度
-      height: 4rpx; // 横线高度
-      background-color: #333; // 横线颜色
+      width: $line-width; // 使用参数指定横线宽度
+      height: $line-height; // 横线高度
+      background-color: #ccc; // 横线颜色
     }
 
     &::before {
@@ -212,3 +213,4 @@
     }
   }
 }
+
