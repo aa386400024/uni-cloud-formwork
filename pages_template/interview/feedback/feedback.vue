@@ -85,7 +85,9 @@
 					class="feedback-item">
 					<view v-if="feedback.type === '改进建议' || feedback.type === '推荐答案'" class="long-feedback">
 						<view class="feedback-type">{{ feedback.type }}</view>
-						<view class="long-feedback-score common-feedback-style">{{ feedback.score }}</view>
+						<view class="long-feedback-score common-feedback-style">
+							<u-parse :content="feedback.score"></u-parse>
+						</view>
 					</view>
 					<view v-else class="feedback-header">
 						<view class="feedback-type">{{ feedback.type }}</view>

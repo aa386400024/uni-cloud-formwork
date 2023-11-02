@@ -78,7 +78,12 @@
 		encryptedKey: ""
 	})
 
-	const { loginForm, inputCustomStyle, wxBtnCustomStyle, encryptedKey } = toRefs(myData);
+	const { 
+		loginForm, 
+		inputCustomStyle, 
+		wxBtnCustomStyle, 
+		encryptedKey 
+	} = toRefs(myData);
 
 	// 跳转到注册页
 	const goToRegister = () => {
