@@ -34,8 +34,8 @@
 				<text class="dividing-line">OR</text>
 			</view>
 			<view class="login-by-wx-view">
-				<u-button shape="circle" type="primary" size="large" text="微信一键登录" :customStyle="wxBtnCustomStyle"
-					@click="handleLoginByWxBtn"></u-button>
+				<u-button open-type="getPhoneNumber" shape="circle" type="primary" size="large" text="微信一键登录"
+					:customStyle="wxBtnCustomStyle" @getphonenumber="loginByWeixinPhoneNumber"></u-button>
 			</view>
 			<view class="agreement-view">
 				<u-checkbox-group v-model="loginForm.agreement" @change="checkboxChange">
@@ -57,6 +57,7 @@
 
 <script lang="ts" setup>
 	import { reactive, toRefs, ref, onMounted, computed, getCurrentInstance } from 'vue';
+	import { onLoad } from '@dcloudio/uni-app';
 
 	const eventChannelRef = ref(null); // 创建一个响应式引用用于存储 eventChannel
 
@@ -74,10 +75,10 @@
 			backgroundColor: "rgba(0, 206, 209, .5)",
 			borderColor: "rgba(0, 206, 209, .5)",
 		},
-
+		encryptedKey: ""
 	})
 
-	const { loginForm, inputCustomStyle, wxBtnCustomStyle } = toRefs(myData);
+	const { loginForm, inputCustomStyle, wxBtnCustomStyle, encryptedKey } = toRefs(myData);
 
 	// 跳转到注册页
 	const goToRegister = () => {
@@ -101,6 +102,19 @@
 		const proxy = instance.proxy;
 		eventChannelRef.value = proxy.getOpenerEventChannel();
 		// ... 其他 onMounted 逻辑
+	});
+
+	onLoad((options) => {
+		// 需要先在onLoad内执行此函数
+		vk.userCenter.code2SessionWeixin({
+			data: {
+				needCache: true
+			},
+			success: (data: any) => {
+				encryptedKey.value = data.encryptedKey;
+			}
+		});
+
 	});
 
 	const loginSuccess = (data : any) => {
@@ -184,17 +198,32 @@
 		});
 	}
 
-
 	// 复选框勾选事件
 	const checkboxChange = (value : string) => {
-		console.log('复选框状态变化了，当前值为:', value);
 		loginForm.value.agreement = value.includes('agreement');
 	};
 
-
-	// 微信一键登录
-	const handleLoginByWxBtn = () => {
-
+	// 使用微信绑定的手机号登录/注册
+	const loginByWeixinPhoneNumber = (e) => {
+		console.log(e, 'eeee')
+		let { encryptedData, iv } = e.detail;
+		if (!encryptedData || !iv) {
+			return false;
+		}
+		vk.userCenter.loginByWeixinPhoneNumber({
+			data: {
+				encryptedData,
+				iv,
+				encryptedKey: encryptedKey.value
+			},
+			success: (data : any) => {
+				vk.toast("登陆成功!");
+				setTimeout(() => {
+					// 跳转到首页,或页面返回
+					loginSuccess(data);
+				}, 1000);
+			}
+		});
 	}
 </script>
 
