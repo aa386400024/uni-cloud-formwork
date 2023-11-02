@@ -94,23 +94,32 @@
 		})
 	}
 
+	// 在组件挂载完成后执行的操作
 	onMounted(() => {
+		// 获取当前组件实例
 		const instance = getCurrentInstance();
+
+		// 如果实例不存在或者实例的代理对象不存在，则抛出错误
 		if (!instance || !instance.proxy) {
 			throw new Error('getCurrentInstance().proxy is null');
 		}
+
+		// 获取代理对象
 		const proxy = instance.proxy;
+
+		// 使用代理对象的 getOpenerEventChannel 方法获取事件通道，并赋值给 eventChannelRef
 		eventChannelRef.value = proxy.getOpenerEventChannel();
+
 		// ... 其他 onMounted 逻辑
 	});
 
-	onLoad((options) => {
+	onLoad(() => {
 		// 需要先在onLoad内执行此函数
 		vk.userCenter.code2SessionWeixin({
 			data: {
 				needCache: true
 			},
-			success: (data: any) => {
+			success: (data : any) => {
 				encryptedKey.value = data.encryptedKey;
 			}
 		});
@@ -127,13 +136,12 @@
 
 		// 获取当前应用的页面栈数组
 		const pages = getCurrentPages();
-		console.log(pages.length, pages[pages.length - 1].route, 'pagespagespagespagespages');
 
 		// 判断页面栈是否满足以下条件：
 		// 1. 页面栈长度大于1，表示有多个页面
 		// 2. 倒数第二个页面存在
 		// 3. 倒数第二个页面的路由存在
-		// 4. 倒数第二个页面的路由不是登录页面（'login/index'）
+		// 4. 倒数第二个页面的路由不是登录页面（'login/login'）
 		// 如果以上条件都满足，执行以下逻辑
 		if (
 			pages.length > 1 &&
@@ -203,23 +211,36 @@
 		loginForm.value.agreement = value.includes('agreement');
 	};
 
-	// 使用微信绑定的手机号登录/注册
-	const loginByWeixinPhoneNumber = (e) => {
+	/**
+	 * 通过微信手机号登录的方法
+	 * @param e - 微信手机号事件对象，其中包含加密数据和初始化向量
+	 */
+	const loginByWeixinPhoneNumber = (e : WeixinPhoneNumberEvent) => {
+		// 打印事件对象，用于调试
 		console.log(e, 'eeee')
+
+		// 从事件对象的 detail 中解构出 encryptedData 和 iv
 		let { encryptedData, iv } = e.detail;
+
+		// 如果 encryptedData 或 iv 为空，则直接返回 false，不执行登录操作
 		if (!encryptedData || !iv) {
 			return false;
 		}
+
+		// 调用 vk.userCenter.loginByWeixinPhoneNumber 方法进行登录
 		vk.userCenter.loginByWeixinPhoneNumber({
 			data: {
-				encryptedData,
-				iv,
-				encryptedKey: encryptedKey.value
+				encryptedData, // 加密数据
+				iv, // 初始化向量
+				encryptedKey: encryptedKey.value // 加密密钥
 			},
 			success: (data : any) => {
-				vk.toast("登陆成功!");
+				// 登录成功后的回调函数
+				vk.toast("登陆成功!"); // 弹出登录成功的提示
+
+				// 延迟 1 秒后执行跳转操作，以便用户能看到登录成功的提示
 				setTimeout(() => {
-					// 跳转到首页,或页面返回
+					// 跳转到首页或返回上一页
 					loginSuccess(data);
 				}, 1000);
 			}

@@ -9,3 +9,9 @@ declare interface Grid {
 	title: string;
 }
 
+declare interface WeixinPhoneNumberEvent {
+  detail: {
+    encryptedData: string;
+    iv: string;
+  };
+}
