@@ -7,7 +7,7 @@ export default {
   functionName: "router",
   // 登录页面路径
   login: {
-    url: '/pages_template/uni-id/login/index/index'
+    url: '/pages_sub/login/login'
   },
   // 首页页面路径
   index: {
@@ -49,7 +49,7 @@ export default {
     mode: 2,
     list: [
       "/pages_template/*",
-      "/pages/login/*",
+      "/pages_sub/login/*",
       "/pages/index/*",
       "/pages/error/*",
 	  "/pages/home/*"

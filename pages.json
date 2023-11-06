@@ -288,6 +288,14 @@
 						"navigationBarTitleText" : "隐私政策",
 						"enablePullDownRefresh" : false
 					}
+				},
+				{
+					"path" : "userinfo/userinfo",
+					"style" : 
+					{
+						"navigationBarTitleText" : "个人资料",
+						"enablePullDownRefresh" : false
+					}
 				}
 
 			]

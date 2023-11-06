@@ -56,7 +56,8 @@
 </template>
 
 <script lang="ts" setup>
-	import { reactive, toRefs, ref, onMounted, computed, getCurrentInstance } from 'vue';
+	import { reactive, toRefs, defineExpose, ref, onMounted, computed, getCurrentInstance } from 'vue';
+	import { store, mutations } from '@/uni_modules/uni-id-pages/common/store.js';
 	import { onLoad } from '@dcloudio/uni-app';
 
 	const eventChannelRef = ref(null); // 创建一个响应式引用用于存储 eventChannel
@@ -131,7 +132,7 @@
 
 	});
 
-	const loginSuccess = (data : any) => {
+	const loginSuccessFun = (data : any) => {
 		// 检查是否有指定跳转的页面
 		// 如果有，则执行原始页面的跳转逻辑，并终止当前函数的执行
 		if (vk.navigate.getOriginalPage()) {
@@ -148,6 +149,11 @@
 		// 3. 倒数第二个页面的路由存在
 		// 4. 倒数第二个页面的路由不是登录页面（'login/login'）
 		// 如果以上条件都满足，执行以下逻辑
+		mutations.loginSuccess({
+		    showToast: true,
+		    toastText: '登录成功',
+		    autoBack: true
+		});
 		if (
 			pages.length > 1 &&
 			pages[pages.length - 2] &&
@@ -202,10 +208,11 @@
 		vk.userCenter.login({
 			data: loginForm.value,
 			success: (data : any) => {
+				console.log(data, 'datatdddd')
 				vk.toast("登陆成功!");
 				setTimeout(() => {
 					// 跳转到首页,或页面返回
-					loginSuccess(data);
+					loginSuccessFun(data);
 				}, 1000);
 			}
 		});
@@ -246,7 +253,7 @@
 				// 延迟 1 秒后执行跳转操作，以便用户能看到登录成功的提示
 				setTimeout(() => {
 					// 跳转到首页或返回上一页
-					loginSuccess(data);
+					loginSuccessFun(data);
 				}, 1000);
 			}
 		});

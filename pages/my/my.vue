@@ -10,8 +10,8 @@
 				></u-avatar>
 				<u-avatar size="45"></u-avatar>
 				<view class="logo-title">
-					<view v-if="hasLogin">
-						<text class="uer-name" v-if="hasLogin">{{userInfo.nickname||userInfo.username||userInfo.mobile}}酷酷的张大炮</text>
+					<view v-if="hasLogin" @click="toUserInfo">
+						<text class="uer-name" v-if="hasLogin">{{userInfo.nickname||userInfo.username||userInfo.mobile}}</text>
 						<text class="iconfont icon-VIP1 not-logged-prompt margin-top-xs"> 开通会员，享受更多特权！</text>
 					</view>
 					<view v-else @click="toLogin">
@@ -115,11 +115,18 @@
 	})
 	const { offsetTop, statsList, gridList, showOfficial } = toRefs(myData)
 	const { userInfo, hasLogin } = toRefs(storeOriginal);
-	
+	console.log(hasLogin, 'hasLoginhasLogin')
 	// 跳转到登录页
 	const toLogin = () => {
 		uni.navigateTo({
 			url: '/pages_sub/login/login'
+		})
+	}
+	
+	// 跳转到个人中心
+	const toUserInfo = () => {
+		uni.navigateTo({
+			url: '/pages_sub/userinfo/userinfo'
 		})
 	}
 	

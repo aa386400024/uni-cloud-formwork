@@ -24,7 +24,7 @@ class CallFunctionUtil {
 			targetTimezone: 8,
 			// 客户端登录页面地址
 			login: {
-				url: '/pages_template/uni-id/login/index/index'
+				url: '/pages_sub/login/login'
 			},
 			// 请求配置
 			request: {
